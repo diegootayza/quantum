@@ -1,0 +1,9 @@
+{
+    "endOfLine": "auto",
+    "printWidth": 600,
+    "semi": false,
+    "singleAttributePerLine": true,
+    "singleQuote": true,
+    "tabWidth": 4,
+    "vueIndentScriptAndStyle": true
+}
