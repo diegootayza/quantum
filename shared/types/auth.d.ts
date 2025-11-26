@@ -7,6 +7,7 @@ declare module '#auth-utils' {
         email: string
         id: string
         name: string
+        role: 'ADMIN' | 'USER'
         surname: string
     }
 

@@ -7,11 +7,7 @@
     import { useClipboard } from '@vueuse/core'
     import { DefaultChatTransport } from 'ai'
 
-    interface Props {}
-
     definePageMeta({ layout: 'dashboard', middleware: 'auth' })
-
-    const props = withDefaults(defineProps<Props>(), {})
 
     const ConversationProse = resolveComponent('ConversationProse')
 
@@ -22,6 +18,7 @@
     const route = useRoute()
     const toast = useToast()
     const clipboard = useClipboard()
+    const { model } = useModel()
 
     const { data } = await useFetch(`/api/conversation/${route.params.id}`, {
         cache: 'force-cache',
@@ -38,7 +35,7 @@
         messages: data.value.messages,
         onData: (dataPart) => {
             if (dataPart.type === 'data-chat-title') {
-                refreshNuxtData('chats')
+                refreshNuxtData('dashboard-navigation')
             }
         },
         onError(error) {
@@ -52,6 +49,7 @@
         },
         transport: new DefaultChatTransport({
             api: `/api/conversation/${data.value.id}`,
+            body: { model: model.value },
         }),
     })
 
@@ -90,6 +88,13 @@
         class="relative"
         :ui="{ body: 'p-0 sm:p-0' }"
     >
+        <template #header>
+            <UDashboardNavbar title="Conversación">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
+        </template>
         <template #body>
             <UContainer class="flex-1 flex flex-col gap-4 sm:gap-6">
                 <UChatMessages
@@ -137,6 +142,9 @@
                         @reload="chat.regenerate()"
                         @stop="chat.stop()"
                     />
+                    <template #footer>
+                        <SelectModel v-model="model" />
+                    </template>
                 </UChatPrompt>
             </UContainer>
         </template>

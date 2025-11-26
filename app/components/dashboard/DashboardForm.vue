@@ -22,6 +22,8 @@
     const route = useRoute()
     const router = useRouter()
 
+    const form = useTemplateRef('form')
+
     const open = ref(false)
     const state = reactive<z.output<T>>(getDefaultsForSchema(props.schema))
 
@@ -67,28 +69,30 @@
 
         <template #body>
             <UForm
+                ref="form"
                 class="space-y-4"
                 :schema="schema"
                 :state="state"
                 @submit="onSubmit"
             >
                 <slot :state="state" />
-
-                <div class="flex justify-end gap-2">
-                    <UButton
-                        color="neutral"
-                        label="Cancelar"
-                        variant="subtle"
-                        @click="onReset"
-                    />
-                    <UButton
-                        color="primary"
-                        label="Guardar"
-                        type="submit"
-                        variant="solid"
-                    />
-                </div>
             </UForm>
+        </template>
+        <template #footer>
+            <div class="flex justify-end gap-2 w-full">
+                <UButton
+                    color="neutral"
+                    label="Cancelar"
+                    variant="subtle"
+                    @click="onReset"
+                />
+                <UButton
+                    color="primary"
+                    label="Guardar"
+                    variant="solid"
+                    @click="form?.submit()"
+                />
+            </div>
         </template>
     </UModal>
 </template>

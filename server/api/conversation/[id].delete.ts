@@ -1,4 +1,6 @@
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id')
-    return await prisma.conversation.delete({ where: { id } })
+    await prisma.message.deleteMany({ where: { conversationId: id } })
+    await prisma.conversation.delete({ where: { id } })
+    return { message: 'Conversación eliminada' }
 })

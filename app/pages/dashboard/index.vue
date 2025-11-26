@@ -4,6 +4,12 @@
 
 <template>
     <UDashboardPanel id="dashboard">
-        <template #body> Panel de control </template>
+        <template #header>
+            <UDashboardNavbar title="Panel de control">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
+        </template>
     </UDashboardPanel>
 </template>

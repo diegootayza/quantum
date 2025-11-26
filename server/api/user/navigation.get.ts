@@ -9,5 +9,12 @@ export default defineEventHandler(async (event) => {
         where: { userId: user!.id },
     })
 
-    return { conversations }
+    const instructions = await prisma.instruction.findMany({
+        select: {
+            id: true,
+            name: true,
+        },
+    })
+
+    return { conversations, instructions }
 })

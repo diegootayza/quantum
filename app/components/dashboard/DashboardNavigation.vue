@@ -12,16 +12,20 @@
     const open = defineModel('open', { default: false, type: Boolean })
 
     const router = useRouter()
+    const toast = useToast()
+    const { user } = useUserSession()
 
-    const { data, refresh } = useFetch('/api/user/navigation', {
+    const { data: navigation, refresh } = useFetch('/api/user/navigation', {
         key: 'dashboard-navigation',
     })
 
     const items = computed<NavigationMenuItem[][]>(() => {
-        const { conversations } = data.value ?? { conversations: [] }
+        const { conversations, instructions } = navigation.value ?? { conversations: [], instructions: [] }
 
-        return [
-            [
+        const items: NavigationMenuItem[][] = []
+
+        if (user.value?.role === 'ADMIN') {
+            items.push([
                 {
                     icon: 'lucide:layout-dashboard',
                     label: 'Panel de control',
@@ -62,31 +66,35 @@
                     },
                     to: { name: 'dashboard-user' },
                 },
-            ],
-            [
-                {
-                    icon: 'lucide:plus',
-                    label: 'Nueva conversación',
-                    to: { name: 'conversation' },
-                },
-            ],
-            [
+            ])
+        }
+
+        items.push([
+            {
+                exactQuery: true,
+                icon: 'lucide:plus',
+                label: 'Nueva conversación',
+                to: { name: 'conversation' },
+            },
+        ])
+
+        if (instructions.length > 0) {
+            items.push([
                 {
                     label: "GPT's",
                     type: 'label',
                 },
-                {
+                ...instructions.map((instruction) => ({
+                    exactQuery: true,
                     icon: 'lucide:bot',
-                    label: 'Dashboard',
-                    onSelect: () => {},
-                },
-                {
-                    icon: 'lucide:bot',
-                    label: 'Instrucciones',
-                    onSelect: () => {},
-                },
-            ],
-            [
+                    label: instruction.name,
+                    to: { name: 'conversation', query: { id: instruction.id } },
+                })),
+            ])
+        }
+
+        if (conversations.length > 0) {
+            items.push([
                 {
                     label: 'Conversaciones',
                     type: 'label',
@@ -97,8 +105,10 @@
                     slot: 'actions' as const,
                     to: { name: 'conversation-id', params: { id: conversation.id } },
                 })),
-            ],
-        ]
+            ])
+        }
+
+        return [...items]
     })
 
     const actions = (item: any) => {
@@ -112,9 +122,14 @@
                 icon: 'lucide:trash',
                 label: 'Eliminar',
                 async onSelect() {
-                    await $fetch(`/api/conversation/${item.to.params.id}`, { method: 'DELETE' })
-                    await refresh()
-                    router.push({ name: 'conversation' })
+                    try {
+                        await $fetch(`/api/conversation/${item.to.params.id}`, { method: 'DELETE' })
+                        await refresh()
+                        router.push({ name: 'conversation' })
+                        toast.add({ color: 'success', title: 'Conversación eliminada' })
+                    } catch (error) {
+                        console.log(error)
+                    }
                 },
             },
         ] satisfies DropdownMenuItem[]
