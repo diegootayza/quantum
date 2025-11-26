@@ -35,7 +35,7 @@
         <UButton
             class="p-0 group"
             color="neutral"
-            :label="isStreaming ? 'Thinking...' : 'Thoughts'"
+            :label="isStreaming ? 'Pensando...' : 'Pensamientos'"
             trailingIcon="i-lucide-chevron-down"
             :ui="{
                 trailingIcon: text.length > 0 ? 'group-data-[state=open]:rotate-180 transition-transform duration-200' : 'hidden',

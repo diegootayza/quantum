@@ -111,6 +111,14 @@
         return [...items]
     })
 
+    const groups = computed(() => [
+        {
+            id: 'items',
+            items: items.value.flat(),
+            label: 'Ir a',
+        },
+    ])
+
     const actions = (item: any) => {
         return [
             {
@@ -137,35 +145,41 @@
 </script>
 
 <template>
-    <div>
-        <UNavigationMenu
-            class="h-full"
-            :collapsed="collapsed"
-            :items="items"
-            orientation="vertical"
-        >
-            <template #actions-trailing="{ item }">
-                <ClientOnly>
-                    <UDropdownMenu
-                        :content="{
-                            align: 'start',
-                            side: 'right',
-                            sideOffset: 8,
-                        }"
-                        :items="actions(item)"
-                    >
-                        <UButton
-                            color="neutral"
-                            icon="lucide:ellipsis-vertical"
-                            size="xs"
-                            variant="ghost"
-                        />
-                    </UDropdownMenu>
-                    <template #fallback>
-                        <div class="size-6" />
-                    </template>
-                </ClientOnly>
-            </template>
-        </UNavigationMenu>
-    </div>
+    <UDashboardSearchButton
+        class="bg-transparent ring-default"
+        :collapsed="collapsed"
+    />
+    <UNavigationMenu
+        class="h-full"
+        :collapsed="collapsed"
+        :items="items"
+        orientation="vertical"
+    >
+        <template #actions-trailing="{ item }">
+            <ClientOnly>
+                <UDropdownMenu
+                    :content="{
+                        align: 'start',
+                        side: 'right',
+                        sideOffset: 8,
+                    }"
+                    :items="actions(item)"
+                >
+                    <UButton
+                        color="neutral"
+                        icon="lucide:ellipsis-vertical"
+                        size="xs"
+                        variant="ghost"
+                    />
+                </UDropdownMenu>
+                <template #fallback>
+                    <div class="size-6" />
+                </template>
+            </ClientOnly>
+        </template>
+    </UNavigationMenu>
+    <UDashboardSearch
+        :colorMode="false"
+        :groups="groups"
+    />
 </template>

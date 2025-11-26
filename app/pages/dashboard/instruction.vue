@@ -100,6 +100,11 @@
             },
         },
     ]
+
+    async function onRefresh() {
+        await refresh()
+        await refreshNuxtData('dashboard-navigation')
+    }
 </script>
 
 <template>
@@ -111,7 +116,7 @@
                 </template>
 
                 <template #right>
-                    <ModalInstruction @refresh="refresh" />
+                    <ModalInstruction @refresh="onRefresh" />
                 </template>
             </UDashboardNavbar>
         </template>

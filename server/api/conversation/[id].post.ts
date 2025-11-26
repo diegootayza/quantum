@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
     if (!conversation.name) {
         const { text: name } = await generateText({
-            model: gateway(model),
+            model: gateway('openai/gpt-4o-mini'),
             prompt: JSON.stringify(messages[0]),
             system: `Eres un generador de títulos para una conversación:
                     - Genera un título corto basado en el primer mensaje del usuario
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
             const result = streamText({
                 experimental_transform: smoothStream({ chunking: 'word' }),
                 messages: convertToModelMessages(messages),
-                model: gateway('xai/grok-4-fast-reasoning'),
+                model: gateway(model),
                 providerOptions: {
                     openai: {
                         reasoningEffort: 'low',

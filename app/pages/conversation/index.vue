@@ -8,6 +8,7 @@
     const input = ref('')
     const loading = ref(false)
     const instructionId = ref<string>()
+    const instruction = ref<{ description: string; id: string; name: string } | null>(null)
 
     async function createConversation(prompt: string) {
         input.value = prompt
@@ -33,10 +34,14 @@
 
     watch(
         () => route.query,
-        (v) => {
+        async (v) => {
             if (typeof v.id === 'string') {
+                const response = await $fetch(`/api/instruction/${v.id}`, { method: 'GET' })
+
+                instruction.value = response
                 instructionId.value = v.id
             } else {
+                instruction.value = null
                 instructionId.value = undefined
             }
         },
@@ -51,7 +56,7 @@
     >
         <template #body>
             <UContainer class="flex-1 flex flex-col justify-center gap-4 sm:gap-6 py-8">
-                <h1 class="text-3xl sm:text-4xl text-center text-highlighted font-bold">¿En que estas trabajando?</h1>
+                <h1 class="text-3xl sm:text-4xl text-center text-highlighted font-bold">{{ instruction?.name || '¿En que estas trabajando?' }}</h1>
 
                 <UChatPrompt
                     v-model="input"
