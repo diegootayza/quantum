@@ -10,6 +10,8 @@
 
     const open = ref(false)
 
+    const values = computed(() => cleanMarkdown(props.text).split('\n').filter(Boolean))
+
     watch(
         () => props.isStreaming,
         () => {
@@ -29,6 +31,7 @@
 
 <template>
     <UCollapsible
+        v-if="values.length > 0"
         v-model:open="open"
         class="flex flex-col gap-1 my-5"
     >
@@ -45,7 +48,7 @@
 
         <template #content>
             <div
-                v-for="(value, index) in cleanMarkdown(text).split('\n').filter(Boolean)"
+                v-for="(value, index) in values"
                 :key="index"
             >
                 <span class="whitespace-pre-wrap text-sm text-muted font-normal">{{ value }}</span>

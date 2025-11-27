@@ -57,7 +57,7 @@
 
         toast.add({ color: 'success', title: response.message })
 
-        await router.push({ name: 'dashboard' })
+        router.push({ name: 'profile' })
     }
 </script>
 

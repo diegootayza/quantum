@@ -49,7 +49,7 @@
 
         toast.add({ color: 'success', title: response.message })
 
-        router.push({ name: 'dashboard' })
+        router.push({ name: 'profile' })
     }
 </script>
 

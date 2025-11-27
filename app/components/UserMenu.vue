@@ -10,9 +10,9 @@
     const items = computed<DropdownMenuItem[][]>(() => [
         [
             {
-                avatar: { text: user.value ? user.value.name.substring(0, 1) : '' },
-                label: user.value ? `${user.value.name} ${user.value.surname}` : '',
-                type: 'label',
+                icon: 'lucide:home',
+                label: 'Ir al inicio',
+                to: { name: 'index' },
             },
         ],
         [
@@ -69,7 +69,7 @@
     >
         <UButton
             v-bind="{
-                avatar: { text: user ? user.name.substring(0, 1) : '' },
+                icon: 'lucide:user',
                 label: collapsed ? undefined : user ? `${user.name} ${user.surname}` : '',
                 trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
             }"

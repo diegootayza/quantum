@@ -49,7 +49,9 @@
         },
         transport: new DefaultChatTransport({
             api: `/api/conversation/${data.value.id}`,
-            body: { model: model.value },
+            body: () => ({
+                model: model.value,
+            }),
         }),
     })
 

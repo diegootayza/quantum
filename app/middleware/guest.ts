@@ -3,5 +3,5 @@ export default defineNuxtRouteMiddleware(async () => {
 
     await fetch()
 
-    if (loggedIn.value) return navigateTo({ name: 'dashboard' })
+    if (loggedIn.value) return navigateTo({ name: 'profile' })
 })

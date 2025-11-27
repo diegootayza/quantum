@@ -45,6 +45,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const lastMessage = messages[messages.length - 1]
+
     if (lastMessage?.role === 'user' && messages.length > 1) {
         await prisma.message.create({
             data: {
