@@ -24,6 +24,14 @@ export const instructionSchema = z.object({
 
 export type InstructionSchema = z.output<typeof instructionSchema>
 
+export const settingSchema = z.object({
+    name: z.string().min(1, 'El nombre debe tener al menos 1 carácter'),
+    namespace: z.string().min(1, 'El namespace debe tener al menos 1 carácter'),
+    value: z.any(),
+})
+
+export type SettingSchema = z.output<typeof settingSchema>
+
 export const userSchema = z.object({
     active: z.boolean().optional().default(false),
     email: z.email('El email debe ser válido').min(1, 'El email es requerido').default(''),

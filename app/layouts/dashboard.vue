@@ -5,10 +5,13 @@
 <template>
     <UDashboardGroup unit="rem">
         <UDashboardSidebar
-            id="default"
             v-model:open="open"
             class="bg-elevated/25"
             collapsible
+            :defaultSize="20"
+            :maxSize="20"
+            :minSize="20"
+            resizable
             :ui="{ footer: 'lg:border-t lg:border-default', header: 'm-0 p-0 h-auto border-0' }"
         >
             <template #header>

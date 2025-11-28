@@ -14,6 +14,11 @@
                 label: 'Ir al inicio',
                 to: { name: 'index' },
             },
+            {
+                icon: 'lucide:settings',
+                label: 'Configuración',
+                to: { name: 'setting' },
+            },
         ],
         [
             {

@@ -66,23 +66,10 @@
                     },
                     to: { name: 'dashboard-user' },
                 },
-                {
-                    icon: 'lucide:settings',
-                    label: 'Configuración',
-                    onSelect: () => {
-                        open.value = false
-                    },
-                    to: { name: 'dashboard-setting' },
-                },
             ])
         }
 
         items.push([
-            {
-                icon: 'lucide:user',
-                label: `${user.value?.name} ${user.value?.surname}`,
-                to: { name: 'profile' },
-            },
             {
                 exactQuery: true,
                 icon: 'lucide:plus',

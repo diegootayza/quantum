@@ -12,7 +12,13 @@ export default defineEventHandler(async (event) => {
     const response = await prisma.conversation.findUnique({
         select: {
             id: true,
-            messages: true,
+            messages: {
+                select: {
+                    parts: true,
+                    role: true,
+                },
+            },
+            name: true,
         },
         where: { id: result.data.id },
     })

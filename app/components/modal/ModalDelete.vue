@@ -15,10 +15,7 @@
         :description="description"
         :title="title"
     >
-        <UButton
-            icon="lucide:plus"
-            label="Nuevo"
-        />
+        <slot />
 
         <template #body>
             <!--  -->

@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     )
 
     const conversation = await prisma.conversation.findUnique({
-        include: { messages: true },
+        select: { id: true, instruction: { select: { content: true } }, messages: { select: { parts: true, role: true } }, name: true },
         where: { id },
     })
 
@@ -27,15 +27,12 @@ export default defineEventHandler(async (event) => {
     }
 
     if (!conversation.name) {
+        const promptTitle = await getSettingValue<string>('title', 'ai')
+
         const { text: name } = await generateText({
             model: gateway('openai/gpt-4o-mini'),
             prompt: JSON.stringify(messages[0]),
-            system: `Eres un generador de títulos para una conversación:
-                    - Genera un título corto basado en el primer mensaje del usuario
-                    - El título debe tener menos de 30 caracteres
-                    - El título debe ser un resumen del mensaje del usuario
-                    - No uses comillas (' o "), dos puntos (:) ni otra puntuación
-                    - No uses Markdown, solo texto plano`,
+            system: promptTitle || '',
         })
 
         await prisma.conversation.update({
@@ -57,7 +54,9 @@ export default defineEventHandler(async (event) => {
     }
 
     const stream = createUIMessageStream({
-        execute: ({ writer }) => {
+        execute: async ({ writer }) => {
+            const promptGlobal = await getSettingValue<string>('prompt', 'ai')
+
             const result = streamText({
                 experimental_transform: smoothStream({ chunking: 'word' }),
                 messages: convertToModelMessages(messages),
@@ -69,27 +68,16 @@ export default defineEventHandler(async (event) => {
                     },
                 },
                 stopWhen: stepCountIs(5),
-                system: `Eres un asistente de IA conocedor y servicial. ${session.user?.name ? `El nombre del usuario es ${session.user.name}.` : ''} Tu objetivo es proporcionar respuestas claras, precisas y bien estructuradas.
-
-**REGLAS DE FORMATO (CRÍTICAS):**
-- NUNCA USAR ENCABEZADOS EN MARKDOWN: No uses #, ##, ###, ####, #####, ni ######
-- NO uses encabezados con subrayado como === o ---
-- Utiliza **texto en negrita** para énfasis y etiquetas de secciones en su lugar
-- Ejemplos:
-    * En vez de "## Uso", escribe "**Uso:**" o simplemente "Así se usa:"
-    * En vez de "# Guía Completa", escribe "**Guía Completa**" o comienza directamente con el contenido
-- Comienza todas las respuestas con contenido, nunca con un encabezado
-
-**CALIDAD DE LA RESPUESTA:**
-- Sé conciso pero completo
-- Usa ejemplos cuando sea útil
-- Divide temas complejos en partes digeribles
-- Mantén un tono amable y profesional`,
+                system: `
+                Eres un asistente de IA conocedor y servicial. ${session.user ? `El nombre completo del usuario es ${session.user.name} ${session.user.surname}.` : ''} Tu objetivo es proporcionar respuestas claras, precisas y bien estructuradas.
+                ${promptGlobal || ''}
+                ${conversation.instruction?.content || ''}
+                `,
             })
 
             if (!conversation.name) {
                 writer.write({
-                    data: { message: 'Generating title...' },
+                    data: { message: 'Generando título...' },
                     transient: true,
                     type: 'data-chat-title',
                 })

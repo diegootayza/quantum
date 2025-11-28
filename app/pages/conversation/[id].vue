@@ -18,9 +18,9 @@
     const route = useRoute()
     const toast = useToast()
     const clipboard = useClipboard()
-    const { model } = useModel()
+    const { model } = useModels()
 
-    const { data } = await useFetch(`/api/conversation/${route.params.id}`, {
+    const { data, refresh } = await useFetch(`/api/conversation/${route.params.id}`, {
         cache: 'force-cache',
     })
 
@@ -32,10 +32,11 @@
 
     const chat = new Chat({
         id: data.value.id,
-        messages: data.value.messages,
+        messages: data.value.messages as any[],
         onData: (dataPart) => {
             if (dataPart.type === 'data-chat-title') {
                 refreshNuxtData('dashboard-navigation')
+                refresh()
             }
         },
         onError(error) {
@@ -91,7 +92,7 @@
         :ui="{ body: 'p-0 sm:p-0' }"
     >
         <template #header>
-            <UDashboardNavbar title="Conversación">
+            <UDashboardNavbar :title="data?.name || 'Nueva conversación'">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
@@ -145,7 +146,17 @@
                         @stop="chat.stop()"
                     />
                     <template #footer>
-                        <SelectModel v-model="model" />
+                        <div class="flex items-center justify-start gap-2">
+                            <UTooltip text="Adjuntar archivos">
+                                <UButton
+                                    class="hover:bg-default focus:bg-default"
+                                    color="neutral"
+                                    icon="i-lucide-paperclip"
+                                    variant="ghost"
+                                />
+                            </UTooltip>
+                            <SelectModel v-model="model" />
+                        </div>
                     </template>
                 </UChatPrompt>
             </UContainer>

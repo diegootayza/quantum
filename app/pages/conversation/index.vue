@@ -3,7 +3,7 @@
 
     const route = useRoute()
     const router = useRouter()
-    const { model } = useModel()
+    const { model } = useModels()
 
     const input = ref('')
     const loading = ref(false)
@@ -18,8 +18,6 @@
             body: { instructionId: instructionId.value, prompt },
             method: 'POST',
         })
-
-        await refreshNuxtData('dashboard-navigation')
 
         router.push({
             name: 'conversation-id',
@@ -68,7 +66,17 @@
                     <UChatPromptSubmit color="neutral" />
 
                     <template #footer>
-                        <SelectModel v-model="model" />
+                        <div class="flex items-center justify-start gap-2">
+                            <UTooltip text="Adjuntar archivos">
+                                <UButton
+                                    class="hover:bg-default focus:bg-default"
+                                    color="neutral"
+                                    icon="i-lucide-paperclip"
+                                    variant="ghost"
+                                />
+                            </UTooltip>
+                            <SelectModel v-model="model" />
+                        </div>
                     </template>
                 </UChatPrompt>
             </UContainer>

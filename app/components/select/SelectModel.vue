@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    const { model, models } = useModel()
+    const { model, models } = useModels()
 
     const items = computed(() =>
         models.map((model) => ({

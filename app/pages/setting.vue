@@ -7,24 +7,20 @@
         [
             {
                 exact: true,
-                icon: 'i-lucide-user',
-                label: 'General',
-                to: { name: 'profile' },
+                icon: 'lucide:user',
+                label: 'información',
+                to: { name: 'setting' },
             },
             {
-                icon: 'i-lucide-users',
-                label: 'Members',
-                to: { name: 'profile' },
+                exact: true,
+                icon: 'lucide:brain',
+                label: 'IA',
+                to: { name: 'setting-ai' },
             },
             {
-                icon: 'i-lucide-bell',
-                label: 'Notificaciones',
-                to: { name: 'profile' },
-            },
-            {
-                icon: 'i-lucide-shield',
-                label: 'Security',
-                to: { name: 'profile' },
+                icon: 'lucide:shield',
+                label: 'Seguridad',
+                to: { name: 'setting-security' },
             },
         ],
     ] satisfies NavigationMenuItem[][]
@@ -36,14 +32,13 @@
         :ui="{ body: 'lg:py-12' }"
     >
         <template #header>
-            <UDashboardNavbar title="Perfil">
+            <UDashboardNavbar title="Configuración">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <!-- NOTE: The `-mx-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
                 <UNavigationMenu
                     class="-mx-1 flex-1"
                     highlight
