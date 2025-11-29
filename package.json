@@ -11,7 +11,9 @@
     },
     "dependencies": {
         "@ai-sdk/gateway": "^2.0.15",
+        "@ai-sdk/openai": "^2.0.74",
         "@ai-sdk/vue": "^2.0.101",
+        "@aws-sdk/client-s3": "^3.940.0",
         "@iconify-json/lucide": "^1.2.74",
         "@nuxt/eslint": "1.10.0",
         "@nuxt/scripts": "0.13.0",
@@ -25,6 +27,7 @@
         "@vueuse/nuxt": "^14.0.0",
         "ai": "^5.0.100",
         "eslint": "^9.39.1",
+        "mime-types": "^3.0.2",
         "nuxt": "^4.2.1",
         "nuxt-auth-utils": "^0.5.25",
         "nuxt-viewport": "^2.3.1",
@@ -42,6 +45,7 @@
         "zod-defaults": "^0.2.3"
     },
     "devDependencies": {
+        "@types/mime-types": "^3.0.1",
         "@types/node": "^24.10.1",
         "eslint-plugin-perfectionist": "^4.15.1",
         "eslint-plugin-unused-imports": "^4.3.0"

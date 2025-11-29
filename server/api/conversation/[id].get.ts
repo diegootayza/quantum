@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
             id: true,
             messages: {
                 select: {
+                    id: true,
                     parts: true,
                     role: true,
                 },

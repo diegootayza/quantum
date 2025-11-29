@@ -10,6 +10,10 @@
     const instructionId = ref<string>()
     const instruction = ref<{ description: string; id: string; name: string } | null>(null)
 
+    const state = reactive({
+        image: undefined,
+    })
+
     async function createConversation(prompt: string) {
         input.value = prompt
         loading.value = true
@@ -26,6 +30,8 @@
     }
 
     async function onSubmit() {
+        console.log(state)
+
         await createConversation(input.value)
         input.value = ''
     }
@@ -65,16 +71,18 @@
                 >
                     <UChatPromptSubmit color="neutral" />
 
+                    <template #header>
+                        <UTooltip text="Adjuntar archivos">
+                            <UFileUpload
+                                v-model="state.image"
+                                multiple
+                                variant="button"
+                            />
+                        </UTooltip>
+                    </template>
+
                     <template #footer>
                         <div class="flex items-center justify-start gap-2">
-                            <UTooltip text="Adjuntar archivos">
-                                <UButton
-                                    class="hover:bg-default focus:bg-default"
-                                    color="neutral"
-                                    icon="i-lucide-paperclip"
-                                    variant="ghost"
-                                />
-                            </UTooltip>
                             <SelectModel v-model="model" />
                         </div>
                     </template>

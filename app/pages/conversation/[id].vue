@@ -127,6 +127,11 @@
                                     :parserOptions="{ highlight: false }"
                                     :value="part.text"
                                 />
+                                <ConversationImage
+                                    v-else-if="part.type === 'tool-generateImage'"
+                                    :output="part.output"
+                                    :state="part.state"
+                                />
                             </template>
                         </div>
                     </template>
@@ -148,12 +153,7 @@
                     <template #footer>
                         <div class="flex items-center justify-start gap-2">
                             <UTooltip text="Adjuntar archivos">
-                                <UButton
-                                    class="hover:bg-default focus:bg-default"
-                                    color="neutral"
-                                    icon="i-lucide-paperclip"
-                                    variant="ghost"
-                                />
+                                <UFileUpload variant="button" />
                             </UTooltip>
                             <SelectModel v-model="model" />
                         </div>
