@@ -24,6 +24,24 @@
 
         const items: NavigationMenuItem[][] = []
 
+        items.push([
+            {
+                icon: 'lucide:home',
+                label: 'Inicio',
+                to: { name: 'profile' },
+            },
+            {
+                icon: 'lucide:shield',
+                label: 'Seguridad',
+                to: { name: 'profile-security' },
+            },
+            {
+                icon: 'lucide:files',
+                label: 'Archivos',
+                to: { name: 'profile-security' },
+            },
+        ])
+
         if (user.value?.role === 'ADMIN') {
             items.push([
                 {
@@ -69,43 +87,45 @@
             ])
         }
 
-        items.push([
-            {
-                exactQuery: true,
-                icon: 'lucide:plus',
-                label: 'Nueva conversación',
-                to: { name: 'conversation' },
-            },
-        ])
-
-        if (instructions.length > 0) {
+        if (user.value?.active) {
             items.push([
                 {
-                    label: "GPT's",
-                    type: 'label',
-                },
-                ...instructions.map((instruction) => ({
                     exactQuery: true,
-                    icon: 'lucide:bot',
-                    label: instruction.name,
-                    to: { name: 'conversation', query: { id: instruction.id } },
-                })),
-            ])
-        }
-
-        if (conversations.length > 0) {
-            items.push([
-                {
-                    label: 'Conversaciones',
-                    type: 'label',
+                    icon: 'lucide:plus',
+                    label: 'Nueva conversación',
+                    to: { name: 'conversation' },
                 },
-                ...conversations.map((conversation) => ({
-                    icon: 'lucide:message-square',
-                    label: conversation.name,
-                    slot: 'actions' as const,
-                    to: { name: 'conversation-id', params: { id: conversation.id } },
-                })),
             ])
+
+            if (instructions.length > 0) {
+                items.push([
+                    {
+                        label: "GPT's",
+                        type: 'label',
+                    },
+                    ...instructions.map((instruction) => ({
+                        exactQuery: true,
+                        icon: 'lucide:bot',
+                        label: instruction.name,
+                        to: { name: 'conversation', query: { id: instruction.id } },
+                    })),
+                ])
+            }
+
+            if (conversations.length > 0) {
+                items.push([
+                    {
+                        label: 'Conversaciones',
+                        type: 'label',
+                    },
+                    ...conversations.map((conversation) => ({
+                        icon: 'lucide:message-square',
+                        label: conversation.name,
+                        slot: 'actions' as const,
+                        to: { name: 'conversation-id', params: { id: conversation.id } },
+                    })),
+                ])
+            }
         }
 
         return [...items]

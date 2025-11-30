@@ -25,12 +25,14 @@ export default defineEventHandler(async (event) => {
 
     await setUserSession(event, {
         secure: {
-            apiToken: '1234567890',
+            id: user.id,
+            role: user.role,
         },
         user: {
+            active: user.active,
             email: user.email,
-            id: user.id,
             name: user.name,
+            role: user.role,
             surname: user.surname,
         },
     })

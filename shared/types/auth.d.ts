@@ -1,9 +1,11 @@
 declare module '#auth-utils' {
     interface SecureSessionData {
-        // Add your own fields
+        id: string
+        role: 'ADMIN' | 'USER'
     }
 
     interface User {
+        active: boolean
         email: string
         id: string
         name: string

@@ -13,6 +13,8 @@
     const toast = useToast()
     const router = useRouter()
 
+    const { fetch } = useUserSession()
+
     const fields = [
         {
             label: 'Correo electrónico',
@@ -46,6 +48,8 @@
             body: payload.data,
             method: 'POST',
         })
+
+        await fetch()
 
         toast.add({ color: 'success', title: response.message })
 

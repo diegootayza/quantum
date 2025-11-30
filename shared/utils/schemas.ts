@@ -33,11 +33,10 @@ export const settingSchema = z.object({
 export type SettingSchema = z.output<typeof settingSchema>
 
 export const userSchema = z.object({
-    active: z.boolean().optional().default(false),
-    email: z.email('El email debe ser válido').min(1, 'El email es requerido').default(''),
+    active: z.boolean().optional(),
+    email: z.email('El email debe ser válido').min(1, 'El email es requerido').optional(),
     name: z.string().min(1, 'El nombre es requerido'),
-    password: z.string().min(1, 'La contraseña es requerida'),
-    role: z.enum(['ADMIN', 'USER']).optional().default('USER'),
+    role: z.enum(['ADMIN', 'USER']).optional(),
     surname: z.string().min(1, 'El apellido es requerido'),
 })
 

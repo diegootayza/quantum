@@ -1,7 +1,7 @@
 import z from 'zod'
 
 export default defineEventHandler(async (event) => {
-    const session = await getUserSession(event)
+    const { secure } = await getUserSession(event)
 
     const { instructionId, prompt } = await readValidatedBody(event, z.object({ instructionId: z.string().optional(), prompt: z.string() }).parse)
 
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
         data: {
             instructionId,
             name: '',
-            userId: session.user!.id,
+            userId: secure!.id,
         },
     })
 

@@ -1,11 +1,9 @@
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id')
 
-    const result = await readValidatedBody(event, (v) => userSchema.partial().safeParse(v))
+    const result = await readValidatedBody(event, userSchema.partial().parse)
 
-    if (!result.success) throw result.error.issues
-
-    const response = await prisma.user.update({ data: result.data, where: { id } })
+    const response = await prisma.user.update({ data: result, where: { id } })
 
     return response
 })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    definePageMeta({ layout: 'dashboard', middleware: 'auth' })
+    definePageMeta({ layout: 'dashboard', middleware: ['auth', 'active'] })
 
     const route = useRoute()
     const router = useRouter()
@@ -69,17 +69,10 @@
                     variant="subtle"
                     @submit="onSubmit"
                 >
-                    <UChatPromptSubmit color="neutral" />
-
-                    <template #header>
-                        <UTooltip text="Adjuntar archivos">
-                            <UFileUpload
-                                v-model="state.image"
-                                multiple
-                                variant="button"
-                            />
-                        </UTooltip>
-                    </template>
+                    <div class="flex items-center justify-center gap-2">
+                        <ConversationSpeech v-model="input" />
+                        <UChatPromptSubmit color="neutral" />
+                    </div>
 
                     <template #footer>
                         <div class="flex items-center justify-start gap-2">

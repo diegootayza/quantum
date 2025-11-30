@@ -7,7 +7,7 @@
     import { useClipboard } from '@vueuse/core'
     import { DefaultChatTransport } from 'ai'
 
-    definePageMeta({ layout: 'dashboard', middleware: 'auth' })
+    definePageMeta({ layout: 'dashboard', middleware: ['auth', 'active'] })
 
     const ConversationProse = resolveComponent('ConversationProse')
 
@@ -152,9 +152,6 @@
                     />
                     <template #footer>
                         <div class="flex items-center justify-start gap-2">
-                            <UTooltip text="Adjuntar archivos">
-                                <UFileUpload variant="button" />
-                            </UTooltip>
                             <SelectModel v-model="model" />
                         </div>
                     </template>

@@ -5,7 +5,7 @@ import { convertToModelMessages, createUIMessageStream, createUIMessageStreamRes
 import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
-    const session = await getUserSession(event)
+    const { user } = await getUserSession(event)
 
     const { id } = await getValidatedRouterParams(event, z.object({ id: z.string() }).parse)
 
@@ -69,7 +69,7 @@ export default defineEventHandler(async (event) => {
                 },
                 stopWhen: stepCountIs(5),
                 system: `
-                Eres un asistente de IA conocedor y servicial. ${session.user ? `El nombre completo del usuario es ${session.user.name} ${session.user.surname}.` : ''} Tu objetivo es proporcionar respuestas claras, precisas y bien estructuradas.
+                Eres un asistente de IA conocedor y servicial. ${user ? `El nombre completo del usuario es ${user.name} ${user.surname}.` : ''} Tu objetivo es proporcionar respuestas claras, precisas y bien estructuradas.
                 Puedes usar la herramienta "generateImage" para crear imágenes cuando el usuario lo solicite.
                 ${promptGlobal || ''}
                 ${conversation.instruction?.content || ''}

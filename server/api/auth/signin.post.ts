@@ -6,25 +6,24 @@ const schema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-    const result = await readValidatedBody(event, (body) => schema.safeParse(body))
+    const result = await readValidatedBody(event, schema.parse)
 
-    if (!result.success) throw result.error.issues
-
-    const user = await prisma.user.findUnique({ where: { email: result.data.email } })
+    const user = await prisma.user.findUnique({ where: { email: result.email } })
 
     if (!user) throw createError({ statusCode: 401, statusMessage: 'Usuario no encontrado' })
 
-    const isPasswordValid = await verifyPassword(user.password, result.data.password)
+    const isPasswordValid = await verifyPassword(user.password, result.password)
 
     if (!isPasswordValid) throw createError({ statusCode: 401, statusMessage: 'Contraseña incorrecta' })
 
     await setUserSession(event, {
         secure: {
-            apiToken: '1234567890',
+            id: user.id,
+            role: user.role,
         },
         user: {
+            active: user.active,
             email: user.email,
-            id: user.id,
             name: user.name,
             role: user.role,
             surname: user.surname,
