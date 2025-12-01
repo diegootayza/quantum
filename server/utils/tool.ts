@@ -17,7 +17,7 @@ export const toolGenerateImage = (conversationId: string, userId: string) => {
         description: 'Genera una imagen usando el modelo de imágenes de OpenAI.',
         execute: async ({ prompt }) => {
             const result = await generateText({
-                model: gateway('google/gemini-2.5-flash-image'),
+                model: gateway('google/gemini-3-pro-image'),
                 prompt,
             })
 
