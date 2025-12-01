@@ -1,13 +1,12 @@
 import { z } from 'zod'
 
-const schema = z.object({
+const paramSchema = z.object({
     id: z.string(),
 })
 
 export default defineEventHandler(async (event) => {
-    const result = await getValidatedRouterParams(event, (v) => schema.safeParse(v))
-
-    if (!result.success) throw result.error.issues
+    const { secure } = await getUserSession(event)
+    const { id } = await getValidatedRouterParams(event, paramSchema.parse)
 
     const response = await prisma.conversation.findUnique({
         select: {
@@ -21,7 +20,7 @@ export default defineEventHandler(async (event) => {
             },
             name: true,
         },
-        where: { id: result.data.id },
+        where: { id, userId: secure!.id },
     })
 
     return response

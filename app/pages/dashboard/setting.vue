@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import type { NavigationMenuItem } from '@nuxt/ui'
 
-    definePageMeta({ layout: 'dashboard', middleware: 'auth' })
+    definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
     const links = [
         [

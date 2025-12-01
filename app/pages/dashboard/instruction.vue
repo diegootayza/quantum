@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 
-    definePageMeta({ layout: 'dashboard', middleware: 'auth' })
+    definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
     const UButton = resolveComponent('UButton')
     const UDropdownMenu = resolveComponent('UDropdownMenu')

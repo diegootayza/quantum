@@ -8,7 +8,6 @@
 
 <template>
     <DashboardForm
-        ref="DashboardForm"
         name="dashboard-instruction"
         :schema="instructionSchema"
         title="Instrucción"
@@ -44,6 +43,15 @@
                 />
             </UFormField>
             <UFormField
+                label="Archivo"
+                name="file"
+            >
+                <UFileUpload
+                    class="w-full"
+                    multiple
+                />
+            </UFormField>
+            <UFormField
                 label="Contenido"
                 name="content"
             >
@@ -51,15 +59,6 @@
                     v-model="state.content"
                     autoresize
                     class="w-full"
-                />
-            </UFormField>
-            <UFormField
-                label="Archivo"
-                name="file"
-            >
-                <UFileUpload
-                    class="w-full"
-                    multiple
                 />
             </UFormField>
         </template>

@@ -12,6 +12,7 @@
     <UButton
         color="neutral"
         :leadingIcon="isListening ? 'lucide:square-stop' : 'lucide:mic'"
+        variant="ghost"
         @click="isListening ? stop() : start()"
     />
 </template>

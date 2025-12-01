@@ -8,30 +8,21 @@ export default defineEventHandler(async (event) => {
     if (!formData) throw createError({ statusCode: 400, statusMessage: 'No form data provided' })
 
     const files = formData.filter((p) => p.name === 'files')
-    const instructionId = formData.find((p) => p.name === 'instructionId')?.data.toString()
-    const prompt = formData.find((p) => p.name === 'prompt')?.data.toString()
-
-    const conversation = await prisma.conversation.create({
-        data: {
-            instructionId,
-            name: '',
-            userId: secure!.id,
-        },
-    })
+    const conversationId = formData.find((p) => p.name === 'conversationId')?.data.toString()
 
     const parts: UIMessage['parts'] = []
 
     for await (const file of files) {
         const attachment = await prisma.attachment.create({
             data: {
-                conversationId: conversation.id,
+                conversationId,
                 mimeType: file.type || 'application/octet-stream',
                 size: file.data.length || 0,
                 userId: secure!.id,
             },
         })
 
-        const r2Key = `conversations/${conversation.id}/${attachment.id}.${extension(attachment.mimeType) || 'bin'}`
+        const r2Key = `conversations/${conversationId}/${attachment.id}.${extension(attachment.mimeType) || 'bin'}`
 
         const url = await storageUpload(r2Key, file.data, attachment.mimeType)
 
@@ -47,19 +38,5 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    await prisma.message.create({
-        data: {
-            conversationId: conversation.id,
-            parts: [
-                ...(parts as any),
-                {
-                    text: prompt,
-                    type: 'text',
-                },
-            ],
-            role: 'user',
-        },
-    })
-
-    return { conversationId: conversation.id }
+    return parts
 })

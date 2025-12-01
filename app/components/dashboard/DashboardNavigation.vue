@@ -31,14 +31,29 @@
                 to: { name: 'profile' },
             },
             {
-                icon: 'lucide:shield',
-                label: 'Seguridad',
-                to: { name: 'profile-security' },
-            },
-            {
                 icon: 'lucide:files',
                 label: 'Archivos',
-                to: { name: 'profile-security' },
+                to: { name: 'profile-file' },
+            },
+            {
+                children: [
+                    {
+                        label: 'Cuenta',
+                        to: { name: 'profile-security' },
+                    },
+                    {
+                        label: 'Seguridad',
+                        to: { name: 'profile-security' },
+                    },
+                    {
+                        label: 'Notificaciones',
+                        to: { name: 'profile-security' },
+                    },
+                ],
+                defaultOpen: true,
+                icon: 'lucide:settings',
+                label: 'Configuración',
+                type: 'trigger',
             },
         ])
 

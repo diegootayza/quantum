@@ -8,8 +8,9 @@ export const categorySchema = z.object({
 export type CategorySchema = z.output<typeof categorySchema>
 
 export const conversationSchema = z.object({
-    active: z.boolean().optional().default(true),
+    instructionId: z.string().min(1, 'El ID de instrucción es requerido').nullable(),
     name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+    userId: z.string().min(1, 'El ID de usuario es requerido'),
 })
 
 export type ConversationSchema = z.output<typeof conversationSchema>

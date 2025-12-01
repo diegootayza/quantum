@@ -25,10 +25,11 @@
     })
 
     if (!data.value) {
-        throw createError({ fatal: true, statusCode: 404, statusMessage: 'Chat not found' })
+        throw createError({ fatal: true, statusCode: 404, statusMessage: 'La conversación no existe.' })
     }
 
     const input = ref('')
+    const files = ref<File[]>([])
 
     const chat = new Chat({
         id: data.value.id,
@@ -56,13 +57,40 @@
         }),
     })
 
-    function handleSubmit(e: Event) {
+    async function handleSubmit(e: Event) {
         e.preventDefault()
         if (input.value.trim()) {
+            const files = await processFiles()
+
             chat.sendMessage({
+                files: files as any[],
                 text: input.value,
             })
             input.value = ''
+        }
+    }
+
+    async function processFiles() {
+        if (import.meta.browser) {
+            if (files.value.length === 0) return []
+            const formData = new FormData()
+
+            if (data.value) formData.append('conversationId', data.value.id)
+
+            for (const file of files.value) {
+                if (file) formData.append('files', file)
+            }
+
+            const response = await $fetch('/api/attachment', {
+                body: formData,
+                method: 'POST',
+            })
+
+            files.value = []
+
+            return response
+        } else {
+            return []
         }
     }
 
@@ -76,6 +104,10 @@
         setTimeout(() => {
             copied.value = false
         }, 2000)
+    }
+
+    function onFilePush(newFiles: File[]) {
+        files.value?.push(...newFiles)
     }
 
     onMounted(() => {
@@ -127,6 +159,12 @@
                                     :parserOptions="{ highlight: false }"
                                     :value="part.text"
                                 />
+                                <img
+                                    v-else-if="part.type === 'file'"
+                                    :alt="part.mediaType"
+                                    class="h-40"
+                                    :src="part.url"
+                                />
                                 <ConversationImage
                                     v-else-if="part.type === 'tool-generateImage'"
                                     :output="part.output"
@@ -144,15 +182,24 @@
                     variant="subtle"
                     @submit="handleSubmit"
                 >
-                    <UChatPromptSubmit
-                        color="neutral"
-                        :status="chat.status"
-                        @reload="chat.regenerate()"
-                        @stop="chat.stop()"
-                    />
+                    <template #header>
+                        <ConversationFilePreview v-model="files" />
+                    </template>
+
                     <template #footer>
                         <div class="flex items-center justify-start gap-2">
+                            <ConversationFile @push="onFilePush" />
                             <SelectModel v-model="model" />
+                        </div>
+                        <div class="flex items-center justify-end gap-2">
+                            <ConversationSpeech v-model="input" />
+                            <UChatPromptSubmit
+                                color="neutral"
+                                :status="chat.status"
+                                variant="ghost"
+                                @reload="chat.regenerate()"
+                                @stop="chat.stop()"
+                            />
                         </div>
                     </template>
                 </UChatPrompt>

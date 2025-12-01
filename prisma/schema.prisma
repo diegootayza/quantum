@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,6 +12,19 @@ enum Role {
   ADMIN
 }
 
+model Attachment {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  mimeType       String
+  r2Key          String?
+  size           Int
+  url            String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId String?       @db.ObjectId
+  user           User?         @relation(fields: [userId], references: [id])
+  userId         String?       @db.ObjectId
+  createdAt      DateTime      @default(now())
+}
+
 model Category {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   active       Boolean       @default(true)
@@ -28,6 +35,7 @@ model Category {
 model Conversation {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
   name          String
+  attachments   Attachment[]
   messages      Message[]
   instruction   Instruction? @relation(fields: [instructionId], references: [id])
   instructionId String?      @db.ObjectId
@@ -48,6 +56,17 @@ model Instruction {
   conversations Conversation[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  files         File[]
+}
+
+model File {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  mimeType      String
+  r2Key         String
+  size          Int
+  instruction   Instruction? @relation(fields: [instructionId], references: [id])
+  instructionId String?      @db.ObjectId
+  createdAt     DateTime     @default(now())
 }
 
 model Message {
@@ -75,12 +94,13 @@ model Subscription {
 
 model User {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  email         String         @unique
   active        Boolean        @default(false)
+  email         String         @unique
   name          String
   password      String
   role          Role           @default(USER)
   surname       String
+  attachments   Attachment[]
   conversations Conversation[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt

@@ -6,16 +6,20 @@
 
     const props = withDefaults(defineProps<Props>(), {})
 
-    const src = computed(() => props.output as string)
+    const images = computed(() => props.output as { url: string }[])
 </script>
 
 <template>
-    <div class="mb-4">
+    <div
+        v-if="state === 'output-available'"
+        class="mb-4"
+    >
         <img
-            v-if="state === 'output-available'"
+            v-for="value in images"
+            :key="value.url"
             alt="Generated Image"
             class="size-40"
-            :src="src"
+            :src="value.url"
         />
     </div>
 </template>

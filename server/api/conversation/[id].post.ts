@@ -4,18 +4,17 @@ import { gateway } from '@ai-sdk/gateway'
 import { convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, generateText, smoothStream, stepCountIs, streamText } from 'ai'
 import { z } from 'zod'
 
+const bodySchema = z.object({
+    messages: z.array(z.custom<UIMessage>()),
+    model: z.string(),
+})
+
 export default defineEventHandler(async (event) => {
-    const { user } = await getUserSession(event)
+    const { secure, user } = await getUserSession(event)
 
     const { id } = await getValidatedRouterParams(event, z.object({ id: z.string() }).parse)
 
-    const { messages, model } = await readValidatedBody(
-        event,
-        z.object({
-            messages: z.array(z.custom<UIMessage>()),
-            model: z.string(),
-        }).parse
-    )
+    const { messages, model } = await readValidatedBody(event, bodySchema.parse)
 
     const conversation = await prisma.conversation.findUnique({
         select: { id: true, instruction: { select: { content: true } }, messages: { select: { parts: true, role: true } }, name: true },
@@ -70,13 +69,13 @@ export default defineEventHandler(async (event) => {
                 stopWhen: stepCountIs(5),
                 system: `
                 Eres un asistente de IA conocedor y servicial. ${user ? `El nombre completo del usuario es ${user.name} ${user.surname}.` : ''} Tu objetivo es proporcionar respuestas claras, precisas y bien estructuradas.
-                Puedes usar la herramienta "generateImage" para crear imágenes cuando el usuario lo solicite.
+                Puedes usar la herramienta "generateImage" para crear imágenes cuando el usuario lo solicite, no devuelvas los enlaces.
                 ${promptGlobal || ''}
                 ${conversation.instruction?.content || ''}
                 `,
                 toolChoice: 'auto',
                 tools: {
-                    generateImage: toolGenerateImage,
+                    generateImage: toolGenerateImage(conversation.id, secure!.id),
                 },
             })
 
@@ -90,7 +89,7 @@ export default defineEventHandler(async (event) => {
 
             writer.merge(
                 result.toUIMessageStream({
-                    sendReasoning: true,
+                    sendReasoning: false,
                 })
             )
         },

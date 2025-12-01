@@ -12,10 +12,16 @@
             :maxSize="20"
             :minSize="20"
             resizable
-            :ui="{ footer: 'lg:border-t lg:border-default', header: 'm-0 p-0 h-auto border-0' }"
+            :ui="{ footer: 'lg:border-t lg:border-default' }"
         >
             <template #header>
-                <div class="grid place-items-center h-16 w-full">Quantum</div>
+                <div class="w-full flex items-center justify-start gap-2 px-2">
+                    <UIcon
+                        class="size-6"
+                        name="lucide:atom"
+                    />
+                    <span class="font-bold">Quantum IA</span>
+                </div>
             </template>
             <template #default="{ collapsed }">
                 <DashboardNavigation

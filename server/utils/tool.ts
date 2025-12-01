@@ -1,23 +1,54 @@
 import { gateway } from '@ai-sdk/gateway'
 import { generateText, tool } from 'ai'
-import { randomUUID } from 'crypto'
+import { extension } from 'mime-types'
 import z from 'zod'
 
-export const toolGenerateImage = tool({
-    description: 'Genera una imagen usando el modelo de imágenes de OpenAI.',
-    execute: async ({ prompt }) => {
-        const result = await generateText({
-            model: gateway('google/gemini-2.5-flash-image'),
-            prompt,
-        })
+function base64Size(base64: string) {
+    let padding = 0
+    if (base64.endsWith('==')) padding = 2
+    else if (base64.endsWith('=')) padding = 1
 
-        const id = randomUUID()
+    const size = (base64.length * 3) / 4 - padding
+    return Math.round(size) // bytes
+}
 
-        const url = storageUpload(id, Buffer.from(result.files[0].base64, 'base64'), result.files[0].mediaType)
+export const toolGenerateImage = (conversationId: string, userId: string) => {
+    return tool({
+        description: 'Genera una imagen usando el modelo de imágenes de OpenAI.',
+        execute: async ({ prompt }) => {
+            const result = await generateText({
+                model: gateway('google/gemini-2.5-flash-image'),
+                prompt,
+            })
 
-        return url
-    },
-    inputSchema: z.object({
-        prompt: z.string().describe('Descripción clara de la imagen que quieres generar.'),
-    }),
-})
+            const response: { url: string }[] = []
+
+            for await (const file of result.files) {
+                const attachment = await prisma.attachment.create({
+                    data: {
+                        conversationId,
+                        mimeType: file.mediaType,
+                        size: base64Size(file.base64),
+                        userId,
+                    },
+                })
+
+                const r2Key = `conversations/${conversationId}/${attachment.id}.${extension(attachment.mimeType) || 'bin'}`
+
+                const url = await storageUpload(r2Key, Buffer.from(file.base64, 'base64'), attachment.mimeType)
+
+                await prisma.attachment.update({
+                    data: { r2Key, url },
+                    where: { id: attachment.id },
+                })
+
+                response.push({ url })
+            }
+
+            return response
+        },
+        inputSchema: z.object({
+            prompt: z.string().describe('Descripción clara de la imagen que quieres generar.'),
+        }),
+    })
+}

@@ -3,22 +3,22 @@
 </script>
 
 <template>
-    <UDashboardPanel
-        id="setting"
-        :ui="{ body: 'lg:py-12' }"
-    >
+    <UDashboardPanel id="security">
         <template #header>
-            <UDashboardNavbar title="Seguridad">
+            <UDashboardNavbar title="Configuración - Seguridad">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
             </UDashboardNavbar>
         </template>
-
         <template #body>
-            <div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full lg:max-w-2xl mx-auto">
-                <NuxtPage />
-            </div>
+            <UContainer class="flex-1 flex flex-col justify-center items-center gap-6">
+                <UIcon
+                    class="size-20"
+                    name="lucide:construction"
+                />
+                <h1 class="text-2xl sm:text-4xl text-center text-highlighted font-bold">Esta pagina se encuentra en construcción</h1>
+            </UContainer>
         </template>
     </UDashboardPanel>
 </template>

@@ -1,21 +1,34 @@
 import type { PutObjectCommandInput } from '@aws-sdk/client-s3'
 
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { extension } from 'mime-types'
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 const storage = new S3Client({
     credentials: {
-        accessKeyId: '1ec7a224402e70013eea3529bfae44fc',
-        secretAccessKey: 'e2307c0e87e3bdf1814c1a83c49015d8f42da0edf852b15bf005afd07aebb7d4',
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
     },
-    endpoint: 'https://08d512e2dc849fcbee3a92a9ed49a626.r2.cloudflarestorage.com/quantum',
+    endpoint: process.env.R2_ENDPOINT!,
     region: 'auto',
 })
 
-export function storageUpload(id: string, body: NonNullable<PutObjectCommandInput['Body']>, mediaType: string) {
-    const ext = extension(mediaType)
-    if (!ext) throw new Error('No se pudo determinar la extensión del archivo.')
-    const key = `${ext}/${id}.${ext}`
-    storage.send(new PutObjectCommand({ Body: body, Bucket: 'quantum', ContentType: mediaType, Key: key }))
-    return `https://pub-abed36ff824d48fd8f9c26ccf9913d7e.r2.dev/quantum/${key}`
+export async function storageDelete(Key: string) {
+    await storage.send(
+        new DeleteObjectCommand({
+            Bucket: 'quantum',
+            Key,
+        })
+    )
+}
+
+export async function storageUpload(Key: string, Body: NonNullable<PutObjectCommandInput['Body']>, ContentType?: string) {
+    await storage.send(
+        new PutObjectCommand({
+            Body,
+            Bucket: 'quantum',
+            ContentType: ContentType || 'application/octet-stream',
+            Key,
+        })
+    )
+
+    return `${process.env.R2_URL}/${Key}`
 }

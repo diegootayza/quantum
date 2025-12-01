@@ -5,21 +5,28 @@
     const router = useRouter()
     const { model } = useModels()
 
+    const files = ref<File[]>([])
     const input = ref('')
-    const loading = ref(false)
-    const instructionId = ref<string>()
     const instruction = ref<{ description: string; id: string; name: string } | null>(null)
-
-    const state = reactive({
-        image: undefined,
-    })
+    const instructionId = ref<string>()
+    const loading = ref(false)
 
     async function createConversation(prompt: string) {
         input.value = prompt
         loading.value = true
 
+        const formData = new FormData()
+
+        formData.append('prompt', prompt)
+
+        if (instructionId.value) formData.append('instructionId', instructionId.value)
+
+        for (const file of files.value) {
+            formData.append('files', file)
+        }
+
         const response = await $fetch('/api/conversation', {
-            body: { instructionId: instructionId.value, prompt },
+            body: formData,
             method: 'POST',
         })
 
@@ -29,9 +36,11 @@
         })
     }
 
-    async function onSubmit() {
-        console.log(state)
+    function onFilePush(newFiles: File[]) {
+        files.value?.push(...newFiles)
+    }
 
+    async function onSubmit() {
         await createConversation(input.value)
         input.value = ''
     }
@@ -69,14 +78,21 @@
                     variant="subtle"
                     @submit="onSubmit"
                 >
-                    <div class="flex items-center justify-center gap-2">
-                        <ConversationSpeech v-model="input" />
-                        <UChatPromptSubmit color="neutral" />
-                    </div>
+                    <template #header>
+                        <ConversationFilePreview v-model="files" />
+                    </template>
 
                     <template #footer>
                         <div class="flex items-center justify-start gap-2">
+                            <ConversationFile @push="onFilePush" />
                             <SelectModel v-model="model" />
+                        </div>
+                        <div class="flex items-center justify-end gap-2">
+                            <ConversationSpeech v-model="input" />
+                            <UChatPromptSubmit
+                                color="neutral"
+                                variant="ghost"
+                            />
                         </div>
                     </template>
                 </UChatPrompt>
