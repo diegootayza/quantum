@@ -33,12 +33,34 @@ export const settingSchema = z.object({
 
 export type SettingSchema = z.output<typeof settingSchema>
 
+export const serviceSchema = z.object({
+    active: z.boolean().optional().default(true),
+    description: z.string().min(1, 'La descripción es requerida'),
+    name: z.string().min(1, 'El nombre es requerido'),
+})
+
+export type ServiceSchema = z.output<typeof serviceSchema>
+
+export const subscriptionSchema = z.object({
+    active: z.boolean().optional().default(true),
+    currency: z.string().default('USD'),
+    description: z.string().min(1, 'La descripción es requerida'),
+    features: z.array(z.string()).min(1, 'Debe tener al menos una característica'),
+    interval: z.enum(['MONTHLY', 'YEARLY']),
+    name: z.string().min(1, 'El nombre es requerido'),
+    price: z.number().min(0, 'El precio debe ser mayor o igual a 0'),
+    serviceIds: z.array(z.string()).optional(),
+    stripeId: z.string().nullable(),
+})
+
+export type SubscriptionSchema = z.output<typeof subscriptionSchema>
+
 export const userSchema = z.object({
     active: z.boolean().optional(),
     email: z.email('El email debe ser válido').min(1, 'El email es requerido').optional(),
     name: z.string().min(1, 'El nombre es requerido'),
     role: z.enum(['ADMIN', 'USER']).optional(),
+    serviceIds: z.array(z.string()).optional(),
+    subscriptionId: z.string().nullable().optional(),
     surname: z.string().min(1, 'El apellido es requerido'),
 })
-
-export type UserSchema = z.output<typeof userSchema>

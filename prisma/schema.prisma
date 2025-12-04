@@ -88,20 +88,50 @@ model Setting {
   @@unique([namespace, name])
 }
 
+model Service {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  active        Boolean        @default(true)
+  description   String
+  name          String
+  subscriptions Subscription[] @relation(fields: [subscriptionIds], references: [id])
+  subscriptionIds String[]     @db.ObjectId
+  users         User[]         @relation(fields: [userIds], references: [id])
+  userIds       String[]       @db.ObjectId
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
 model Subscription {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  active      Boolean   @default(true)
+  currency    String    @default("USD")
+  description String
+  features    Json[]
+  interval    String
+  name        String
+  price       Float
+  stripeId    String?
+  services    Service[] @relation(fields: [serviceIds], references: [id])
+  serviceIds  String[]  @db.ObjectId
+  users       User[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model User {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  active        Boolean        @default(false)
-  email         String         @unique
-  name          String
-  password      String
-  role          Role           @default(USER)
-  surname       String
-  attachments   Attachment[]
-  conversations Conversation[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  active         Boolean        @default(false)
+  email          String         @unique
+  name           String
+  password       String
+  role           Role           @default(USER)
+  surname        String
+  attachments    Attachment[]
+  conversations  Conversation[]
+  subscription   Subscription?  @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String?        @db.ObjectId
+  services       Service[]      @relation(fields: [serviceIds], references: [id])
+  serviceIds     String[]       @db.ObjectId
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }

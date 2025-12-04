@@ -5,26 +5,16 @@
 
     const links = [
         [
+            // {
+            //     exact: true,
+            //     icon: 'i-lucide-user',
+            //     label: 'General',
+            //     to: { name: 'dashboard-setting' },
+            // },
             {
-                exact: true,
-                icon: 'i-lucide-user',
-                label: 'General',
-                to: { name: 'dashboard-setting' },
-            },
-            {
-                icon: 'i-lucide-users',
-                label: 'Members',
-                to: { name: 'dashboard-setting' },
-            },
-            {
-                icon: 'i-lucide-bell',
-                label: 'Notificaciones',
-                to: { name: 'dashboard-setting-notification' },
-            },
-            {
-                icon: 'i-lucide-shield',
-                label: 'Security',
-                to: { name: 'dashboard-setting' },
+                icon: 'lucide:brain',
+                label: 'IA',
+                to: { name: 'dashboard-setting-ai' },
             },
         ],
     ] satisfies NavigationMenuItem[][]

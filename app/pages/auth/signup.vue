@@ -14,6 +14,7 @@
     const router = useRouter()
 
     const { fetch } = useUserSession()
+    const { safeExecute } = useSafeError()
 
     const fields = [
         {
@@ -52,16 +53,18 @@
     type Schema = z.output<typeof schema>
 
     async function onSubmit(payload: FormSubmitEvent<Schema>) {
-        const response = await $fetch('/api/auth/signup', {
-            body: payload.data,
-            method: 'POST',
+        safeExecute(async () => {
+            const response = await $fetch('/api/auth/signup', {
+                body: payload.data,
+                method: 'POST',
+            })
+
+            await fetch()
+
+            toast.add({ color: 'success', title: response.message })
+
+            router.push({ name: 'profile' })
         })
-
-        await fetch()
-
-        toast.add({ color: 'success', title: response.message })
-
-        router.push({ name: 'profile' })
     }
 </script>
 

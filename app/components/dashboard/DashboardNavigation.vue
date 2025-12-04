@@ -37,18 +37,22 @@
             },
             {
                 children: [
-                    {
-                        label: 'Cuenta',
-                        to: { name: 'profile-security' },
-                    },
+                    // {
+                    //     label: 'Cuenta',
+                    //     to: { name: 'profile-security' },
+                    // },
                     {
                         label: 'Seguridad',
                         to: { name: 'profile-security' },
                     },
                     {
-                        label: 'Notificaciones',
-                        to: { name: 'profile-security' },
+                        label: 'Suscripción',
+                        to: { name: 'profile-subscription' },
                     },
+                    // {
+                    //     label: 'Notificaciones',
+                    //     to: { name: 'profile-security' },
+                    // },
                 ],
                 defaultOpen: true,
                 icon: 'lucide:settings',
@@ -98,6 +102,36 @@
                         open.value = false
                     },
                     to: { name: 'dashboard-user' },
+                },
+                {
+                    icon: 'lucide:credit-card',
+                    label: 'Suscripciones',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-subscription' },
+                },
+                {
+                    icon: 'lucide:cpu',
+                    label: 'Servicios',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-service' },
+                },
+                {
+                    children: [
+                        {
+                            label: 'IA',
+                            to: { name: 'dashboard-setting-ai' },
+                        },
+                    ],
+                    defaultOpen: true,
+                    icon: 'lucide:settings',
+                    label: 'Ajustes',
+                    onSelect: () => {
+                        open.value = false
+                    },
                 },
             ])
         }

@@ -8,34 +8,34 @@ const schema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-    const result = await readValidatedBody(event, (body) => schema.safeParse(body))
+    return processError(async () => {
+        const data = await readValidatedBody(event, schema.parse)
 
-    if (!result.success) throw result.error.issues
+        const hashedPassword = await hashPassword(data.password)
 
-    const hashedPassword = await hashPassword(result.data.password)
+        const user = await prisma.user.create({
+            data: {
+                email: data.email,
+                name: data.name,
+                password: hashedPassword,
+                surname: data.surname,
+            },
+        })
 
-    const user = await prisma.user.create({
-        data: {
-            email: result.data.email,
-            name: result.data.name,
-            password: hashedPassword,
-            surname: result.data.surname,
-        },
+        await setUserSession(event, {
+            secure: {
+                id: user.id,
+                role: user.role,
+            },
+            user: {
+                active: user.active,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+                surname: user.surname,
+            },
+        })
+
+        return { message: 'Usuario creado exitosamente' }
     })
-
-    await setUserSession(event, {
-        secure: {
-            id: user.id,
-            role: user.role,
-        },
-        user: {
-            active: user.active,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            surname: user.surname,
-        },
-    })
-
-    return { message: 'Usuario creado exitosamente' }
 })

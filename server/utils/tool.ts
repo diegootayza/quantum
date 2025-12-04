@@ -9,7 +9,7 @@ function base64Size(base64: string) {
     else if (base64.endsWith('=')) padding = 1
 
     const size = (base64.length * 3) / 4 - padding
-    return Math.round(size) // bytes
+    return Math.round(size)
 }
 
 export const toolGenerateImage = (conversationId: string, userId: string) => {
@@ -17,7 +17,7 @@ export const toolGenerateImage = (conversationId: string, userId: string) => {
         description: 'Genera una imagen usando el modelo de imágenes de OpenAI.',
         execute: async ({ prompt }) => {
             const result = await generateText({
-                model: gateway('google/gemini-3-pro-image'),
+                model: gateway('google/gemini-2.5-flash-image'),
                 prompt,
             })
 
