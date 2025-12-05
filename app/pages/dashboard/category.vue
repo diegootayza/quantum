@@ -8,6 +8,7 @@
     const USwitch = resolveComponent('USwitch')
 
     const router = useRouter()
+    const { safeExecute } = useSafeError()
 
     const { data, refresh } = await useFetch('/api/dashboard/category', {})
 
@@ -45,11 +46,13 @@
                 return h(USwitch, {
                     modelValue: row.original.active,
                     'onUpdate:modelValue': async (value: boolean) => {
-                        await $fetch(`/api/dashboard/category/${row.original.id}`, {
-                            body: { active: value },
-                            method: 'PATCH',
+                        await safeExecute(async () => {
+                            await $fetch(`/api/dashboard/category/${row.original.id}`, {
+                                body: { active: value },
+                                method: 'PATCH',
+                            })
+                            row.original.active = value
                         })
-                        row.original.active = value
                     },
                 })
             },

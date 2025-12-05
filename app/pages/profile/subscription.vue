@@ -4,23 +4,24 @@
     const { user, fetch: refreshUser } = useUserSession()
     const { data: subscriptions, pending } = await useFetch('/api/subscription')
     const toast = useToast()
+    const { safeExecute } = useSafeError()
 
     const loading = ref(false)
 
     async function subscribe(subscriptionId: string) {
         loading.value = true
-        try {
+        
+        const success = await safeExecute(async () => {
             await $fetch('/api/subscription/subscribe', {
                 method: 'POST',
                 body: { subscriptionId },
             })
             await refreshUser()
             toast.add({ title: 'Suscripción actualizada', color: 'success' })
-        } catch (error) {
-            toast.add({ title: 'Error al actualizar suscripción', color: 'error' })
-        } finally {
-            loading.value = false
-        }
+            return true
+        })
+        
+        loading.value = false
     }
 </script>
 

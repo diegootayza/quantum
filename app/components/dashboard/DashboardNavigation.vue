@@ -14,6 +14,7 @@
     const router = useRouter()
     const toast = useToast()
     const { user } = useUserSession()
+    const { safeExecute } = useSafeError()
 
     const { data: navigation, refresh } = useFetch('/api/user/navigation', {
         key: 'dashboard-navigation',
@@ -200,14 +201,12 @@
                 icon: 'lucide:trash',
                 label: 'Eliminar',
                 async onSelect() {
-                    try {
+                    await safeExecute(async () => {
                         await $fetch(`/api/conversation/${item.to.params.id}`, { method: 'DELETE' })
                         await refresh()
                         router.push({ name: 'conversation' })
                         toast.add({ color: 'success', title: 'Conversación eliminada' })
-                    } catch (error) {
-                        console.log(error)
-                    }
+                    })
                 },
             },
         ] satisfies DropdownMenuItem[]

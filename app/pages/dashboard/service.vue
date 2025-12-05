@@ -8,6 +8,7 @@
     const USwitch = resolveComponent('USwitch')
 
     const router = useRouter()
+    const { safeExecute } = useSafeError()
 
     const { data, refresh } = await useFetch('/api/dashboard/service', {})
 
@@ -28,10 +29,12 @@
                 icon: 'i-lucide-trash',
                 label: 'Eliminar servicio',
                 async onSelect() {
-                     await $fetch(`/api/dashboard/service/${row.id}`, {
-                        method: 'DELETE',
+                    await safeExecute(async () => {
+                        await $fetch(`/api/dashboard/service/${row.id}`, {
+                            method: 'DELETE',
+                        })
+                        refresh()
                     })
-                    refresh()
                 },
             },
         ]
@@ -52,11 +55,13 @@
                 return h(USwitch, {
                     modelValue: row.original.active,
                     'onUpdate:modelValue': async (value: boolean) => {
-                        await $fetch(`/api/dashboard/service/${row.original.id}`, {
-                            body: { active: value },
-                            method: 'PATCH',
+                        await safeExecute(async () => {
+                            await $fetch(`/api/dashboard/service/${row.original.id}`, {
+                                body: { active: value },
+                                method: 'PATCH',
+                            })
+                            row.original.active = value
                         })
-                        row.original.active = value
                     },
                 })
             },

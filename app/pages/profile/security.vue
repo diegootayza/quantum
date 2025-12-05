@@ -1,9 +1,13 @@
 <script setup lang="ts">
-    import type { FormError } from '@nuxt/ui'
+    import type { FormError, FormSubmitEvent } from '@nuxt/ui'
 
     import * as z from 'zod'
 
     definePageMeta({ layout: 'dashboard', middleware: 'auth' })
+
+    const toast = useToast()
+    const loading = ref(false)
+    const { safeExecute } = useSafeError()
 
     const passwordSchema = z.object({
         current: z.string().min(8, 'Debe tener al menos 8 caracteres'),
@@ -23,6 +27,34 @@
             errors.push({ message: 'Las contraseñas deben ser diferentes', name: 'new' })
         }
         return errors
+    }
+
+    async function onSubmit(event: FormSubmitEvent<PasswordSchema>) {
+        loading.value = true
+        
+        const success = await safeExecute(async () => {
+            await $fetch('/api/user/password', {
+                method: 'POST',
+                body: {
+                    currentPassword: event.data.current,
+                    newPassword: event.data.new,
+                }
+            })
+            
+            toast.add({
+                title: 'Contraseña actualizada',
+                description: 'Tu contraseña ha sido cambiada exitosamente',
+                color: 'success'
+            })
+            
+            // Reset form
+            password.current = undefined
+            password.new = undefined
+            
+            return true
+        })
+        
+        loading.value = false
     }
 </script>
 
@@ -51,29 +83,34 @@
                         :schema="passwordSchema"
                         :state="password"
                         :validate="validate"
+                        @submit="onSubmit"
                     >
-                        <UFormField name="current">
+                        <UFormField name="current" label="Contraseña actual">
                             <UInput
                                 v-model="password.current"
                                 class="w-full"
-                                placeholder="Contraseña actual"
+                                placeholder="Ingresa tu contraseña actual"
                                 type="password"
+                                :disabled="loading"
                             />
                         </UFormField>
 
-                        <UFormField name="new">
+                        <UFormField name="new" label="Nueva contraseña">
                             <UInput
                                 v-model="password.new"
                                 class="w-full"
-                                placeholder="Nueva contraseña"
+                                placeholder="Ingresa tu nueva contraseña"
                                 type="password"
+                                :disabled="loading"
                             />
                         </UFormField>
 
                         <UButton
                             class="w-fit"
-                            label="Actualizar"
+                            label="Actualizar contraseña"
                             type="submit"
+                            :loading="loading"
+                            :disabled="loading"
                         />
                     </UForm>
                 </UPageCard>

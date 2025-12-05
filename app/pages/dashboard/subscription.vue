@@ -8,6 +8,7 @@
     const USwitch = resolveComponent('USwitch')
 
     const router = useRouter()
+    const { safeExecute } = useSafeError()
 
     const { data, refresh } = await useFetch('/api/dashboard/subscription', {})
 
@@ -28,10 +29,12 @@
                 icon: 'i-lucide-trash',
                 label: 'Eliminar suscripción',
                 async onSelect() {
-                     await $fetch(`/api/dashboard/subscription/${row.id}`, {
-                        method: 'DELETE',
+                    await safeExecute(async () => {
+                        await $fetch(`/api/dashboard/subscription/${row.id}`, {
+                            method: 'DELETE',
+                        })
+                        refresh()
                     })
-                    refresh()
                 },
             },
         ]
@@ -57,11 +60,13 @@
                 return h(USwitch, {
                     modelValue: row.original.active,
                     'onUpdate:modelValue': async (value: boolean) => {
-                        await $fetch(`/api/dashboard/subscription/${row.original.id}`, {
-                            body: { active: value },
-                            method: 'PATCH',
+                        await safeExecute(async () => {
+                            await $fetch(`/api/dashboard/subscription/${row.original.id}`, {
+                                body: { active: value },
+                                method: 'PATCH',
+                            })
+                            row.original.active = value
                         })
-                        row.original.active = value
                     },
                 })
             },

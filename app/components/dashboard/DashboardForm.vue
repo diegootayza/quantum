@@ -21,6 +21,7 @@
 
     const route = useRoute()
     const router = useRouter()
+    const { safeExecute } = useSafeError()
 
     const form = useTemplateRef('form')
 
@@ -36,19 +37,23 @@
     }
 
     async function onSubmit(event: FormSubmitEvent<InstructionSchema>) {
-        if (id.value) await $fetch(`${props.url}/${id.value}`, { body: event.data, method: 'PATCH' })
-        else await $fetch(`${props.url}`, { body: event.data, method: 'POST' })
-        emit('refresh')
-        onReset()
+        await safeExecute(async () => {
+            if (id.value) await $fetch(`${props.url}/${id.value}`, { body: event.data, method: 'PATCH' })
+            else await $fetch(`${props.url}`, { body: event.data, method: 'POST' })
+            emit('refresh')
+            onReset()
+        })
     }
 
     watch(
         id,
         async (v) => {
             if (v) {
-                const response = await $fetch(`${props.url}/${v}`)
-                Object.assign(state, z.parse(props.schema, response))
-                open.value = true
+                await safeExecute(async () => {
+                    const response = await $fetch(`${props.url}/${v}`)
+                    Object.assign(state, z.parse(props.schema, response))
+                    open.value = true
+                })
             }
         },
         { immediate: true }
