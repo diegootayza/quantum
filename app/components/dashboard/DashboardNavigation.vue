@@ -15,6 +15,8 @@
     const toast = useToast()
     const { user } = useUserSession()
     const { safeExecute } = useSafeError()
+    const confirmModal = useConfirmModal()
+    const inputModal = useInputModal()
 
     const { data: navigation, refresh } = useFetch('/api/user/navigation', {
         key: 'dashboard-navigation',
@@ -194,18 +196,44 @@
             {
                 icon: 'lucide:edit',
                 label: 'Renombrar',
-                async onSelect() {},
+                async onSelect() {
+                    inputModal.open({
+                        confirmButtonLabel: 'Guardar',
+                        initialValue: item.label,
+                        onConfirm: async (newName: string) => {
+                            if (!newName.trim()) return
+
+                            await safeExecute(async () => {
+                                await $fetch(`/api/conversation/${item.to.params.id}`, {
+                                    body: { name: newName },
+                                    method: 'PATCH',
+                                })
+                                await refresh()
+                                toast.add({ color: 'success', title: 'Conversación renombrada' })
+                            })
+                        },
+                        placeholder: 'Nombre de la conversación',
+                        title: 'Renombrar conversación',
+                    })
+                },
             },
             {
                 color: 'error',
                 icon: 'lucide:trash',
                 label: 'Eliminar',
                 async onSelect() {
-                    await safeExecute(async () => {
-                        await $fetch(`/api/conversation/${item.to.params.id}`, { method: 'DELETE' })
-                        await refresh()
-                        router.push({ name: 'conversation' })
-                        toast.add({ color: 'success', title: 'Conversación eliminada' })
+                    confirmModal.open({
+                        confirmButtonLabel: 'Eliminar',
+                        description: '¿Estás seguro de que deseas eliminar esta conversación? Esta acción no se puede deshacer.',
+                        onConfirm: async () => {
+                            await safeExecute(async () => {
+                                await $fetch(`/api/conversation/${item.to.params.id}`, { method: 'DELETE' })
+                                router.push({ name: 'conversation' })
+                                toast.add({ color: 'success', title: 'Conversación eliminada' })
+                                await refresh()
+                            })
+                        },
+                        title: 'Eliminar conversación',
                     })
                 },
             },
