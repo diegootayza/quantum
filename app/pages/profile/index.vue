@@ -3,6 +3,8 @@
 
     const { user } = useUserSession()
     const { data: stats, pending } = await useFetch('/api/user/stats')
+    const { data: imageStats } = await useFetch('/api/user/image-stats')
+    const { data: creditsBalance } = await useFetch('/api/credits/balance')
 </script>
 
 <template>
@@ -93,6 +95,37 @@
                     </div>
                 </UPageCard>
 
+                <!-- Credits Info -->
+                <UPageCard
+                    title="Créditos Disponibles"
+                    :ui="{
+                        title: 'font-semibold text-base',
+                        body: { padding: 'p-4 sm:p-6' }
+                    }"
+                >
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/30">
+                                <UIcon name="i-lucide-coins" class="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-gray-900 dark:text-white">
+                                    {{ creditsBalance?.balance || 0 }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Créditos disponibles para usar
+                                </p>
+                            </div>
+                        </div>
+                        <NuxtLink to="/profile/credits">
+                            <UButton color="primary" variant="solid" icon="i-lucide-plus" size="md">
+                                Recargar Créditos
+                            </UButton>
+                        </NuxtLink>
+                    </div>
+                </UPageCard>
+
+                <!-- Statistics Grid -->
                 <!-- Statistics Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Total Conversations -->
@@ -191,6 +224,72 @@
                         </div>
                     </UPageCard>
                 </div>
+
+                <!-- Image Generation Stats -->
+                <UPageCard
+                    v-if="imageStats?.hasSubscription"
+                    title="Generación de Imágenes"
+                    :ui="{
+                        title: 'font-semibold text-base',
+                        body: { padding: 'p-4 sm:p-6' }
+                    }"
+                >
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="space-y-1">
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    Uso de Imágenes
+                                </p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    {{ imageStats.used }} / {{ imageStats.limit }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ imageStats.remaining }} imágenes restantes
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-full bg-pink-100 dark:bg-pink-900/30">
+                                <UIcon name="i-lucide-image" class="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="space-y-2">
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                    class="h-2 rounded-full transition-all duration-300"
+                                    :class="imageStats.remaining === 0 ? 'bg-red-500' : imageStats.remaining < imageStats.limit * 0.2 ? 'bg-orange-500' : 'bg-primary-500'"
+                                    :style="{ width: `${(imageStats.used / imageStats.limit) * 100}%` }"
+                                ></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                                <span>{{ ((imageStats.used / imageStats.limit) * 100).toFixed(0) }}% usado</span>
+                                <span v-if="imageStats.resetAt">
+                                    Reinicia: {{ new Date(imageStats.resetAt).toLocaleDateString() }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Warning if low -->
+                        <div 
+                            v-if="imageStats.remaining === 0"
+                            class="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                        >
+                            <UIcon name="i-lucide-alert-triangle" class="w-4 h-4 text-red-600 dark:text-red-400" />
+                            <p class="text-sm text-red-600 dark:text-red-400">
+                                Has alcanzado tu límite de generación de imágenes
+                            </p>
+                        </div>
+                        <div 
+                            v-else-if="imageStats.remaining < imageStats.limit * 0.2"
+                            class="flex items-center gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800"
+                        >
+                            <UIcon name="i-lucide-alert-circle" class="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                            <p class="text-sm text-orange-600 dark:text-orange-400">
+                                Te quedan pocas imágenes disponibles
+                            </p>
+                        </div>
+                    </div>
+                </UPageCard>
 
                 <!-- Additional Services -->
                 <UPageCard

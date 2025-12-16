@@ -56,7 +56,7 @@
                 })
             }
         },
-        { immediate: true }
+        { immediate: true },
     )
 </script>
 
@@ -64,7 +64,7 @@
     <UModal
         v-model:open="open"
         :description="title"
-        :title="id ? 'Editar' : 'Nueva'"
+        :title="id ? 'Actualizar' : 'Nuevo'"
         @after:leave="onReset"
     >
         <UButton
@@ -84,7 +84,7 @@
             </UForm>
         </template>
         <template #footer>
-            <div class="flex justify-end gap-2 w-full">
+            <div class="flex w-full justify-end gap-2">
                 <UButton
                     color="neutral"
                     label="Cancelar"

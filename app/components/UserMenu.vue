@@ -14,11 +14,6 @@
                 label: 'Ir al inicio',
                 to: { name: 'index' },
             },
-            {
-                icon: 'lucide:settings',
-                label: 'Configuración',
-                to: { name: 'setting' },
-            },
         ],
         [
             {
@@ -91,8 +86,7 @@
         <template #chip-leading="{ item }">
             <span
                 class="ms-0.5 size-2 rounded-full bg-(--chip-light) dark:bg-(--chip-dark)"
-                :style="{'--chip-light': `var(--color-${(item as any).chip}-500)`, '--chip-dark': `var(--color-${(item as any).chip}-400)`
-        }"
+                :style="{ '--chip-light': `var(--color-${(item as any).chip}-500)`, '--chip-dark': `var(--color-${(item as any).chip}-400)` }"
             />
         </template>
     </UDropdownMenu>

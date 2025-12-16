@@ -18,7 +18,7 @@
             v-for="value in images"
             :key="value.url"
             alt="Generated Image"
-            class="size-40"
+            class="size-40 object-contain"
             :src="value.url"
         />
     </div>

@@ -89,49 +89,117 @@ model Setting {
 }
 
 model Service {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  active        Boolean        @default(true)
-  description   String
-  name          String
-  subscriptions Subscription[] @relation(fields: [subscriptionIds], references: [id])
-  subscriptionIds String[]     @db.ObjectId
-  users         User[]         @relation(fields: [userIds], references: [id])
-  userIds       String[]       @db.ObjectId
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  active          Boolean        @default(true)
+  description     String
+  name            String
+  subscriptions   Subscription[] @relation(fields: [subscriptionIds], references: [id])
+  subscriptionIds String[]       @db.ObjectId
+  users           User[]         @relation(fields: [userIds], references: [id])
+  userIds         String[]       @db.ObjectId
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }
 
 model Subscription {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  active      Boolean   @default(true)
-  currency    String    @default("USD")
-  description String
-  features    Json[]
-  interval    String
-  name        String
-  price       Float
-  stripeId    String?
-  services    Service[] @relation(fields: [serviceIds], references: [id])
-  serviceIds  String[]  @db.ObjectId
-  users       User[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  active               Boolean   @default(true)
+  currency             String    @default("USD")
+  description          String
+  features             Json[]
+  interval             String
+  name                 String
+  price                Float
+  stripeId             String?
+  imageGenerationLimit Int       @default(0)
+  services             Service[] @relation(fields: [serviceIds], references: [id])
+  serviceIds           String[]  @db.ObjectId
+  users                User[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 model User {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  active         Boolean        @default(false)
-  email          String         @unique
-  name           String
-  password       String
-  role           Role           @default(USER)
-  surname        String
-  attachments    Attachment[]
-  conversations  Conversation[]
-  subscription   Subscription?  @relation(fields: [subscriptionId], references: [id])
-  subscriptionId String?        @db.ObjectId
-  services       Service[]      @relation(fields: [serviceIds], references: [id])
-  serviceIds     String[]       @db.ObjectId
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id                     String              @id @default(auto()) @map("_id") @db.ObjectId
+  active                 Boolean             @default(false)
+  email                  String              @unique
+  name                   String
+  password               String
+  role                   Role                @default(USER)
+  surname                String
+  credits                Int                 @default(0)
+  imageGenerationCount   Int                 @default(0)
+  imageGenerationResetAt DateTime            @default(now())
+  attachments            Attachment[]
+  conversations          Conversation[]
+  subscription           Subscription?       @relation(fields: [subscriptionId], references: [id])
+  subscriptionId         String?             @db.ObjectId
+  services               Service[]           @relation(fields: [serviceIds], references: [id])
+  serviceIds             String[]            @db.ObjectId
+  analyticsEvents        AnalyticsEvent[]
+  creditTransactions     CreditTransaction[]
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventType String
+  metadata  Json     @default("{}")
+  timestamp DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?  @db.ObjectId
+
+  @@index([eventType])
+  @@index([userId])
+  @@index([timestamp])
+}
+
+enum TransactionType {
+  PURCHASE
+  CONSUMPTION
+  REFUND
+  BONUS
+  SUBSCRIPTION_GRANT
+}
+
+model CreditTransaction {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  amount          Int
+  type            TransactionType
+  description     String
+  balanceAfter    Int
+  metadata        Json            @default("{}")
+  user            User            @relation(fields: [userId], references: [id])
+  userId          String          @db.ObjectId
+  creditPackage   CreditPackage?  @relation(fields: [creditPackageId], references: [id])
+  creditPackageId String?         @db.ObjectId
+  createdAt       DateTime        @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model CreditPackage {
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  description        String
+  credits            Int
+  price              Float
+  currency           String              @default("USD")
+  active             Boolean             @default(true)
+  stripePriceId      String?
+  stripeProductId    String?
+  bonusCredits       Int                 @default(0)
+  creditTransactions CreditTransaction[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model Model {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  active Boolean @default(true)
+  label  String  @unique
+  value  String  @unique
 }

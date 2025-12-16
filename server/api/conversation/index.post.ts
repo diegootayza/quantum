@@ -2,6 +2,8 @@ import type { UIMessage } from 'ai'
 
 import { extension } from 'mime-types'
 
+import { trackEvent } from '../../utils/analytics/events'
+
 export default defineEventHandler(async (event) => {
     const { secure } = await getUserSession(event)
     const formData = await readMultipartFormData(event)
@@ -17,6 +19,17 @@ export default defineEventHandler(async (event) => {
             name: '',
             userId: secure!.id,
         },
+    })
+
+    // Track evento de conversación creada
+    await trackEvent({
+        eventType: 'conversation_created',
+        metadata: {
+            conversationId: conversation.id,
+            hasFiles: files.length > 0,
+            instructionId,
+        },
+        userId: secure!.id,
     })
 
     const parts: UIMessage['parts'] = []
@@ -47,6 +60,19 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    // Track evento de archivos subidos
+    if (files.length > 0) {
+        await trackEvent({
+            eventType: 'file_uploaded',
+            metadata: {
+                conversationId: conversation.id,
+                count: files.length,
+                totalSize: files.reduce((sum, f) => sum + f.data.length, 0),
+            },
+            userId: secure!.id,
+        })
+    }
+
     await prisma.message.create({
         data: {
             conversationId: conversation.id,
@@ -59,6 +85,16 @@ export default defineEventHandler(async (event) => {
             ],
             role: 'user',
         },
+    })
+
+    // Track evento de mensaje enviado
+    await trackEvent({
+        eventType: 'message_sent',
+        metadata: {
+            conversationId: conversation.id,
+            hasAttachments: parts.length > 0,
+        },
+        userId: secure!.id,
     })
 
     return { conversationId: conversation.id }

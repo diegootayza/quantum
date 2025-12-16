@@ -50,6 +50,10 @@
                         label: 'Suscripción',
                         to: { name: 'profile-subscription' },
                     },
+                    {
+                        label: 'Créditos',
+                        to: { name: 'profile-credits' },
+                    },
                     // {
                     //     label: 'Notificaciones',
                     //     to: { name: 'profile-security' },
@@ -89,6 +93,14 @@
                     to: { name: 'dashboard-instruction' },
                 },
                 {
+                    icon: 'lucide:bot',
+                    label: 'Modelos',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-model' },
+                },
+                {
                     icon: 'lucide:messages-square',
                     label: 'Conversaciones',
                     onSelect: () => {
@@ -121,18 +133,9 @@
                     to: { name: 'dashboard-service' },
                 },
                 {
-                    children: [
-                        {
-                            label: 'IA',
-                            to: { name: 'dashboard-setting-ai' },
-                        },
-                    ],
-                    defaultOpen: true,
                     icon: 'lucide:settings',
-                    label: 'Ajustes',
-                    onSelect: () => {
-                        open.value = false
-                    },
+                    label: 'IA',
+                    to: { name: 'dashboard-setting-ai' },
                 },
             ])
         }
