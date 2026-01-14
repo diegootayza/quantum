@@ -7,69 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
+enum UserRole {
   USER
   ADMIN
 }
 
-model Attachment {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  mimeType       String
-  r2Key          String?
-  size           Int
-  url            String?
-  conversation   Conversation? @relation(fields: [conversationId], references: [id])
-  conversationId String?       @db.ObjectId
-  user           User?         @relation(fields: [userId], references: [id])
-  userId         String?       @db.ObjectId
-  createdAt      DateTime      @default(now())
-}
-
-model Category {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  active       Boolean       @default(true)
-  name         String
-  instructions Instruction[]
-}
-
 model Conversation {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  id            String                @id @default(auto()) @map("_id") @db.ObjectId
   name          String
-  attachments   Attachment[]
-  messages      Message[]
-  instruction   Instruction? @relation(fields: [instructionId], references: [id])
-  instructionId String?      @db.ObjectId
-  user          User         @relation(fields: [userId], references: [id])
-  userId        String       @db.ObjectId
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  files         UserFile[]
+  messages      ConversationMessage[]
+  instruction   Instruction?          @relation(fields: [instructionId], references: [id])
+  instructionId String?               @db.ObjectId
+  user          User                  @relation(fields: [userId], references: [id])
+  userId        String                @db.ObjectId
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
 }
 
-model Instruction {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  active        Boolean        @default(true)
-  content       String
-  description   String
-  name          String
-  category      Category       @relation(fields: [categoryId], references: [id])
-  categoryId    String         @db.ObjectId
-  conversations Conversation[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  files         File[]
-}
-
-model File {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  mimeType      String
-  r2Key         String
-  size          Int
-  instruction   Instruction? @relation(fields: [instructionId], references: [id])
-  instructionId String?      @db.ObjectId
-  createdAt     DateTime     @default(now())
-}
-
-model Message {
+model ConversationMessage {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
   parts          Json[]
   role           String
@@ -79,6 +35,54 @@ model Message {
   updatedAt      DateTime     @updatedAt
 }
 
+model Instruction {
+  id            String            @id @default(auto()) @map("_id") @db.ObjectId
+  active        Boolean           @default(true)
+  content       String
+  description   String
+  name          String
+  conversations Conversation[]
+  files         InstructionFile[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model InstructionFile {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  key           String?
+  mimeType      String
+  size          Int
+  instruction   Instruction? @relation(fields: [instructionId], references: [id])
+  instructionId String?      @db.ObjectId
+  createdAt     DateTime     @default(now())
+}
+
+model User {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  active        Boolean        @default(false)
+  email         String         @unique
+  name          String
+  password      String
+  role          UserRole       @default(USER)
+  surname       String
+  conversations Conversation[]
+  files         UserFile[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model UserFile {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  key            String?
+  mimeType       String
+  size           Int
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId String?       @db.ObjectId
+  user           User          @relation(fields: [userId], references: [id])
+  userId         String        @db.ObjectId
+  createdAt      DateTime      @default(now())
+}
+
 model Setting {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -86,52 +90,4 @@ model Setting {
   value     Json
 
   @@unique([namespace, name])
-}
-
-model Service {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  active        Boolean        @default(true)
-  description   String
-  name          String
-  subscriptions Subscription[] @relation(fields: [subscriptionIds], references: [id])
-  subscriptionIds String[]     @db.ObjectId
-  users         User[]         @relation(fields: [userIds], references: [id])
-  userIds       String[]       @db.ObjectId
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-}
-
-model Subscription {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  active      Boolean   @default(true)
-  currency    String    @default("USD")
-  description String
-  features    Json[]
-  interval    String
-  name        String
-  price       Float
-  stripeId    String?
-  services    Service[] @relation(fields: [serviceIds], references: [id])
-  serviceIds  String[]  @db.ObjectId
-  users       User[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-model User {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  active         Boolean        @default(false)
-  email          String         @unique
-  name           String
-  password       String
-  role           Role           @default(USER)
-  surname        String
-  attachments    Attachment[]
-  conversations  Conversation[]
-  subscription   Subscription?  @relation(fields: [subscriptionId], references: [id])
-  subscriptionId String?        @db.ObjectId
-  services       Service[]      @relation(fields: [serviceIds], references: [id])
-  serviceIds     String[]       @db.ObjectId
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
 }

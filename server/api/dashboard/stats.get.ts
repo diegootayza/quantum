@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     // Subscriptions
     const totalSubscriptions = await prisma.subscription.count()
     const usersWithSubscription = await prisma.user.count({
-        where: { subscriptionId: { not: null } }
+        where: { subscriptionId: { not: null } },
     })
 
     // Conversations
@@ -14,9 +14,9 @@ export default defineEventHandler(async (event) => {
     const conversationsLast30Days = await prisma.conversation.count({
         where: {
             createdAt: {
-                gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-            }
-        }
+                gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+            },
+        },
     })
 
     // Messages
@@ -31,45 +31,45 @@ export default defineEventHandler(async (event) => {
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
     const usersByMonth = await prisma.user.groupBy({
-        by: ['createdAt'],
         _count: true,
+        by: ['createdAt'],
         where: {
             createdAt: {
-                gte: sixMonthsAgo
-            }
-        }
+                gte: sixMonthsAgo,
+            },
+        },
     })
 
     // Subscription distribution
     const subscriptionDistribution = await prisma.subscription.findMany({
         select: {
-            name: true,
             _count: {
                 select: {
-                    users: true
-                }
-            }
-        }
+                    users: true,
+                },
+            },
+            name: true,
+        },
     })
 
     return {
+        charts: {
+            subscriptionDistribution: subscriptionDistribution.map((sub) => ({
+                name: sub.name,
+                users: sub._count.users,
+            })),
+            userGrowth: usersByMonth,
+        },
         stats: {
-            totalUsers,
+            activeServices,
             activeUsers,
-            totalSubscriptions,
-            usersWithSubscription,
-            totalConversations,
             conversationsLast30Days,
+            totalConversations,
             totalMessages,
             totalServices,
-            activeServices,
+            totalSubscriptions,
+            totalUsers,
+            usersWithSubscription,
         },
-        charts: {
-            userGrowth: usersByMonth,
-            subscriptionDistribution: subscriptionDistribution.map(sub => ({
-                name: sub.name,
-                users: sub._count.users
-            }))
-        }
     }
 })

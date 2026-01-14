@@ -17,7 +17,6 @@ export type ConversationSchema = z.output<typeof conversationSchema>
 
 export const instructionSchema = z.object({
     active: z.boolean().optional().default(true),
-    categoryId: z.string().min(1, 'La categoría es requerida'),
     content: z.string().min(1, 'El contenido es requerido'),
     description: z.string().min(5, 'La descripción debe tener al menos 5 caracteres'),
     name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),

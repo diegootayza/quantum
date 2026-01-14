@@ -4,17 +4,16 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 
 const storage = new S3Client({
     credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
     },
-    endpoint: process.env.R2_ENDPOINT!,
-    region: 'auto',
+    region: process.env.AWS_REGION!,
 })
 
 export async function storageDelete(Key: string) {
     await storage.send(
         new DeleteObjectCommand({
-            Bucket: 'quantum',
+            Bucket: 'quantum-click',
             Key,
         })
     )
@@ -24,7 +23,7 @@ export async function storageUpload(Key: string, Body: NonNullable<PutObjectComm
     await storage.send(
         new PutObjectCommand({
             Body,
-            Bucket: 'quantum',
+            Bucket: 'quantum-click',
             ContentType: ContentType || 'application/octet-stream',
             Key,
         })

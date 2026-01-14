@@ -10,7 +10,7 @@
     const router = useRouter()
     const { safeExecute } = useSafeError()
 
-    const { data, refresh } = await useFetch('/api/dashboard/instruction', {})
+    const { data, refresh } = await useFetch('/api/instruction/dashboard/list', {})
 
     function getRowItems(row: { id: string } & InstructionSchema): DropdownMenuItem[] {
         return [
@@ -28,8 +28,9 @@
                 color: 'error',
                 icon: 'i-lucide-trash',
                 label: 'Eliminar instrucción',
-                onSelect() {
-                    console.log(row)
+                async onSelect() {
+                    await $fetch(`/api/instruction/dashboard/${row.id}`, { method: 'DELETE' })
+                    await onRefresh()
                 },
             },
         ]
@@ -41,24 +42,18 @@
             header: 'Nombre',
         },
         {
-            accessorKey: 'category.name',
-            header: 'Categoría',
-            meta: {
-                class: {
-                    td: 'w-px',
-                    th: 'w-px',
-                },
-            },
-        },
-        {
             accessorKey: 'active',
             cell: ({ row }) => {
                 return h(USwitch, {
                     modelValue: row.original.active,
                     'onUpdate:modelValue': async (value: boolean) => {
                         await safeExecute(async () => {
-                            await $fetch(`/api/dashboard/instruction/${row.original.id}`, {
-                                body: { active: value },
+                            const formData = new FormData()
+
+                            formData.append('active', String(value))
+
+                            await $fetch(`/api/instruction/dashboard/${row.original.id}`, {
+                                body: formData,
                                 method: 'PATCH',
                             })
                             row.original.active = value

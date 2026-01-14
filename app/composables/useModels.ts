@@ -16,11 +16,6 @@ export function useModels() {
             value: 'anthropic/claude-haiku-4.5',
         },
         {
-            icon: 'meta',
-            label: 'Llama 4',
-            value: 'meta/llama-4-maverick',
-        },
-        {
             icon: 'xai',
             label: 'Grok 4.1',
             value: 'xai/grok-4.1-fast-reasoning',

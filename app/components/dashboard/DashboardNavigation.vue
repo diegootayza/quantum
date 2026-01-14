@@ -39,28 +39,9 @@
                 to: { name: 'profile-file' },
             },
             {
-                children: [
-                    // {
-                    //     label: 'Cuenta',
-                    //     to: { name: 'profile-security' },
-                    // },
-                    {
-                        label: 'Seguridad',
-                        to: { name: 'profile-security' },
-                    },
-                    {
-                        label: 'Suscripción',
-                        to: { name: 'profile-subscription' },
-                    },
-                    // {
-                    //     label: 'Notificaciones',
-                    //     to: { name: 'profile-security' },
-                    // },
-                ],
-                defaultOpen: true,
-                icon: 'lucide:settings',
-                label: 'Configuración',
-                type: 'trigger',
+                icon: 'lucide:shield',
+                label: 'Seguridad',
+                to: { name: 'profile-security' },
             },
         ])
 
@@ -74,14 +55,7 @@
                     },
                     to: { name: 'dashboard' },
                 },
-                {
-                    icon: 'lucide:folders',
-                    label: 'Categorías',
-                    onSelect: () => {
-                        open.value = false
-                    },
-                    to: { name: 'dashboard-category' },
-                },
+
                 {
                     icon: 'lucide:bot',
                     label: 'Instrucciones',
@@ -105,22 +79,6 @@
                         open.value = false
                     },
                     to: { name: 'dashboard-user' },
-                },
-                {
-                    icon: 'lucide:credit-card',
-                    label: 'Suscripciones',
-                    onSelect: () => {
-                        open.value = false
-                    },
-                    to: { name: 'dashboard-subscription' },
-                },
-                {
-                    icon: 'lucide:cpu',
-                    label: 'Servicios',
-                    onSelect: () => {
-                        open.value = false
-                    },
-                    to: { name: 'dashboard-service' },
                 },
                 {
                     children: [
