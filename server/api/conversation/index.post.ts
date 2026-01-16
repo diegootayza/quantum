@@ -1,7 +1,7 @@
 import type { UIMessage } from 'ai'
 
 export default defineEventHandler(async (event) => {
-    const { user } = await requireUserSession(event)
+    const { secure } = await requireUserSession(event)
     const formData = await readMultipartFormData(event)
     if (!formData) throw createError({ statusCode: 400, statusMessage: 'No form data provided' })
 
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
         data: {
             instructionId,
             name: '',
-            userId: user.id,
+            userId: secure!.id,
         },
     })
 

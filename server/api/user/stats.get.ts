@@ -12,16 +12,13 @@ export default defineEventHandler(async (event) => {
     const userData = await prisma.user.findUnique({
         include: {
             conversations: {
-                include: {
+                select: {
                     conversationAttachments: {
                         select: {
                             createdAt: true,
-                            id: true,
                             size: true,
                         },
                     },
-                },
-                select: {
                     createdAt: true,
                     id: true,
                 },

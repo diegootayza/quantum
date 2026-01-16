@@ -6,21 +6,21 @@ const schema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-    const { user } = await requireUserSession(event)
+    const { secure } = await requireUserSession(event)
     const result = await readValidatedBody(event, (v) => schema.safeParse(v))
 
     if (!result.success) throw result.error.issues
 
     // Get current user with password
     const currentUser = await prisma.user.findUnique({
-        where: { id: user.id },
-        select: { password: true }
+        select: { password: true },
+        where: { id: secure!.id },
     })
 
     if (!currentUser) {
         throw createError({
+            message: 'Usuario no encontrado',
             statusCode: 404,
-            message: 'Usuario no encontrado'
         })
     }
 
@@ -29,8 +29,8 @@ export default defineEventHandler(async (event) => {
 
     if (!isValidPassword) {
         throw createError({
+            message: 'La contraseña actual es incorrecta',
             statusCode: 401,
-            message: 'La contraseña actual es incorrecta'
         })
     }
 
@@ -39,9 +39,9 @@ export default defineEventHandler(async (event) => {
 
     // Update password
     await prisma.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword }
+        data: { password: hashedPassword },
+        where: { id: secure!.id },
     })
 
-    return { success: true, message: 'Contraseña actualizada correctamente' }
+    return { message: 'Contraseña actualizada correctamente', success: true }
 })
