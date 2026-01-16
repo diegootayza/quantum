@@ -3,6 +3,11 @@
 
     definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 
+    useSeoMeta({
+        description: 'Personaliza tu experiencia en la plataforma',
+        title: 'Configuración',
+    })
+
     const links = [
         [
             {

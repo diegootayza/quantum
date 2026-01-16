@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import type { FormSubmitEvent } from '@nuxt/ui'
 
-    import * as z from 'zod'
+    import z from 'zod'
 
     definePageMeta({ layout: 'auth', middleware: 'guest' })
 
@@ -58,38 +58,40 @@
 </script>
 
 <template>
-    <UAuthForm
-        :fields="fields"
-        icon="i-lucide-lock"
-        :schema="schema"
-        title="Bienvenido de nuevo"
-        @submit="onSubmit"
-    >
-        <template #description>
-            ¿No tienes una cuenta?
-            <ULink
-                class="text-primary font-medium"
-                :to="{ name: 'auth-signup' }"
-                >Regístrate</ULink
-            >.
-        </template>
+    <ClientOnly>
+        <UAuthForm
+            :fields="fields"
+            icon="i-lucide-lock"
+            :schema="schema"
+            title="Bienvenido de nuevo"
+            @submit="onSubmit"
+        >
+            <template #description>
+                ¿No tienes una cuenta?
+                <ULink
+                    class="text-primary font-medium"
+                    :to="{ name: 'auth-signup' }"
+                    >Regístrate</ULink
+                >.
+            </template>
 
-        <template #password-hint>
-            <ULink
-                class="text-primary font-medium"
-                tabindex="-1"
-                to="/"
-                >¿Olvidaste tu contraseña?</ULink
-            >
-        </template>
+            <template #password-hint>
+                <ULink
+                    class="text-primary font-medium"
+                    tabindex="-1"
+                    to="/"
+                    >¿Olvidaste tu contraseña?</ULink
+                >
+            </template>
 
-        <template #footer>
-            Al iniciar sesión, aceptas nuestros
-            <ULink
-                class="text-primary font-medium"
-                to="/"
-                >Términos de Servicio</ULink
-            >.
-        </template>
-    </UAuthForm>
+            <template #footer>
+                Al iniciar sesión, aceptas nuestros
+                <ULink
+                    class="text-primary font-medium"
+                    to="/"
+                    >Términos de Servicio</ULink
+                >.
+            </template>
+        </UAuthForm>
+    </ClientOnly>
 </template>

@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+    useSeoMeta({
+        description: 'Configura las opciones de IA',
+        title: 'IA - Configuración',
+    })
+</script>
 
 <template>
     <div class="w-full grid grid-cols-1 gap-4">

@@ -1,6 +1,11 @@
 <script setup lang="ts">
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
+    useSeoMeta({
+        description: 'Panel de administración del sistema',
+        title: 'Panel de Control',
+    })
+
     const { data: stats, pending } = await useFetch('/api/dashboard/stats')
 
     const userGrowthData: any[] = []

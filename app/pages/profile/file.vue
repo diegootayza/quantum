@@ -3,6 +3,11 @@
 
     definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 
+    useSeoMeta({
+        description: 'Gestiona tus archivos subidos y generados',
+        title: 'Mis Archivos',
+    })
+
     interface Attachment {
         conversationId: string
         createdAt: string

@@ -3,6 +3,11 @@
 
     import * as z from 'zod'
 
+    useSeoMeta({
+        description: 'Actualiza tu información personal',
+        title: 'Información - Configuración',
+    })
+
     const { user } = useUserSession()
 
     const profileSchema = z.object({

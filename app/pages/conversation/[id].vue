@@ -9,6 +9,11 @@
 
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'active'] })
 
+    useSeoMeta({
+        description: 'Continúa tu conversación con IA',
+        title: 'Conversación',
+    })
+
     const ConversationProse = resolveComponent('ConversationProse')
 
     const components = {

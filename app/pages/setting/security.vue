@@ -3,6 +3,11 @@
 
     import * as z from 'zod'
 
+    useSeoMeta({
+        description: 'Cambia tu contraseña y gestiona tu cuenta',
+        title: 'Seguridad - Configuración',
+    })
+
     const passwordSchema = z.object({
         current: z.string().min(8, 'Debe tener al menos 8 caracteres'),
         new: z.string().min(8, 'Debe tener al menos 8 caracteres'),

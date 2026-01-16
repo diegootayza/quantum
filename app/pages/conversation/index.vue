@@ -1,6 +1,11 @@
 <script setup lang="ts">
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'active'] })
 
+    useSeoMeta({
+        description: 'Inicia una nueva conversación con IA',
+        title: 'Nueva Conversación',
+    })
+
     const route = useRoute()
     const router = useRouter()
     const { model } = useModels()

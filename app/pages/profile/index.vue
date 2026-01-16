@@ -1,6 +1,11 @@
 <script setup lang="ts">
     definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 
+    useSeoMeta({
+        description: 'Tu perfil y estadísticas de uso',
+        title: 'Mi Perfil',
+    })
+
     const { user } = useUserSession()
     const { data: stats, pending } = await useFetch('/api/user/stats')
 

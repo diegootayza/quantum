@@ -3,6 +3,11 @@
 
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
+    useSeoMeta({
+        description: 'Gestiona las conversaciones del sistema',
+        title: 'Conversaciones - Admin',
+    })
+
     const UButton = resolveComponent('UButton')
     const UDropdownMenu = resolveComponent('UDropdownMenu')
 

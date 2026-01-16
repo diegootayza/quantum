@@ -37,3 +37,5 @@ export const userSchema = z.object({
     role: z.enum(['ADMIN', 'USER']).optional(),
     surname: z.string().min(1, 'El apellido es requerido'),
 })
+
+export type UserSchema = z.output<typeof userSchema>

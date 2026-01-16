@@ -5,6 +5,11 @@
 
     definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 
+    useSeoMeta({
+        description: 'Gestiona la seguridad de tu cuenta',
+        title: 'Seguridad',
+    })
+
     const toast = useToast()
     const loading = ref(false)
     const { safeExecute } = useSafeError()

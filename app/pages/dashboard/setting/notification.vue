@@ -1,4 +1,9 @@
 <script setup lang="ts">
+    useSeoMeta({
+        description: 'Configuración de notificaciones del sistema',
+        title: 'Notificaciones - Configuración Admin',
+    })
+
     const state = reactive<{ [key: string]: boolean }>({
         desktop: false,
         email: true,

@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+    useSeoMeta({
+        description: 'Configuración de IA del sistema',
+        title: 'IA - Configuración Admin',
+    })
+</script>
 
 <template>
     <div class="w-full grid grid-cols-1 gap-4">

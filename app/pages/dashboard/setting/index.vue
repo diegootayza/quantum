@@ -3,6 +3,11 @@
 
     import * as z from 'zod'
 
+    useSeoMeta({
+        description: 'Configuración general del sistema',
+        title: 'General - Configuración Admin',
+    })
+
     const fileRef = ref<HTMLInputElement>()
 
     const profileSchema = z.object({

@@ -3,6 +3,11 @@
 
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
+    useSeoMeta({
+        description: 'Configuración del sistema',
+        title: 'Configuración - Admin',
+    })
+
     const links = [
         [
             // {

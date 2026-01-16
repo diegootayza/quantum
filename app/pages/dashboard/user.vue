@@ -3,6 +3,11 @@
 
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
+    useSeoMeta({
+        description: 'Gestiona los usuarios del sistema',
+        title: 'Usuarios - Admin',
+    })
+
     const UButton = resolveComponent('UButton')
     const UDropdownMenu = resolveComponent('UDropdownMenu')
     const USwitch = resolveComponent('USwitch')
