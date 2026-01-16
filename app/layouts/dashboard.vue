@@ -14,13 +14,25 @@
             resizable
             :ui="{ footer: 'lg:border-t lg:border-default' }"
         >
-            <template #header>
-                <div class="w-full flex items-center justify-start gap-2 px-2">
-                    <UIcon
-                        class="size-6"
-                        name="lucide:atom"
+            <template #header="{ collapsed }">
+                <div class="w-full flex items-center justify-between gap-2 px-2">
+                    <div class="flex items-center gap-2">
+                        <UIcon
+                            class="size-6"
+                            name="lucide:atom"
+                        />
+                        <span
+                            v-if="!collapsed"
+                            class="font-bold"
+                        >
+                            Quantum IA
+                        </span>
+                    </div>
+                    <UColorModeButton
+                        v-if="!collapsed"
+                        color="neutral"
+                        variant="ghost"
                     />
-                    <span class="font-bold">Quantum IA</span>
                 </div>
             </template>
             <template #default="{ collapsed }">

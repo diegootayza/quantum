@@ -89,6 +89,17 @@
                 v-else
                 class="flex flex-col gap-6 w-full max-w-6xl mx-auto px-4"
             >
+                <!-- Access Request Alert -->
+                <UAlert
+                    v-if="!user?.active"
+                    color="warning"
+                    description="Tu cuenta está pendiente de activación. Contacta al administrador para solicitar acceso a la plataforma."
+                    icon="i-lucide-clock"
+                    title="Acceso pendiente"
+                    :ui="{ title: 'font-semibold' }"
+                    variant="subtle"
+                />
+
                 <!-- Welcome Section -->
                 <div class="text-center space-y-2 py-8">
                     <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Hola, {{ user?.name }} {{ user?.surname }}</h1>

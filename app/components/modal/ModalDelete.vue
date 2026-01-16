@@ -16,10 +16,6 @@
         :title="title"
     >
         <slot />
-
-        <template #body>
-            <!--  -->
-        </template>
         <template #footer>
             <div class="flex justify-end gap-2 w-full">
                 <UButton

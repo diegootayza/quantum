@@ -5,7 +5,5 @@
         <UMain>
             <slot />
         </UMain>
-
-        <DefaultFooter />
     </div>
 </template>
