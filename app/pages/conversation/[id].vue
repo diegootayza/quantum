@@ -164,11 +164,10 @@
                                     :parserOptions="{ highlight: false }"
                                     :value="part.text"
                                 />
-                                <img
+                                <ConversationAttachment
                                     v-else-if="part.type === 'file'"
                                     :alt="part.mediaType"
-                                    class="h-40"
-                                    :src="part.url"
+                                    :url="part.url"
                                 />
                                 <ConversationImage
                                     v-else-if="part.type === 'tool-generateImage'"

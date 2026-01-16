@@ -35,6 +35,7 @@
             <NuxtPage />
         </NuxtLayout>
         <CommonConfirmModal />
+        <CommonImageModal />
         <CommonInputModal />
     </UApp>
 </template>

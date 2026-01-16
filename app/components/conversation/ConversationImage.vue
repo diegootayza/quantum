@@ -6,7 +6,16 @@
 
     const props = withDefaults(defineProps<Props>(), {})
 
+    const { open } = useImageModal()
+
     const images = computed(() => props.output as { url: string }[])
+
+    function openModal(url: string) {
+        open({
+            alt: 'Imagen generada',
+            url,
+        })
+    }
 </script>
 
 <template>
@@ -17,9 +26,10 @@
         <img
             v-for="value in images"
             :key="value.url"
-            alt="Generated Image"
-            class="size-40"
+            alt="Imagen generada"
+            class="size-40 cursor-pointer rounded-lg hover:opacity-80 transition-opacity"
             :src="value.url"
+            @click="openModal(value.url)"
         />
     </div>
 </template>
