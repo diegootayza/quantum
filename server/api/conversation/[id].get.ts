@@ -5,7 +5,7 @@ const paramSchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-    const { secure } = await getUserSession(event)
+    const { user } = await requireUserSession(event)
     const { id } = await getValidatedRouterParams(event, paramSchema.parse)
 
     const response = await prisma.conversation.findUnique({
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
             },
             name: true,
         },
-        where: { id, userId: secure!.id },
+        where: { id, userId: user.id },
     })
 
     return response

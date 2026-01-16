@@ -1,6 +1,5 @@
 import { gateway } from '@ai-sdk/gateway'
 import { generateText, tool } from 'ai'
-import { extension } from 'mime-types'
 import z from 'zod'
 
 function base64Size(base64: string) {
@@ -12,7 +11,7 @@ function base64Size(base64: string) {
     return Math.round(size)
 }
 
-export const toolGenerateImage = (conversationId: string, userId: string) => {
+export const toolGenerateImage = (conversationId: string) => {
     return tool({
         description: 'Genera una imagen usando el modelo de imágenes de OpenAI.',
         execute: async ({ prompt }) => {
@@ -22,24 +21,20 @@ export const toolGenerateImage = (conversationId: string, userId: string) => {
             })
 
             const response: { url: string }[] = []
+            const prefix = import.meta.dev ? 'test/' : ''
 
             for await (const file of result.files) {
-                const attachment = await prisma.attachment.create({
+                const key = `${prefix}conversations/${conversationId}/generated/${Date.now()}-image.png`
+                const url = await storageUpload(key, Buffer.from(file.base64, 'base64'), file.mediaType)
+
+                await prisma.conversationAttachment.create({
                     data: {
                         conversationId,
+                        key,
                         mimeType: file.mediaType,
                         size: base64Size(file.base64),
-                        userId,
+                        source: 'AI_GENERATED',
                     },
-                })
-
-                const r2Key = `conversations/${conversationId}/${attachment.id}.${extension(attachment.mimeType) || 'bin'}`
-
-                const url = await storageUpload(r2Key, Buffer.from(file.base64, 'base64'), attachment.mimeType)
-
-                await prisma.attachment.update({
-                    data: { r2Key, url },
-                    where: { id: attachment.id },
                 })
 
                 response.push({ url })

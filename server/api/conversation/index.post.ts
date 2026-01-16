@@ -1,9 +1,7 @@
 import type { UIMessage } from 'ai'
 
-import { extension } from 'mime-types'
-
 export default defineEventHandler(async (event) => {
-    const { secure } = await getUserSession(event)
+    const { user } = await requireUserSession(event)
     const formData = await readMultipartFormData(event)
     if (!formData) throw createError({ statusCode: 400, statusMessage: 'No form data provided' })
 
@@ -15,29 +13,25 @@ export default defineEventHandler(async (event) => {
         data: {
             instructionId,
             name: '',
-            userId: secure!.id,
+            userId: user.id,
         },
     })
 
     const parts: UIMessage['parts'] = []
+    const prefix = import.meta.dev ? 'test/' : ''
 
-    for await (const file of files) {
-        const attachment = await prisma.attachment.create({
+    for (const file of files) {
+        const filename = encodeURIComponent(file.filename || 'file')
+        const key = `${prefix}conversations/${conversation.id}/uploads/${Date.now()}-${filename}`
+        const url = await storageUpload(key, file.data, file.type)
+
+        const attachment = await prisma.conversationAttachment.create({
             data: {
                 conversationId: conversation.id,
+                key,
                 mimeType: file.type || 'application/octet-stream',
                 size: file.data.length || 0,
-                userId: secure!.id,
             },
-        })
-
-        const r2Key = `conversations/${conversation.id}/${attachment.id}.${extension(attachment.mimeType) || 'bin'}`
-
-        const url = await storageUpload(r2Key, file.data, attachment.mimeType)
-
-        await prisma.attachment.update({
-            data: { r2Key, url },
-            where: { id: attachment.id },
         })
 
         parts.push({
@@ -47,7 +41,7 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    await prisma.message.create({
+    await prisma.conversationMessage.create({
         data: {
             conversationId: conversation.id,
             parts: [

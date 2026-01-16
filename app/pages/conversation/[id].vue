@@ -60,12 +60,14 @@
     async function handleSubmit(e: Event) {
         e.preventDefault()
         if (input.value.trim()) {
-            const files = await processFiles()
+            const uploadedFiles = await processFiles()
 
             chat.sendMessage({
-                files: files as any[],
+                files: uploadedFiles.length > 0 ? uploadedFiles : undefined,
                 text: input.value,
             })
+
+            files.value = []
             input.value = ''
         }
     }
@@ -85,8 +87,6 @@
                 body: formData,
                 method: 'POST',
             })
-
-            files.value = []
 
             return response
         } else {

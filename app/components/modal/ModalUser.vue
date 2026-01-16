@@ -4,9 +4,6 @@
     }
 
     const emit = defineEmits<Emit>()
-
-    const { data: subscriptions } = await useFetch('/api/dashboard/subscription')
-    const { data: services } = await useFetch('/api/dashboard/service')
 </script>
 
 <template>
@@ -52,35 +49,8 @@
             >
                 <USelectMenu
                     v-model="state.role"
+                    class="w-full"
                     :options="['ADMIN', 'USER']"
-                    class="w-full"
-                />
-            </UFormField>
-
-            <UFormField
-                label="Suscripción"
-                name="subscriptionId"
-            >
-                <USelectMenu
-                    v-model="state.subscriptionId"
-                    :options="subscriptions"
-                    option-attribute="name"
-                    value-attribute="id"
-                    class="w-full"
-                />
-            </UFormField>
-
-            <UFormField
-                label="Servicios Adicionales"
-                name="serviceIds"
-            >
-                <USelectMenu
-                    v-model="state.serviceIds"
-                    :options="services"
-                    option-attribute="name"
-                    multiple
-                    value-attribute="id"
-                    class="w-full"
                 />
             </UFormField>
         </template>

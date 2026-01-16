@@ -95,51 +95,6 @@
                     <p class="text-lg text-gray-500 dark:text-gray-400">Bienvenido a tu panel de control</p>
                 </div>
 
-                <!-- Subscription Info -->
-                <UPageCard
-                    v-if="stats?.subscription"
-                    title="Tu Plan"
-                    :ui="{
-                        title: 'font-semibold text-base',
-                        body: 'p-4 sm:p-6',
-                    }"
-                >
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <UIcon
-                                    class="w-5 h-5 text-primary-500"
-                                    name="i-lucide-crown"
-                                />
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                    {{ stats.subscription.name }}
-                                </h3>
-                            </div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ stats.subscription.price }} {{ stats.subscription.currency }} / {{ stats.subscription.interval }}</p>
-                        </div>
-
-                        <div
-                            v-if="stats.subscription.services && stats.subscription.services.length > 0"
-                            class="space-y-2"
-                        >
-                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Servicios incluidos:</p>
-                            <div class="flex flex-wrap gap-2">
-                                <span
-                                    v-for="service in stats.subscription.services"
-                                    :key="service.id"
-                                    class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
-                                >
-                                    <UIcon
-                                        class="w-3 h-3"
-                                        name="i-lucide-check"
-                                    />
-                                    {{ service.name }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </UPageCard>
-
                 <!-- Statistics Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <UPageCard
@@ -170,37 +125,7 @@
                         </div>
                     </UPageCard>
                 </div>
-                <UPageCard
-                    v-if="stats?.services && stats.services.length > 0"
-                    title="Servicios Adicionales"
-                    :ui="{
-                        title: 'font-semibold text-base',
-                        body: 'p-4 sm:p-6',
-                    }"
-                >
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div
-                            v-for="service in stats.services"
-                            :key="service.id"
-                            class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50"
-                        >
-                            <div class="rounded-full bg-primary-100 dark:bg-primary-900/30">
-                                <UIcon
-                                    class="size-4 text-primary-600 dark:text-primary-400"
-                                    name="i-lucide-zap"
-                                />
-                            </div>
-                            <div>
-                                <p class="font-medium text-sm text-gray-900 dark:text-white">
-                                    {{ service.name }}
-                                </p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ service.description }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </UPageCard>
+
                 <UPageCard
                     title="Acciones Rápidas"
                     :ui="{

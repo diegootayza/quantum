@@ -10,7 +10,7 @@ const bodySchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-    const { secure, user } = await getUserSession(event)
+    const { user } = await requireUserSession(event)
 
     const { id } = await getValidatedRouterParams(event, z.object({ id: z.string() }).parse)
 
@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
     const lastMessage = messages[messages.length - 1]
 
     if (lastMessage?.role === 'user' && messages.length > 1) {
-        await prisma.message.create({
+        await prisma.conversationMessage.create({
             data: {
                 conversationId: id as string,
                 parts: lastMessage.parts as any,
@@ -75,7 +75,7 @@ export default defineEventHandler(async (event) => {
                 `,
                 toolChoice: 'auto',
                 tools: {
-                    generateImage: toolGenerateImage(conversation.id, secure!.id),
+                    generateImage: toolGenerateImage(conversation.id),
                 },
             })
 
@@ -94,7 +94,7 @@ export default defineEventHandler(async (event) => {
             )
         },
         onFinish: async ({ messages }) => {
-            await prisma.message.createMany({
+            await prisma.conversationMessage.createMany({
                 data: messages.map((message) => ({
                     conversationId: conversation.id,
                     parts: message.parts as any,

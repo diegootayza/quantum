@@ -10,7 +10,6 @@ declare module '#auth-utils' {
         id: string
         name: string
         role: 'ADMIN' | 'USER'
-        subscriptionId?: string | null
         surname: string
     }
 
@@ -19,4 +18,4 @@ declare module '#auth-utils' {
     }
 }
 
-export { }
+export {}

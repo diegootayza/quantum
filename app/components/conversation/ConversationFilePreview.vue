@@ -25,11 +25,10 @@
         <UCard
             v-for="(item, index) in items"
             :key="index"
-            class="aspect-square"
+            class="relative aspect-square"
             :ui="{
                 body: 'flex size-full items-center justify-center p-0 sm:p-0',
             }"
-            @click="onRemove(index)"
         >
             <img
                 v-if="item.src"
@@ -41,6 +40,14 @@
                 v-else
                 class="size-6"
                 name="lucide:file"
+            />
+            <UButton
+                class="absolute -right-1 -top-1 rounded-full"
+                color="neutral"
+                icon="lucide:x"
+                size="xs"
+                variant="link"
+                @click="onRemove(index)"
             />
         </UCard>
     </div>
