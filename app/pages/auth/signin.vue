@@ -29,11 +29,6 @@
             placeholder: 'Ingresa tu contraseña',
             type: 'password' as const,
         },
-        {
-            label: 'Recordarme',
-            name: 'remember',
-            type: 'checkbox' as const,
-        },
     ]
 
     const schema = z.object({
