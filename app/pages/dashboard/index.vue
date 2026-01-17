@@ -16,7 +16,7 @@
 
         return [
             {
-                subtitle: `${devices} dispositivos`,
+                subtitle: `${devices} ${devices === 1 ? 'dispositivo' : 'dispositivos'}`,
                 title: 'Usuarios Conectados',
                 value: Object.keys(users.value).length,
             },
