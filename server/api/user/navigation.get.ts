@@ -1,12 +1,12 @@
 export default defineEventHandler(async (event) => {
-    const { user } = await requireUserSession(event)
+    const { secure } = await requireUserSession(event)
 
     const conversations = await prisma.conversation.findMany({
         select: {
             id: true,
             name: true,
         },
-        where: { userId: user!.id },
+        where: { userId: secure!.id },
     })
 
     const instructions = await prisma.instruction.findMany({
