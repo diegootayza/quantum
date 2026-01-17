@@ -8,15 +8,30 @@
         title: 'Usuarios - Admin',
     })
 
-    const DashboardTableConnected = resolveComponent('DashboardTableConnected')
     const UButton = resolveComponent('UButton')
     const UDropdownMenu = resolveComponent('UDropdownMenu')
     const USwitch = resolveComponent('USwitch')
+    const UBadge = resolveComponent('UBadge')
 
     const router = useRouter()
     const { safeExecute } = useSafeError()
 
     const { data, refresh } = await useFetch('/api/dashboard/user', {})
+
+    const store = useUsersStore()
+    const { users } = storeToRefs(store)
+
+    const currentData = computed(() => {
+        const items = data.value || []
+        return items.map((item) => {
+            const userDevices = users.value[item.id] || []
+
+            return {
+                ...item,
+                devices: userDevices.length,
+            }
+        })
+    })
 
     function getRowItems(row: { id: string } & UserSchema): DropdownMenuItem[] {
         return [
@@ -41,16 +56,17 @@
         ]
     }
 
-    const columns = computed<TableColumn<{ id: string } & UserSchema>[]>(() => {
+    const columns = computed<TableColumn<{ devices: number; id: string } & UserSchema>[]>(() => {
         return [
             {
+                accessorKey: 'devices',
                 cell: ({ row }) => {
-                    return h(DashboardTableConnected, {
-                        id: row.original.id,
+                    return h(UBadge, {
+                        color: row.original.devices ? 'success' : 'error',
+                        label: row.original.devices ? `${row.original.devices} ${row.original.devices === 1 ? 'dispositivo' : 'dispositivos'}` : 'Desconectado',
                     })
                 },
-                header: 'Conexión',
-                id: 'connected',
+                header: 'Dispositivos',
                 meta: {
                     class: {
                         td: 'w-px',
@@ -146,7 +162,7 @@
         <template #body>
             <DashboardTable
                 :columns="columns"
-                :data="data"
+                :data="currentData"
             />
         </template>
     </UDashboardPanel>
