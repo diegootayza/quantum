@@ -65,25 +65,6 @@ router.post(
             data: { content, description, name },
         })
 
-        for await (const file of files) {
-            const instructionFile = await prisma.instructionFile.create({
-                data: {
-                    instructionId: instruction.id,
-                    mimeType: file.type || 'application/octet-stream',
-                    size: file.data.length || 0,
-                },
-            })
-
-            const key = `instructions/${instruction.id}/${instructionFile.id}.${extension(instructionFile.mimeType) || 'bin'}`
-
-            await storageUpload(key, file.data, instructionFile.mimeType)
-
-            await prisma.instructionFile.update({
-                data: { key },
-                where: { id: instructionFile.id },
-            })
-        }
-
         return instruction
     }),
 )
