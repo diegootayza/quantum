@@ -12,7 +12,6 @@
     const UButton = resolveComponent('UButton')
     const UDropdownMenu = resolveComponent('UDropdownMenu')
     const USwitch = resolveComponent('USwitch')
-    const UBadge = resolveComponent('UBadge')
 
     const router = useRouter()
     const { safeExecute } = useSafeError()
@@ -24,6 +23,7 @@
 
     const currentData = computed(() => {
         const items = data.value || []
+
         return items.map((item) => {
             const userDevices = users.value[item.id] || []
 

@@ -12,11 +12,6 @@
             :color="props.devices ? 'success' : 'error'"
             :label="props.devices ? `${props.devices} ${props.devices === 1 ? 'dispositivo' : 'dispositivos'}` : 'Desconectado'"
         />
-        <template #fallback>
-            <UBadge
-                color="error"
-                label="Desconectado"
-            />
-        </template>
+        <template #fallback> Desconectado </template>
     </ClientOnly>
 </template>
