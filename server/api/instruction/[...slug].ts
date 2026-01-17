@@ -56,7 +56,6 @@ router.post(
         const formData = await readMultipartFormData(event)
         if (!formData) throw createError({ statusCode: 400, statusMessage: 'No se proporcionaron datos del formulario.' })
 
-        const files = formData.filter((p) => p.name === 'files')
         const content = formData.find((p) => p.name === 'content')?.data.toString() || ''
         const description = formData.find((p) => p.name === 'description')?.data.toString() || ''
         const name = formData.find((p) => p.name === 'name')?.data.toString() || ''
