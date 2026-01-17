@@ -10,7 +10,8 @@
     function onChange(e: Event) {
         const input = e.target as HTMLInputElement
         const files = input.files ? Array.from(input.files) : []
-        emit('push', files)
+        const images = files.filter(file => file.type.startsWith('image/'))
+        emit('push', images)
         input.value = ''
     }
 
@@ -23,7 +24,7 @@
     <div>
         <input
             ref="input"
-            accept="video/*,image/*,application/pdf"
+            accept="image/*"
             class="hidden"
             hidden
             multiple
