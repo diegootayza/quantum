@@ -8,8 +8,6 @@ router.get(
     defineEventHandler(async (event) => {
         const id = getRouterParam(event, 'id')
 
-        console.log(id)
-
         const instruction = await prisma.instruction.findUnique({
             include: {
                 files: {
