@@ -8,16 +8,13 @@
         title: 'Usuarios - Admin',
     })
 
-    const ClientOnly = resolveComponent('ClientOnly')
-    const UBadge = resolveComponent('UBadge')
+    const DashboardTableConnected = resolveComponent('DashboardTableConnected')
     const UButton = resolveComponent('UButton')
     const UDropdownMenu = resolveComponent('UDropdownMenu')
     const USwitch = resolveComponent('USwitch')
 
     const router = useRouter()
     const { safeExecute } = useSafeError()
-    const store = useUsersStore()
-    const { users } = storeToRefs(store)
 
     const { data, refresh } = await useFetch('/api/dashboard/user', {})
 
@@ -48,25 +45,9 @@
         return [
             {
                 cell: ({ row }) => {
-                    return h(
-                        ClientOnly,
-                        {},
-                        {
-                            default: () => {
-                                const current = users.value[row.original.id]
-
-                                return h(UBadge, {
-                                    color: current?.length ? 'success' : 'error',
-                                    label: current?.length ? `${current?.length} ${current?.length === 1 ? 'dispositivo' : 'dispositivos'}` : 'Desconectado',
-                                })
-                            },
-                            fallback: () =>
-                                h(UBadge, {
-                                    color: 'error',
-                                    label: 'Desconectado',
-                                }),
-                        },
-                    )
+                    return h(DashboardTableConnected, {
+                        id: row.original.id,
+                    })
                 },
                 header: 'Conexión',
                 id: 'connected',
