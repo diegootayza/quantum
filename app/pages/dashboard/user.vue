@@ -8,6 +8,7 @@
         title: 'Usuarios - Admin',
     })
 
+    const DashboardTableConnected = resolveComponent('DashboardTableConnected')
     const UButton = resolveComponent('UButton')
     const UDropdownMenu = resolveComponent('UDropdownMenu')
     const USwitch = resolveComponent('USwitch')
@@ -61,9 +62,8 @@
             {
                 accessorKey: 'devices',
                 cell: ({ row }) => {
-                    return h(UBadge, {
-                        color: row.original.devices ? 'success' : 'error',
-                        label: row.original.devices ? `${row.original.devices} ${row.original.devices === 1 ? 'dispositivo' : 'dispositivos'}` : 'Desconectado',
+                    return h(DashboardTableConnected, {
+                        devices: row.original.devices,
                     })
                 },
                 header: 'Dispositivos',
