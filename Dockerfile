@@ -47,6 +47,9 @@ RUN pnpm prisma generate
 # Copy application files
 COPY . .
 
+# Set Node.js options
+ENV NODE_OPTIONS="--max-old-space-size=6144"
+
 # Build the application
 RUN pnpm build
 

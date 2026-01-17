@@ -12,9 +12,11 @@
     const { users } = storeToRefs(store)
 
     const statsCards = computed(() => {
+        const devices = Object.values(users.value).reduce((acc, deviceList) => acc + deviceList.length, 0)
+
         return [
             {
-                subtitle: `${stats.value?.stats.activeUsers || 0} activos`,
+                subtitle: `${devices} dispositivos`,
                 title: 'Usuarios Conectados',
                 value: Object.keys(users.value).length,
             },
