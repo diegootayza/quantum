@@ -38,6 +38,7 @@
         router.push({
             name: 'conversation-id',
             params: { id: response.conversationId },
+            query: { new: 'true' },
         })
     }
 

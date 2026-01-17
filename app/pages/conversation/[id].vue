@@ -7,7 +7,7 @@
     import { useClipboard } from '@vueuse/core'
     import { DefaultChatTransport } from 'ai'
 
-    definePageMeta({ layout: 'dashboard', middleware: ['auth', 'active'] })
+    definePageMeta({ key: (route) => route.params.id as string, layout: 'dashboard', middleware: ['auth', 'active'] })
 
     useSeoMeta({
         description: 'Continúa tu conversación con IA',
@@ -116,8 +116,9 @@
     }
 
     onMounted(() => {
-        if (data.value?.messages.length === 1) {
+        if (route.query.new === 'true' && data.value?.messages.length === 1) {
             chat.regenerate()
+            navigateTo({ params: { id: route.params.id }, query: {} }, { replace: true })
         }
     })
 </script>
