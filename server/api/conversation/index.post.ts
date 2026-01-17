@@ -1,5 +1,8 @@
 import type { UIMessage } from 'ai'
 
+import { extension } from 'mime-types'
+import { randomUUID } from 'node:crypto'
+
 export default defineEventHandler(async (event) => {
     const { secure } = await requireUserSession(event)
     const formData = await readMultipartFormData(event)
@@ -21,8 +24,7 @@ export default defineEventHandler(async (event) => {
     const prefix = import.meta.dev ? 'test/' : ''
 
     for (const file of files) {
-        const filename = encodeURIComponent(file.filename || 'file')
-        const key = `${prefix}conversations/${conversation.id}/uploads/${Date.now()}-${filename}`
+        const key = `${prefix}conversations/${conversation.id}/uploads/${Date.now()}-${randomUUID()}.${file.type ? extension(file.type) || 'bin' : 'bin'}`
         const url = await storageUpload(key, file.data, file.type)
 
         const attachment = await prisma.conversationAttachment.create({
