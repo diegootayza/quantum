@@ -13,7 +13,7 @@
         meta: [{ charset: 'utf-8' }, { content: 'width=device-width, initial-scale=1', name: 'viewport' }, { content: color, key: 'theme-color', name: 'theme-color' }],
     })
 
-    const title = 'Quantum'
+    const title = 'Quantum Clic'
     const description = 'A professional dashboard template built with Nuxt UI, featuring multiple pages, data visualization, and comprehensive management capabilities for creating powerful admin interfaces.'
 
     useSeoMeta({

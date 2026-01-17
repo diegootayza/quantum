@@ -14,7 +14,12 @@ export default defineNuxtConfig({
             shikiEngine: 'javascript',
         },
     },
-    modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@vueuse/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
+    modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
+    runtimeConfig: {
+        public: {
+            connectUrl: process.env.CONNECT_URL || 'http://localhost:4000',
+        },
+    },
     vite: {
         plugins: [tailwindcss()],
     },
