@@ -26,7 +26,7 @@
     const { model } = useModels()
 
     const { data, refresh } = await useFetch(`/api/conversation/${route.params.id}`, {
-        cache: 'force-cache',
+        key: `conversation-${route.params.id}`,
     })
 
     if (!data.value) {
