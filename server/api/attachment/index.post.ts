@@ -12,10 +12,10 @@ export default defineEventHandler(async (event) => {
     }
 
     const conversationId = formData.find((f) => f.name === 'conversationId')?.data.toString()
-    const files = formData.filter((f) => f.name === 'files')
+    const files = formData.filter((f) => f.name === 'files' && f.type?.startsWith('image/'))
 
     if (files.length === 0) {
-        throw createError({ statusCode: 400, statusMessage: 'No se recibieron archivos.' })
+        throw createError({ statusCode: 400, statusMessage: 'No se recibieron imágenes válidas.' })
     }
 
     if (!conversationId) {

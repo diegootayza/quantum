@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     const formData = await readMultipartFormData(event)
     if (!formData) throw createError({ statusCode: 400, statusMessage: 'No form data provided' })
 
-    const files = formData.filter((p) => p.name === 'files')
+    const files = formData.filter((p) => p.name === 'files' && p.type?.startsWith('image/'))
     const instructionId = formData.find((p) => p.name === 'instructionId')?.data.toString()
     const prompt = formData.find((p) => p.name === 'prompt')?.data.toString()
 
