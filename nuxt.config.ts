@@ -20,6 +20,7 @@ export default defineNuxtConfig({
             connectUrl: process.env.CONNECT_URL || 'http://localhost:4000',
         },
     },
+    sourcemap: { client: false, server: false },
     vite: {
         plugins: [tailwindcss()],
     },

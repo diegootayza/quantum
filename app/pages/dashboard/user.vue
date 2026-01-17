@@ -48,17 +48,18 @@
         return [
             {
                 cell: ({ row }) => {
-                    const current = users.value[row.original.id]
-
                     return h(
                         ClientOnly,
                         {},
                         {
-                            default: () =>
-                                h(UBadge, {
+                            default: () => {
+                                const current = users.value[row.original.id]
+
+                                return h(UBadge, {
                                     color: current?.length ? 'success' : 'error',
                                     label: current?.length ? `${current?.length} ${current?.length === 1 ? 'dispositivo' : 'dispositivos'}` : 'Desconectado',
-                                }),
+                                })
+                            },
                             fallback: () =>
                                 h(UBadge, {
                                     color: 'error',
