@@ -8,6 +8,8 @@ router.get(
     defineEventHandler(async (event) => {
         const id = getRouterParam(event, 'id')
 
+        console.log(id)
+
         const instruction = await prisma.instruction.findUnique({
             include: {
                 files: {
@@ -38,7 +40,7 @@ router.get(
             ...instructionWithoutFiles,
             existingFiles,
         }
-    })
+    }),
 )
 
 router.get(
@@ -47,7 +49,7 @@ router.get(
         const instructions = await prisma.instruction.findMany()
 
         return instructions
-    })
+    }),
 )
 
 router.post(
@@ -85,7 +87,7 @@ router.post(
         }
 
         return instruction
-    })
+    }),
 )
 
 router.patch(
@@ -122,7 +124,7 @@ router.patch(
                         } catch {
                             // Best-effort: si el objeto no existe o falla el borrado, igual borramos el registro en DB.
                         }
-                    })
+                    }),
             )
 
             await prisma.instructionFile.deleteMany({
@@ -150,7 +152,7 @@ router.patch(
         }
 
         return instruction
-    })
+    }),
 )
 
 router.delete(
@@ -175,13 +177,13 @@ router.delete(
                     } catch {
                         // Best-effort: si el objeto no existe o falla el borrado, igual continuamos.
                     }
-                })
+                }),
         )
 
         await prisma.$transaction([prisma.instructionFile.deleteMany({ where: { instructionId: id } }), prisma.instruction.delete({ where: { id } })])
 
         return { id }
-    })
+    }),
 )
 
 export default useBase('/api/instruction/dashboard', router.handler)

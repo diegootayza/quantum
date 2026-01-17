@@ -54,7 +54,7 @@
         () => route.query,
         async (v) => {
             if (typeof v.id === 'string') {
-                const response = await $fetch(`/api/instruction/${v.id}`, { method: 'GET' })
+                const response = await $fetch(`/api/instruction/dashboard/${v.id}`, { method: 'GET' })
 
                 instruction.value = response
                 instructionId.value = v.id
@@ -63,7 +63,7 @@
                 instructionId.value = undefined
             }
         },
-        { immediate: true }
+        { immediate: true },
     )
 </script>
 
@@ -74,8 +74,15 @@
     >
         <template #body>
             <UContainer class="flex-1 flex flex-col justify-center gap-4 sm:gap-6 py-8">
-                <h1 class="text-3xl sm:text-4xl text-center text-highlighted font-bold">{{ instruction?.name || '¿En que estas trabajando?' }}</h1>
-
+                <div class="flex items-center w-full gap-2 flex-col">
+                    <h1 class="text-3xl sm:text-4xl text-center text-highlighted font-bold">{{ instruction?.name || '¿En que estas trabajando?' }}</h1>
+                    <p
+                        v-if="instruction"
+                        class="text-center text-base text-muted-foreground max-w-2xl mx-auto"
+                    >
+                        {{ instruction?.description }}
+                    </p>
+                </div>
                 <UChatPrompt
                     v-model="input"
                     class="[view-transition-name:chat-prompt]"
