@@ -15,6 +15,9 @@ export default defineNuxtConfig({
         },
     },
     modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
+    nitro: {
+        preset: 'bun',
+    },
     runtimeConfig: {
         public: {
             commit: process.env.CAPROVER_GIT_COMMIT_SHA || 'dev',
