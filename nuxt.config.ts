@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     },
     modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
     nitro: {
-        preset: 'bun',
+        preset: process.env.NODE_ENV === 'production' ? 'bun' : 'node-server',
     },
     runtimeConfig: {
         public: {

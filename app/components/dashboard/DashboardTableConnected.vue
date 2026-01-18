@@ -1,16 +1,24 @@
 <script setup lang="ts">
     interface Props {
-        devices: number
+        id: string
     }
 
     const props = withDefaults(defineProps<Props>(), {})
+
+    const store = useUsersStore()
+    const { users } = storeToRefs(store)
+
+    const devices = computed(() => {
+        const userDevices = users.value[props.id] || []
+        return userDevices.length
+    })
 </script>
 
 <template>
     <ClientOnly>
         <UBadge
-            :color="props.devices ? 'success' : 'error'"
-            :label="props.devices ? `${props.devices} ${props.devices === 1 ? 'dispositivo' : 'dispositivos'}` : 'Desconectado'"
+            :color="devices ? 'success' : 'error'"
+            :label="devices ? `${devices} ${devices === 1 ? 'dispositivo' : 'dispositivos'}` : 'Desconectado'"
         />
         <template #fallback>
             <UBadge

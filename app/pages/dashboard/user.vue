@@ -18,22 +18,6 @@
 
     const { data, refresh } = await useFetch('/api/dashboard/user', {})
 
-    const store = useUsersStore()
-    const { users } = storeToRefs(store)
-
-    const currentData = computed(() => {
-        const items = data.value || []
-
-        return items.map((item) => {
-            const userDevices = users.value[item.id] || []
-
-            return {
-                ...item,
-                devices: userDevices.length,
-            }
-        })
-    })
-
     function getRowItems(row: { id: string } & UserSchema): DropdownMenuItem[] {
         return [
             {
@@ -57,93 +41,91 @@
         ]
     }
 
-    const columns = computed<TableColumn<{ devices: number; id: string } & UserSchema>[]>(() => {
-        return [
-            {
-                accessorKey: 'devices',
-                cell: ({ row }) => {
-                    return h(DashboardTableConnected, {
-                        devices: row.original.devices,
-                    })
-                },
-                header: 'Dispositivos',
-                meta: {
-                    class: {
-                        td: 'w-px',
-                        th: 'w-px',
-                    },
+    const columns: TableColumn<{ id: string } & UserSchema>[] = [
+        {
+            accessorKey: 'devices',
+            cell: ({ row }) => {
+                return h(DashboardTableConnected, {
+                    id: row.original.id,
+                })
+            },
+            header: 'Dispositivos',
+            meta: {
+                class: {
+                    td: 'w-px',
+                    th: 'w-px',
                 },
             },
-            {
-                accessorKey: 'name',
-                header: 'Nombre',
-            },
-            {
-                accessorKey: 'surname',
-                header: 'Apellido',
-            },
-            {
-                accessorKey: 'email',
-                header: 'Correo electrónico',
-            },
-            {
-                accessorKey: 'role',
-                header: 'Rol',
-            },
-            {
-                accessorKey: 'active',
-                cell: ({ row }) => {
-                    return h(USwitch, {
-                        modelValue: row.original.active,
-                        'onUpdate:modelValue': async (value: boolean) => {
-                            await safeExecute(async () => {
-                                await $fetch(`/api/dashboard/user/${row.original.id}`, {
-                                    body: { active: value },
-                                    method: 'PATCH',
-                                })
-                                row.original.active = value
+        },
+        {
+            accessorKey: 'name',
+            header: 'Nombre',
+        },
+        {
+            accessorKey: 'surname',
+            header: 'Apellido',
+        },
+        {
+            accessorKey: 'email',
+            header: 'Correo electrónico',
+        },
+        {
+            accessorKey: 'role',
+            header: 'Rol',
+        },
+        {
+            accessorKey: 'active',
+            cell: ({ row }) => {
+                return h(USwitch, {
+                    modelValue: row.original.active,
+                    'onUpdate:modelValue': async (value: boolean) => {
+                        await safeExecute(async () => {
+                            await $fetch(`/api/dashboard/user/${row.original.id}`, {
+                                body: { active: value },
+                                method: 'PATCH',
                             })
+                            row.original.active = value
+                        })
+                    },
+                })
+            },
+            header: 'Activo',
+            meta: {
+                class: {
+                    td: 'w-px',
+                    th: 'w-px',
+                },
+            },
+        },
+        {
+            cell: ({ row }) => {
+                return h(
+                    'div',
+                    { class: 'text-right' },
+                    h(
+                        UDropdownMenu,
+                        {
+                            items: getRowItems(row.original),
                         },
-                    })
-                },
-                header: 'Activo',
-                meta: {
-                    class: {
-                        td: 'w-px',
-                        th: 'w-px',
-                    },
+                        () =>
+                            h(UButton, {
+                                class: 'ml-auto',
+                                color: 'neutral',
+                                icon: 'i-lucide-ellipsis-vertical',
+                                variant: 'ghost',
+                            }),
+                    ),
+                )
+            },
+            id: 'actions',
+            meta: {
+                class: {
+                    td: 'w-px',
+                    th: 'w-px',
                 },
             },
-            {
-                cell: ({ row }) => {
-                    return h(
-                        'div',
-                        { class: 'text-right' },
-                        h(
-                            UDropdownMenu,
-                            {
-                                items: getRowItems(row.original),
-                            },
-                            () =>
-                                h(UButton, {
-                                    class: 'ml-auto',
-                                    color: 'neutral',
-                                    icon: 'i-lucide-ellipsis-vertical',
-                                    variant: 'ghost',
-                                }),
-                        ),
-                    )
-                },
-                id: 'actions',
-                meta: {
-                    class: {
-                        td: 'w-px',
-                        th: 'w-px',
-                    },
-                },
-            },
-        ]
-    })
+        },
+    ]
 </script>
 
 <template>
@@ -162,7 +144,7 @@
         <template #body>
             <DashboardTable
                 :columns="columns"
-                :data="currentData"
+                :data="data"
             />
         </template>
     </UDashboardPanel>
