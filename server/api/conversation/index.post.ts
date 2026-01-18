@@ -21,10 +21,9 @@ export default defineEventHandler(async (event) => {
     })
 
     const parts: UIMessage['parts'] = []
-    const prefix = import.meta.dev ? 'test/' : ''
 
     for (const file of files) {
-        const key = `${prefix}conversations/${conversation.id}/uploads/${Date.now()}-${randomUUID()}.${file.type ? extension(file.type) || 'bin' : 'bin'}`
+        const key = `conversations/${conversation.id}/uploads/${Date.now()}-${randomUUID()}.${file.type ? extension(file.type) || 'bin' : 'bin'}`
         const url = await storageUpload(key, file.data, file.type)
 
         const attachment = await prisma.conversationAttachment.create({

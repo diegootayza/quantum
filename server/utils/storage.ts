@@ -14,9 +14,9 @@ const storage = new S3Client({
 export async function storageDelete(Key: string) {
     await storage.send(
         new DeleteObjectCommand({
-            Bucket: 'quantum',
+            Bucket: process.env.R2_BUCKET_NAME!,
             Key,
-        })
+        }),
     )
 }
 
@@ -24,10 +24,10 @@ export async function storageUpload(Key: string, Body: NonNullable<PutObjectComm
     await storage.send(
         new PutObjectCommand({
             Body,
-            Bucket: 'quantum',
+            Bucket: process.env.R2_BUCKET_NAME!,
             ContentType: ContentType || 'application/octet-stream',
             Key,
-        })
+        }),
     )
 
     return `${process.env.R2_URL}/${Key}`

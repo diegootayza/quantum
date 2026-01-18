@@ -1,34 +1,29 @@
 # Build stage
-FROM node:22-alpine AS builder
+FROM oven/bun:1-alpine AS builder
 
 # Set build arguments and environment variables
 ARG AI_GATEWAY_API_KEY=${AI_GATEWAY_API_KEY}
 ENV AI_GATEWAY_API_KEY=${AI_GATEWAY_API_KEY}
+ARG CAPROVER_GIT_COMMIT_SHA=${CAPROVER_GIT_COMMIT_SHA}
+ENV CAPROVER_GIT_COMMIT_SHA=${CAPROVER_GIT_COMMIT_SHA}
+ARG CONNECT_URL=${CONNECT_URL}
+ENV CONNECT_URL=${CONNECT_URL}
 ARG DATABASE_URL=${DATABASE_URL}
 ENV DATABASE_URL=${DATABASE_URL}
 ARG NUXT_SESSION_PASSWORD=${NUXT_SESSION_PASSWORD}
 ENV NUXT_SESSION_PASSWORD=${NUXT_SESSION_PASSWORD}
+ARG OPENAI_API_KEY=${OPENAI_API_KEY}
+ENV OPENAI_API_KEY=${OPENAI_API_KEY}
 ARG R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
 ENV R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
+ARG R2_BUCKET_NAME=${R2_BUCKET_NAME}
+ENV R2_BUCKET_NAME=${R2_BUCKET_NAME}
 ARG R2_ENDPOINT=${R2_ENDPOINT}
 ENV R2_ENDPOINT=${R2_ENDPOINT}
 ARG R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
 ENV R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
 ARG R2_URL=${R2_URL}
 ENV R2_URL=${R2_URL}
-ARG AWS_REGION=${AWS_REGION}
-ENV AWS_REGION=${AWS_REGION}
-ARG AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-ARG AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-ARG CONNECT_URL=${CONNECT_URL}
-ENV CONNECT_URL=${CONNECT_URL}
-ARG CAPROVER_GIT_COMMIT_SHA=${CAPROVER_GIT_COMMIT_SHA}
-ENV CAPROVER_GIT_COMMIT_SHA=${CAPROVER_GIT_COMMIT_SHA}
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
@@ -36,28 +31,22 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 # Copy prisma schema
 COPY prisma ./prisma
 
 # Generate Prisma Client
-RUN pnpm prisma generate
+RUN bun prisma generate
 
 # Copy application files
 COPY . .
 
-# Set Node.js options
-ENV NODE_OPTIONS="--max-old-space-size=6144"
-
 # Build the application
-RUN pnpm build
+RUN bun run build
 
 # Production stage
-FROM node:22-alpine AS runner
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+FROM oven/bun:1-alpine AS runner
 
 WORKDIR /app
 
@@ -68,9 +57,9 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/prisma ./prisma
 
 # Create a non-root user
-RUN addgroup --system --gid 1001 nodejs && \
+RUN addgroup --system --gid 1001 bunjs && \
     adduser --system --uid 1001 nuxtjs && \
-    chown -R nuxtjs:nodejs /app
+    chown -R nuxtjs:bunjs /app
 
 USER nuxtjs
 
@@ -83,4 +72,4 @@ ENV PORT=3000
 ENV NODE_ENV=production
 
 # Start the application
-CMD ["node", ".output/server/index.mjs"]
+CMD ["bun", "run", ".output/server/index.mjs"]

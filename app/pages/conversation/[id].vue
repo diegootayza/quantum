@@ -144,7 +144,7 @@
                     :messages="chat.messages"
                     shouldAutoScroll
                     :spacingOffset="160"
-                    :status="chat.status"
+                    :status="['submitted', 'streaming'].includes(chat.status) ? 'submitted' : chat.status"
                 >
                     <template #content="{ message }">
                         <div class="*:first:mt-0 *:last:mb-0">

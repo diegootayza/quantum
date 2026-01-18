@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
     runtimeConfig: {
         public: {
+            commit: process.env.CAPROVER_GIT_COMMIT_SHA || 'dev',
             connectUrl: process.env.CONNECT_URL || 'http://localhost:4000',
         },
     },

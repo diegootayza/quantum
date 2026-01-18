@@ -1,4 +1,4 @@
-import { gateway } from '@ai-sdk/gateway'
+import { openai } from '@ai-sdk/openai'
 import { generateText, tool } from 'ai'
 import z from 'zod'
 
@@ -15,29 +15,38 @@ export const toolGenerateImage = (conversationId: string) => {
     return tool({
         description: 'Genera una imagen usando el modelo de imágenes de OpenAI.',
         execute: async ({ prompt }) => {
+            const response: { url: string }[] = []
+
             const result = await generateText({
-                model: gateway('google/gemini-2.5-flash-image'),
+                model: openai('gpt-5'),
                 prompt,
+                tools: {
+                    image_generation: openai.tools.imageGeneration({
+                        outputFormat: 'png',
+                        quality: 'medium',
+                    }),
+                },
             })
 
-            const response: { url: string }[] = []
-            const prefix = import.meta.dev ? 'test/' : ''
+            for (const toolResult of result.staticToolResults) {
+                if (toolResult.toolName === 'image_generation') {
+                    const base64Image = toolResult.output.result
 
-            for await (const file of result.files) {
-                const key = `${prefix}conversations/${conversationId}/generated/${Date.now()}-image.png`
-                const url = await storageUpload(key, Buffer.from(file.base64, 'base64'), file.mediaType)
+                    const key = `conversations/${conversationId}/generated/${Date.now()}-image.png`
+                    const url = await storageUpload(key, Buffer.from(base64Image, 'base64'), 'image/png')
 
-                await prisma.conversationAttachment.create({
-                    data: {
-                        conversationId,
-                        key,
-                        mimeType: file.mediaType,
-                        size: base64Size(file.base64),
-                        source: 'AI_GENERATED',
-                    },
-                })
+                    await prisma.conversationAttachment.create({
+                        data: {
+                            conversationId,
+                            key,
+                            mimeType: 'image/png',
+                            size: base64Size(base64Image),
+                            source: 'AI_GENERATED',
+                        },
+                    })
 
-                response.push({ url })
+                    response.push({ url })
+                }
             }
 
             return response
