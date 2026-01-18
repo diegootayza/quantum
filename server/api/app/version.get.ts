@@ -1,5 +1,7 @@
 export default defineEventHandler(() => {
+    const commit = useRuntimeConfig().public.commit
+
     return {
-        commit: process.env.CAPROVER_GIT_COMMIT_SHA || 'dev',
+        commit,
     }
 })
