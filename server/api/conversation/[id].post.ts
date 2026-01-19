@@ -76,7 +76,7 @@ export default defineLazyEventHandler(async () => {
                 `,
                     toolChoice: 'auto',
                     tools: {
-                        generateImage: toolGenerateImage(conversation.id),
+                        generateImage: toolGenerateImage(conversation.id, writer),
                     },
                 })
 
