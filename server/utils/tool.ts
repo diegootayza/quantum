@@ -28,8 +28,7 @@ async function withHeartbeat<T>(writer: UIMessageStreamWriter, fn: () => Promise
     const stopHeartbeat = createHeartbeat(writer)
     try {
         return await fn()
-    }
-    finally {
+    } finally {
         stopHeartbeat()
     }
 }
@@ -42,7 +41,7 @@ export const toolGenerateImage = (conversationId: string, writer: UIMessageStrea
                 const response: { url: string }[] = []
 
                 const result = await generateText({
-                    model: openai('gpt-5'),
+                    model: openai('gpt-4.1-mini'),
                     prompt,
                     tools: {
                         image_generation: openai.tools.imageGeneration({
