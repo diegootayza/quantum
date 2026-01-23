@@ -81,6 +81,14 @@
                     to: { name: 'dashboard-user' },
                 },
                 {
+                    icon: 'lucide:users',
+                    label: 'Prompts',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-prompt' },
+                },
+                {
                     children: [
                         {
                             label: 'IA',

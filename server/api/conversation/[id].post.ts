@@ -30,7 +30,7 @@ export default defineLazyEventHandler(async () => {
             const promptTitle = await getSettingValue<string>('title', 'ai')
 
             const { text: name } = await generateText({
-                model: gateway('openai/gpt-4o-mini'),
+                model: gateway('openai/gpt-5-mini'),
                 prompt: JSON.stringify(messages[0]),
                 system: promptTitle || '',
             })
