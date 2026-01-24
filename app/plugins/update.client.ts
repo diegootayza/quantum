@@ -3,13 +3,10 @@ export default defineNuxtPlugin(() => {
 
     const toast = useToast()
 
-    console.log(commit)
-
     function checkUpdateAvailable() {
         setTimeout(async () => {
             try {
                 const res = await $fetch('/api/app/version', { method: 'GET' })
-                console.log('response', res.commit)
 
                 if (res.commit && res.commit !== commit) {
                     toast.add({

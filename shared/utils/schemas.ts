@@ -30,6 +30,14 @@ export const settingSchema = z.object({
     value: z.any(),
 })
 
+export const promptSchema = z.object({
+    description: z.string().min(1, 'La descripción debe tener al menos 1 carácter'),
+    key: z.string().min(1, 'El key debe tener al menos 1 carácter'),
+    value: z.string().min(1, 'El valor debe tener al menos 1 carácter'),
+})
+
+export type PromptSchema = z.output<typeof promptSchema>
+
 export const userSchema = z.object({
     active: z.boolean().optional(),
     email: z.email('El email debe ser válido').min(1, 'El email es requerido').optional(),

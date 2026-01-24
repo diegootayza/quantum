@@ -194,7 +194,7 @@
                     </div>
                 </template>
 
-                <div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 min-h-[300px] max-h-[70vh]">
+                <div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 min-h-75 max-h-[70vh]">
                     <img
                         v-if="selectedFile?.url && selectedFile.mimeType.startsWith('image/')"
                         :alt="selectedFile.id"

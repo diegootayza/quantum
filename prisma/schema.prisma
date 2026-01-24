@@ -87,10 +87,10 @@ model User {
 }
 
 model Prompt {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  key   String @unique
-  name  String
-  value String
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  key         String @unique
+  description String
+  value       String
 }
 
 model Setting {

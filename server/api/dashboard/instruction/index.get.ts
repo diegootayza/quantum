@@ -10,12 +10,6 @@ export default defineEventHandler(async (event) => {
     const response = await prisma.instruction.findMany({
         select: {
             active: true,
-            category: {
-                select: {
-                    name: true,
-                },
-            },
-            categoryId: true,
             content: true,
             description: true,
             id: true,

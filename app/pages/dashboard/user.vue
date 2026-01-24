@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
+    import type { DropdownMenuItem } from '@nuxt/ui'
 
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
@@ -8,15 +8,11 @@
         title: 'Usuarios - Admin',
     })
 
-    const DashboardTableConnected = resolveComponent('DashboardTableConnected')
-    const UButton = resolveComponent('UButton')
-    const UDropdownMenu = resolveComponent('UDropdownMenu')
-    const USwitch = resolveComponent('USwitch')
-
     const router = useRouter()
-    const { safeExecute } = useSafeError()
 
-    const { data, refresh } = await useFetch('/api/dashboard/user', {})
+    const { data, refresh } = await useFetch('/api/dashboard/user', {
+        key: 'dashboard-user',
+    })
 
     function getRowItems(row: { id: string } & UserSchema): DropdownMenuItem[] {
         return [
@@ -32,7 +28,7 @@
             },
             {
                 color: 'error',
-                icon: 'i-lucide-trash',
+                icon: 'lucide:trash',
                 label: 'Eliminar usuario',
                 onSelect() {
                     console.log(row)
@@ -41,111 +37,50 @@
         ]
     }
 
-    const columns: TableColumn<{ id: string } & UserSchema>[] = [
-        {
-            accessorKey: 'devices',
-            cell: ({ row }) => {
-                return h(DashboardTableConnected, {
-                    id: row.original.id,
-                })
-            },
-            header: 'Dispositivos',
-            meta: {
-                class: {
-                    td: 'w-px',
-                    th: 'w-px',
-                },
-            },
-        },
-        {
-            accessorKey: 'name',
-            header: 'Nombre',
-        },
-        {
-            accessorKey: 'surname',
-            header: 'Apellido',
-        },
-        {
-            accessorKey: 'email',
-            header: 'Correo electrónico',
-        },
-        {
-            accessorKey: 'role',
-            header: 'Rol',
-        },
-        {
-            accessorKey: 'active',
-            cell: ({ row }) => {
-                return h(USwitch, {
-                    modelValue: row.original.active,
-                    'onUpdate:modelValue': async (value: boolean) => {
-                        await safeExecute(async () => {
-                            await $fetch(`/api/dashboard/user/${row.original.id}`, {
-                                body: { active: value },
-                                method: 'PATCH',
-                            })
-                            row.original.active = value
-                        })
-                    },
-                })
-            },
-            header: 'Activo',
-            meta: {
-                class: {
-                    td: 'w-px',
-                    th: 'w-px',
-                },
-            },
-        },
-        {
-            cell: ({ row }) => {
-                return h(
-                    'div',
-                    { class: 'text-right' },
-                    h(
-                        UDropdownMenu,
-                        {
-                            items: getRowItems(row.original),
-                        },
-                        () =>
-                            h(UButton, {
-                                class: 'ml-auto',
-                                color: 'neutral',
-                                icon: 'i-lucide-ellipsis-vertical',
-                                variant: 'ghost',
-                            }),
-                    ),
-                )
-            },
-            id: 'actions',
-            meta: {
-                class: {
-                    td: 'w-px',
-                    th: 'w-px',
-                },
-            },
-        },
+    const columns: CommonTableColumn[] = [
+        { class: 'w-px', key: 'devices', label: 'Dispositivos' },
+        { class: 'w-px', key: 'name', label: 'Nombre' },
+        { class: 'w-px', key: 'surname', label: 'Apellido' },
+        { class: 'w-px', key: 'role', label: 'Rol' },
+        { key: 'email', label: 'Correo electrónico' },
+        { class: 'w-px', key: 'active', label: 'Activo' },
+        { class: 'w-px text-center', key: 'actions' },
     ]
 </script>
 
 <template>
-    <UDashboardPanel id="dashboard-user">
+    <UDashboardPanel id="user">
         <template #header>
             <UDashboardNavbar title="Usuarios">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
-
                 <template #right>
                     <ModalUser @refresh="refresh" />
                 </template>
             </UDashboardNavbar>
         </template>
         <template #body>
-            <DashboardTable
+            <CommonTable
                 :columns="columns"
                 :data="data"
-            />
+            >
+                <template #devices="{ row }">
+                    <TableDevice :id="row.id" />
+                </template>
+                <template #active="{ row }">
+                    <TableActive :row="row" />
+                </template>
+                <template #actions="{ row }">
+                    <UDropdownMenu :items="getRowItems(row)">
+                        <UButton
+                            color="neutral"
+                            icon="lucide:ellipsis-vertical"
+                            variant="ghost"
+                        />
+                    </UDropdownMenu>
+                </template>
+            </CommonTable>
         </template>
     </UDashboardPanel>
 </template>

@@ -50,7 +50,7 @@
                 <USelectMenu
                     v-model="state.role"
                     class="w-full"
-                    :options="['ADMIN', 'USER']"
+                    :items="['ADMIN', 'USER']"
                 />
             </UFormField>
         </template>

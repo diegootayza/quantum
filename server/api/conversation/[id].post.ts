@@ -27,12 +27,12 @@ export default defineLazyEventHandler(async () => {
         }
 
         if (!conversation.name) {
-            const promptTitle = await getSettingValue<string>('title', 'ai')
+            const conversationTitle = await getPromptByKey('conversation-title')
 
             const { text: name } = await generateText({
                 model: gateway('openai/gpt-5-mini'),
                 prompt: JSON.stringify(messages[0]),
-                system: promptTitle || '',
+                system: conversationTitle,
             })
 
             await prisma.conversation.update({
@@ -55,8 +55,6 @@ export default defineLazyEventHandler(async () => {
 
         const stream = createUIMessageStream({
             execute: async ({ writer }) => {
-                const promptGlobal = await getSettingValue<string>('prompt', 'ai')
-
                 const result = streamText({
                     experimental_transform: smoothStream({ chunking: 'word' }),
                     messages: await convertToModelMessages(messages),
@@ -71,7 +69,6 @@ export default defineLazyEventHandler(async () => {
                     system: `
                 Eres un asistente de IA conocedor y servicial. ${user ? `El nombre completo del usuario es ${user.name} ${user.surname}.` : ''} Tu objetivo es proporcionar respuestas claras, precisas y bien estructuradas.
                 Puedes usar la herramienta "generateImage" para crear imágenes cuando el usuario lo solicite, no devuelvas los enlaces.
-                ${promptGlobal || ''}
                 ${conversation.instruction?.content || ''}
                 `,
                     toolChoice: 'auto',
