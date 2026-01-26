@@ -13,12 +13,18 @@ export default defineEventHandler(async (event) => {
 
         const hashedPassword = await hashPassword(data.password)
 
+        // Generar refresh token
+        const refreshToken = crypto.randomUUID()
+        const tokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 días
+
         const user = await prisma.user.create({
             data: {
                 email: data.email,
                 name: data.name,
                 password: hashedPassword,
+                refreshToken,
                 surname: data.surname,
+                tokenExpiry,
             },
         })
 
@@ -37,6 +43,9 @@ export default defineEventHandler(async (event) => {
             },
         })
 
-        return { message: 'Usuario creado exitosamente' }
+        return {
+            message: 'Usuario creado exitosamente',
+            refreshToken,
+        }
     })
 })

@@ -12,6 +12,7 @@
 
     const toast = useToast()
     const router = useRouter()
+    const authRefresh = useAuthRefresh()
 
     const { fetch } = useUserSession()
     const { safeExecute } = useSafeError()
@@ -54,10 +55,18 @@
 
     async function onSubmit(payload: FormSubmitEvent<Schema>) {
         safeExecute(async () => {
-            const response = await $fetch('/api/auth/signup', {
+            const response = await $fetch<{
+                message: string
+                refreshToken: string
+            }>('/api/auth/signup', {
                 body: payload.data,
                 method: 'POST',
             })
+
+            // Inicializar refresh token
+            if (response.refreshToken) {
+                authRefresh.initializeRefresh(response.refreshToken)
+            }
 
             await fetch()
 

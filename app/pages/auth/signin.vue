@@ -12,6 +12,7 @@
 
     const toast = useToast()
     const router = useRouter()
+    const authRefresh = useAuthRefresh()
 
     const { fetch } = useUserSession()
 
@@ -39,10 +40,15 @@
     type Schema = z.output<typeof schema>
 
     async function onSubmit(payload: FormSubmitEvent<Schema>) {
-        const response = await $fetch('/api/auth/signin', {
+        const response = await $fetch<{ message: string; refreshToken: string }>('/api/auth/signin', {
             body: payload.data,
             method: 'POST',
         })
+
+        // Inicializar refresh token
+        if (response.refreshToken) {
+            authRefresh.initializeRefresh(response.refreshToken)
+        }
 
         await fetch()
 

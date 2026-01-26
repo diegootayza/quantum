@@ -5,6 +5,7 @@
 
     const colorMode = useColorMode()
     const router = useRouter()
+    const authRefresh = useAuthRefresh()
     const { clear, user } = useUserSession()
 
     const items = computed<DropdownMenuItem[][]>(() => [
@@ -13,11 +14,6 @@
                 icon: 'lucide:home',
                 label: 'Ir al inicio',
                 to: { name: 'index' },
-            },
-            {
-                icon: 'lucide:settings',
-                label: 'Configuración',
-                to: { name: 'setting' },
             },
         ],
         [
@@ -58,6 +54,17 @@
                 icon: 'i-lucide-log-out',
                 label: 'Cerrar sesión',
                 async onSelect() {
+                    // Limpiar refresh token
+                    authRefresh.cleanup()
+
+                    // Llamar endpoint logout
+                    try {
+                        await $fetch('/api/auth/logout', { method: 'POST' })
+                    } catch (error) {
+                        console.error('Error al cerrar sesión:', error)
+                    }
+
+                    // Limpiar sesión
                     await clear()
                     router.push({ name: 'auth-signin' })
                 },
@@ -91,8 +98,7 @@
         <template #chip-leading="{ item }">
             <span
                 class="ms-0.5 size-2 rounded-full bg-(--chip-light) dark:bg-(--chip-dark)"
-                :style="{'--chip-light': `var(--color-${(item as any).chip}-500)`, '--chip-dark': `var(--color-${(item as any).chip}-400)`
-        }"
+                :style="{ '--chip-light': `var(--color-${(item as any).chip}-500)`, '--chip-dark': `var(--color-${(item as any).chip}-400)` }"
             />
         </template>
     </UDropdownMenu>

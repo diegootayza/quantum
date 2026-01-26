@@ -40,6 +40,8 @@
         id: data.value.id,
         messages: data.value.messages as any[],
         onData: (dataPart) => {
+            console.log(dataPart.type)
+
             if (dataPart.type === 'data-chat-title') {
                 refreshNuxtData('dashboard-navigation')
                 refresh()

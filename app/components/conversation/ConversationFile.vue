@@ -7,10 +7,11 @@
 
     const inputRef = useTemplateRef('input')
 
-    function onChange(e: Event) {
+    async function onChange(e: Event) {
         const input = e.target as HTMLInputElement
         const files = input.files ? Array.from(input.files) : []
-        const images = files.filter(file => file.type.startsWith('image/'))
+        const images = files.filter((file) => file.type.startsWith('image/'))
+
         emit('push', images)
         input.value = ''
     }
