@@ -1,22 +1,33 @@
 <script setup lang="ts">
+    interface Emit {
+        (e: 'update', id: string): void
+    }
+
     interface Props {
-        row: any
+        active: boolean
+        endpoint: string
+        id: string
+        name: string
     }
 
     const props = withDefaults(defineProps<Props>(), {})
 
+    const emit = defineEmits<Emit>()
+
     async function onUpdate(value: boolean) {
-        await $fetch(`/api/dashboard/user/${props.row.id}`, {
+        await $fetch(`${props.endpoint}/${props.id}`, {
             body: { active: value },
             method: 'PATCH',
         })
-        await refreshNuxtData('dashboard-user')
+        await refreshNuxtData(props.name)
+        emit('update', props.id)
     }
 </script>
 
 <template>
     <USwitch
-        :modelValue="props.row.active"
+        class="inline-flex"
+        :modelValue="props.active"
         @update:modelValue="onUpdate"
     />
 </template>

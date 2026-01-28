@@ -5,6 +5,9 @@ export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
     css: ['~/assets/css/main.css'],
     devtools: { enabled: true },
+    experimental: {
+        viewTransition: true,
+    },
     mdc: {
         headings: {
             anchorLinks: false,
@@ -26,6 +29,9 @@ export default defineNuxtConfig({
     },
     sourcemap: { client: false, server: false },
     vite: {
+        build: {
+            chunkSizeWarningLimit: 1024,
+        },
         plugins: [tailwindcss()],
     },
 })

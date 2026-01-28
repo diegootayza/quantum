@@ -29,7 +29,7 @@
 
 <template>
     <UApp :locale="es">
-        <NuxtLoadingIndicator />
+        <NuxtLoadingIndicator color="var(--ui-primary)" />
 
         <NuxtLayout>
             <NuxtPage />

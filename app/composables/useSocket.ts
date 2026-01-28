@@ -1,4 +1,3 @@
 export function useSocket() {
-    const socket = useNuxtApp().$socket
-    return { socket }
+    return useNuxtApp().$socket
 }

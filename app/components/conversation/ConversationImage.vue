@@ -8,7 +8,7 @@
 
     const { open } = useImageModal()
 
-    const images = computed(() => props.output as { url: string }[])
+    const images = computed(() => [props.output] as { url: string }[])
 
     function openModal(url: string) {
         open({

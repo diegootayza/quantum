@@ -1,7 +1,7 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Record<string, any>">
     interface Props {
         columns: CommonTableColumn[]
-        data?: any[]
+        data?: T[]
     }
 
     const props = withDefaults(defineProps<Props>(), {
@@ -11,7 +11,7 @@
 
 <template>
     <div class="relative w-full overflow-x-auto">
-        <table class="w-full border-collapse divide-y divide-default text-left">
+        <table class="w-full border-collapse divide-y divide-default text-left border border-default">
             <thead class="bg-elevated/50">
                 <tr class="h-10">
                     <th

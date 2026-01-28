@@ -1,2 +1,14 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
+
+::view-transition-old(chat-form) {
+    opacity: 0;
+    animation-duration: 100ms;
+    animation-timing-function: ease-out;
+}
+
+::view-transition-new(chat-form) {
+    opacity: 1;
+    animation-duration: 100ms;
+    animation-timing-function: ease-in;
+}

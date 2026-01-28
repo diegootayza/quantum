@@ -19,7 +19,13 @@
         url: null | string
     }
 
-    const { data } = await useFetch<Attachment[]>('/api/attachment')
+    const { data } = await useFetch<Attachment[]>('/api/attachment', {
+        default: () => [],
+    })
+
+    const { data: files, refresh } = await useFetch<IFileSchema[]>('/api/file', { default: () => [] })
+
+    const { fetcher } = useConnect()
 
     const items = computed(() => data.value || [])
 
@@ -39,6 +45,14 @@
         selectedFile.value = file
         isModalOpen.value = true
     }
+
+    async function removeFile(currentFile: IFileSchema) {
+        await fetcher(`api/file/${currentFile.id}`, {
+            method: 'DELETE',
+        })
+
+        await refresh()
+    }
 </script>
 
 <template>
@@ -52,29 +66,22 @@
         </template>
 
         <template #body>
-            <!-- Empty State -->
-            <div
-                v-if="items.length === 0"
-                class="flex flex-col items-center justify-center py-16 px-4 h-full"
-            >
-                <div class="flex flex-col items-center gap-4 max-w-md text-center">
-                    <div class="p-4 rounded-full bg-gray-100 dark:bg-gray-800">
-                        <UIcon
-                            class="w-12 h-12 text-gray-400 dark:text-gray-600"
-                            name="i-lucide-folder-open"
-                        />
-                    </div>
-                    <div class="space-y-2">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">No hay archivos</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Aún no has subido ningún archivo. Los archivos que subas en tus conversaciones aparecerán aquí.</p>
-                    </div>
-                </div>
+            <div class="w-full grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
+                <CommonImage
+                    v-for="file in files"
+                    :key="file.id"
+                    class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg"
+                    :file="file"
+                    @delete="removeFile"
+                />
             </div>
+            <UEmpty
+                description="Aún no has subido ningún archivo. Los archivos que subas en tus conversaciones aparecerán aquí."
+                icon="lucide:folder-open"
+                title="No hay archivos"
+            />
 
-            <div
-                v-else
-                class="flex flex-col gap-8"
-            >
+            <div class="flex flex-col gap-8">
                 <!-- Generated Files Section -->
                 <div
                     v-if="generatedFiles.length > 0"

@@ -23,7 +23,7 @@
     })
 
     const items = computed<NavigationMenuItem[][]>(() => {
-        const { conversations, instructions } = navigation.value ?? { conversations: [], instructions: [] }
+        const { agents, chats, conversations, instructions } = navigation.value ?? { agents: [], chats: [], conversations: [], instructions: [] }
 
         const items: NavigationMenuItem[][] = []
 
@@ -88,6 +88,30 @@
                     },
                     to: { name: 'dashboard-prompt' },
                 },
+                {
+                    icon: 'lucide:messages-square',
+                    label: 'Conversaciones',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-chat' },
+                },
+                {
+                    icon: 'lucide:bot',
+                    label: 'Agentes',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-chat-agent' },
+                },
+                {
+                    icon: 'lucide:brain-cog',
+                    label: 'Modelos',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-model' },
+                },
             ])
         }
 
@@ -96,37 +120,36 @@
                 {
                     exactQuery: true,
                     icon: 'lucide:plus',
-                    label: 'Nueva conversación',
-                    to: { name: 'conversation' },
+                    label: 'Nuevo chat',
+                    to: { name: 'chat' },
                 },
             ])
 
-            if (instructions.length > 0) {
+            if (agents.length > 0) {
                 items.push([
                     {
-                        label: "GPT's",
+                        label: 'Agentes',
                         type: 'label',
                     },
-                    ...instructions.map((instruction) => ({
+                    ...agents.map((agent) => ({
                         exactQuery: true,
-                        icon: 'lucide:bot',
-                        label: instruction.name,
-                        to: { name: 'conversation', query: { id: instruction.id } },
+                        icon: 'lucide:bot-message-square',
+                        label: agent.name,
+                        to: { name: 'chat-agent-id', params: { id: agent.id } },
                     })),
                 ])
             }
 
-            if (conversations.length > 0) {
+            if (chats.length > 0) {
                 items.push([
                     {
-                        label: 'Conversaciones',
+                        label: 'Tus chats',
                         type: 'label',
                     },
-                    ...conversations.map((conversation) => ({
-                        icon: 'lucide:message-square',
-                        label: conversation.name,
+                    ...chats.map((chat) => ({
+                        label: chat.name,
                         slot: 'actions' as const,
-                        to: { name: 'conversation-id', params: { id: conversation.id } },
+                        to: { name: 'ai-chat-id', params: { id: chat.id } },
                     })),
                 ])
             }
@@ -134,14 +157,6 @@
 
         return [...items]
     })
-
-    const groups = computed(() => [
-        {
-            id: 'items',
-            items: items.value.flat(),
-            label: 'Ir a',
-        },
-    ])
 
     const actions = (item: any) => {
         return [
@@ -194,10 +209,6 @@
 </script>
 
 <template>
-    <UDashboardSearchButton
-        class="bg-transparent ring-default"
-        :collapsed="collapsed"
-    />
     <UNavigationMenu
         class="h-full"
         :collapsed="collapsed"
@@ -227,8 +238,4 @@
             </ClientOnly>
         </template>
     </UNavigationMenu>
-    <UDashboardSearch
-        :colorMode="false"
-        :groups="groups"
-    />
 </template>

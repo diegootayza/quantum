@@ -7,7 +7,6 @@ export async function processError<T>(fn: () => Promise<T> | T) {
         const input = { message: 'Error interno del servidor', statusCode: 500 }
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            // Errores conocidos de Prisma con códigos específicos
             switch (error.code) {
                 case 'P2000':
                     input.message = 'El valor proporcionado es demasiado largo para el campo'

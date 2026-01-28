@@ -5,12 +5,16 @@
 
     const props = withDefaults(defineProps<Props>(), {})
 
-    const store = useUsersStore()
-    const { users } = storeToRefs(store)
+    const socket = useSocket()
 
-    const devices = computed(() => {
-        const userDevices = users.value[props.id] || []
-        return userDevices.length
+    const devices = ref(0)
+
+    onMounted(() => {
+        socket?.emit('admin:user.devices', props.id)
+
+        socket?.on(`admin:user.devices.${props.id}`, (data: number) => {
+            devices.value = data
+        })
     })
 </script>
 

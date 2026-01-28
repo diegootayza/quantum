@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    import type { DropdownMenuItem } from '@nuxt/ui'
-
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
     useSeoMeta({
@@ -8,34 +6,9 @@
         title: 'Usuarios - Admin',
     })
 
-    const router = useRouter()
+    const socket = useSocket()
 
-    const { data, refresh } = await useFetch('/api/dashboard/user', {
-        key: 'dashboard-user',
-    })
-
-    function getRowItems(row: { id: string } & UserSchema): DropdownMenuItem[] {
-        return [
-            {
-                icon: 'lucide:edit',
-                label: 'Editar usuario',
-                async onSelect() {
-                    router.push({ name: 'dashboard-user', query: { id: row.id } })
-                },
-            },
-            {
-                type: 'separator',
-            },
-            {
-                color: 'error',
-                icon: 'lucide:trash',
-                label: 'Eliminar usuario',
-                onSelect() {
-                    console.log(row)
-                },
-            },
-        ]
-    }
+    const { data, refresh } = await useFetch('/api/dashboard/user', { key: 'dashboard-user' })
 
     const columns: CommonTableColumn[] = [
         { class: 'w-px', key: 'devices', label: 'Dispositivos' },
@@ -43,9 +16,18 @@
         { class: 'w-px', key: 'surname', label: 'Apellido' },
         { class: 'w-px', key: 'role', label: 'Rol' },
         { key: 'email', label: 'Correo electrónico' },
-        { class: 'w-px', key: 'active', label: 'Activo' },
+        { class: 'w-px', key: 'session', label: 'Sesión' },
+        { class: 'w-px text-center', key: 'active', label: 'Activo' },
         { class: 'w-px text-center', key: 'actions' },
     ]
+
+    function onSession(id: string) {
+        socket?.emit('user:signout', id)
+    }
+
+    function onUpdate(id: string) {
+        socket?.emit('user:update', id)
+    }
 </script>
 
 <template>
@@ -68,17 +50,31 @@
                 <template #devices="{ row }">
                     <TableDevice :id="row.id" />
                 </template>
+                <template #role="{ row }">
+                    <TableConstant :value="row.role" />
+                </template>
                 <template #active="{ row }">
-                    <TableActive :row="row" />
+                    <TableActive
+                        :id="row.id"
+                        :active="row.active"
+                        endpoint="/api/dashboard/user"
+                        name="dashboard-user"
+                        @update="onUpdate"
+                    />
+                </template>
+                <template #session="{ row }">
+                    <UButton
+                        color="error"
+                        label="Cerrar sesión"
+                        variant="subtle"
+                        @click="onSession(row.id)"
+                    />
                 </template>
                 <template #actions="{ row }">
-                    <UDropdownMenu :items="getRowItems(row)">
-                        <UButton
-                            color="neutral"
-                            icon="lucide:ellipsis-vertical"
-                            variant="ghost"
-                        />
-                    </UDropdownMenu>
+                    <TableAction
+                        :id="row.id"
+                        name="dashboard-user"
+                    />
                 </template>
             </CommonTable>
         </template>

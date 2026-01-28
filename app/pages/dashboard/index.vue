@@ -10,6 +10,7 @@
 
     const store = useUsersStore()
     const { users } = storeToRefs(store)
+    const socket = useSocket()
 
     const statsCards = computed(() => {
         const devices = Object.values(users.value).reduce((acc, deviceList) => acc + deviceList.length, 0)
@@ -36,6 +37,16 @@
                 value: stats.value?.stats.totalMessages || 0,
             },
         ]
+    })
+
+    onMounted(() => {
+        socket?.emit('admin:stats', (v: any) => {
+            console.log('admin:stats', v)
+        })
+
+        socket?.on('admin:stats.update', (v: any) => {
+            console.log('admin:stats.update', v)
+        })
     })
 </script>
 

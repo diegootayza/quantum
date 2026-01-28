@@ -1,5 +1,18 @@
 <script setup lang="ts">
+    const socket = useSocket()
+    const { clearSession, updateSession } = useAuth()
+
     const open = ref(false)
+
+    onMounted(() => {
+        socket?.on('user:signout', async () => {
+            await clearSession()
+        })
+
+        socket?.on('user:update', async () => {
+            await updateSession()
+        })
+    })
 </script>
 
 <template>
@@ -8,8 +21,8 @@
             v-model:open="open"
             class="bg-elevated/25"
             collapsible
-            :defaultSize="20"
-            :maxSize="20"
+            :defaultSize="25"
+            :maxSize="30"
             :minSize="20"
             resizable
             :ui="{ footer: 'lg:border-t lg:border-default' }"

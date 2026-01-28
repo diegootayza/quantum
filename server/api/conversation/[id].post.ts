@@ -43,7 +43,7 @@ export default defineLazyEventHandler(async () => {
 
         const lastMessage = messages[messages.length - 1]
 
-        if (lastMessage?.role === 'user' && messages.length > 1) {
+        if (lastMessage?.role === 'user') {
             await prisma.conversationMessage.create({
                 data: {
                     conversationId: id as string,

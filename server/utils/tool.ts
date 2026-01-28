@@ -1,7 +1,7 @@
 import type { UIMessageStreamWriter } from 'ai'
 
 import { openai } from '@ai-sdk/openai'
-import { generateText, tool } from 'ai'
+import { generateImage, generateText, tool } from 'ai'
 import z from 'zod'
 
 function base64Size(base64: string) {
@@ -77,6 +77,34 @@ export const toolGenerateImage = (conversationId: string, writer: UIMessageStrea
         },
         inputSchema: z.object({
             prompt: z.string().describe('Descripción clara de la imagen que quieres generar.'),
+        }),
+    })
+}
+
+export async function generateImageTool({ userId }: { userId: string }) {
+    return tool({
+        description: 'Genera una imagen usando el modelo de imágenes de OpenAI.',
+        execute: async ({ prompt }) => {
+            const { image } = await generateImage({
+                model: openai.image('gpt-image-1'),
+                prompt,
+            })
+
+            const base64 = image.base64
+            const mediaType = image.mediaType
+
+            const response = await connectUpload({
+                base64,
+                mediaType,
+                path: `users/${userId}/generations`,
+                type: 'generated',
+                userId,
+            })
+
+            return { url: response?.[0].url || '' }
+        },
+        inputSchema: z.object({
+            prompt: z.string(),
         }),
     })
 }

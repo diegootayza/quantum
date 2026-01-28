@@ -16,5 +16,20 @@ export default defineEventHandler(async (event) => {
         },
     })
 
-    return { conversations, instructions }
+    const chats = await prisma.chat.findMany({
+        select: {
+            id: true,
+            name: true,
+        },
+        where: { userId: secure!.id },
+    })
+
+    const agents = await prisma.chatAgent.findMany({
+        select: {
+            id: true,
+            name: true,
+        },
+    })
+
+    return { agents, chats, conversations, instructions }
 })
