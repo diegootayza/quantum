@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
             model: gateway('openai/gpt-5-mini'),
             prompt: JSON.stringify(parts),
             system: conversationTitle,
+            temperature: 0.7,
         })
 
         const chat = await prisma.chat.create({ data: { agentId, name, userId: secure!.id } })

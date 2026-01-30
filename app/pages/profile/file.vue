@@ -11,11 +11,10 @@
     const { fetcher } = useConnect()
 
     async function removeFile(currentFile: IFileSchema) {
-        await fetcher(`api/file/${currentFile.id}`, {
-            method: 'DELETE',
-        })
-
-        await refresh()
+        // await fetcher(`api/file/${currentFile.id}`, {
+        //     method: 'DELETE',
+        // })
+        // await refresh()
     }
 </script>
 
