@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     },
     sourcemap: { client: false, server: false },
     typescript: {
-        typeCheck: true,
+        typeCheck: process.env.NODE_ENV === 'production' ? false : true,
     },
     vite: {
         build: {
