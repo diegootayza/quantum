@@ -23,6 +23,7 @@
         status.value = 'submitted'
         clean()
         const response = await $fetch('/api/ai', { body: { agentId: route.params.id, parts }, method: 'POST' })
+        status.value = 'ready'
         router.push({ name: 'ai-chat-id', params: { id: response.id }, query: { new: 'true' } })
     }
 
