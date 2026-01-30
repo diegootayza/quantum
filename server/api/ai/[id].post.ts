@@ -17,10 +17,11 @@ export default defineEventHandler(async (event) => {
         const { user } = await requireUserSession(event)
         const { id } = await getValidatedRouterParams(event, params.parse)
         const { agentId, messages } = await readValidatedBody(event, body.parse)
+        const ai = await getSettingValue<ISettingAi>('ai')
         const chatModel = getCookie(event, 'chat-model')
 
-        let model = chatModel || 'openai/gpt-5-mini'
-        let system = 'Eres un asistente de IA conocedor y servicial. Tu objetivo es proporcionar respuestas claras, precisas y bien estructuradas.'
+        let model = chatModel || ai.modelText
+        let system = ai.prompt
 
         if (agentId) {
             const agent = await prisma.chatAgent.findUnique({ select: { instruction: true, model: true }, where: { id: agentId } })
@@ -40,7 +41,6 @@ export default defineEventHandler(async (event) => {
         const stream = createUIMessageStream({
             execute: async ({ writer }) => {
                 const result = streamText({
-                    maxOutputTokens: 1000,
                     messages: await convertToModelMessages(messages),
                     model,
                     system,
@@ -61,8 +61,8 @@ export default defineEventHandler(async (event) => {
                     const parts: UIMessage['parts'] = []
 
                     for (const part of message.parts) {
-                        if (part.type === 'text') parts.push(omitObject(part, ['state']))
-                        else if (part.type === 'tool-generate-image') parts.push(omitObject(part, ['state']))
+                        if (part.type === 'text') parts.push(part)
+                        else if (part.type === 'tool-generate-image') parts.push(part)
                     }
 
                     await prisma.chatMessage.create({ data: { chatId: id, parts: parts as any, role: 'assistant' } })

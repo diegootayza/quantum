@@ -133,9 +133,6 @@ model Prompt {
 
 model Setting {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  namespace String
+  namespace String @unique
   value     Json
-
-  @@unique([namespace, name])
 }

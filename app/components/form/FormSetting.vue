@@ -1,58 +1,38 @@
-<script setup lang="ts">
-    import type { FormSubmitEvent } from '@nuxt/ui'
+<script setup lang="ts" generic="T extends ZodType">
+    import type { ZodType } from 'zod'
+
+    import { toTypedSchema } from '@vee-validate/zod'
 
     interface Props {
-        name: string
         namespace: string
-        title: string
+        schema: T
     }
 
     const props = withDefaults(defineProps<Props>(), {})
 
-    const state = reactive({
-        name: props.name,
-        namespace: props.namespace,
-        value: null,
+    const { handleSubmit, setValues } = useForm({
+        initialValues: {
+            namespace: props.namespace,
+            value: {},
+        },
+        validationSchema: toTypedSchema(props.schema),
     })
 
-    async function onSubmit(event: FormSubmitEvent<SettingSchema>) {
-        await $fetch('/api/setting', {
-            body: event.data,
+    const onSubmit = handleSubmit(async (data) => {
+        await useFetch('/api/setting', {
+            body: data,
             method: 'POST',
         })
-        console.log(event.data)
-    }
+    })
 
     onMounted(async () => {
-        const value = await $fetch('/api/setting', {
-            params: {
-                name: props.name,
-                namespace: props.namespace,
-            },
-        })
-
-        Object.assign(state, { value: value || null })
+        const data = await $fetch(`/api/setting/${props.namespace}`, {})
+        if (data) setValues(data, false)
     })
 </script>
 
 <template>
-    <UForm
-        :schema="settingSchema"
-        :state="state"
-        @submit="onSubmit"
-    >
-        <UPageCard
-            :title="title"
-            variant="subtle"
-        >
-            <slot :state="state" />
-            <div class="flex justify-end w-full items-center">
-                <UButton
-                    color="neutral"
-                    label="Guardar"
-                    type="submit"
-                />
-            </div>
-        </UPageCard>
-    </UForm>
+    <form @submit="onSubmit">
+        <slot />
+    </form>
 </template>

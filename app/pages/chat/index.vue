@@ -7,12 +7,29 @@
 
     const status = ref<ChatStatus>('ready')
 
+    let controller: AbortController | null = null
+
+    const { markClean, markDirty } = useLeavePrevent({
+        onCancel() {
+            controller?.abort()
+        },
+    })
+
     async function onSubmit(parts: UIMessage['parts'], clean: () => void) {
+        controller?.abort()
+
+        controller = new AbortController()
+
         status.value = 'submitted'
         clean()
-        const response = await $fetch('/api/ai', { body: { parts }, method: 'POST' })
+        const response = await $fetch('/api/ai', { body: { parts }, method: 'POST', signal: controller.signal })
         router.push({ name: 'ai-chat-id', params: { id: response.id }, query: { new: 'true' } })
     }
+
+    watch(status, (v) => {
+        if (['streaming', 'submitted'].includes(v)) markDirty()
+        else markClean()
+    })
 </script>
 
 <template>

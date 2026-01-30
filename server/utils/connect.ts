@@ -13,7 +13,7 @@ export const connectGet = async <T = unknown>(path: string, config?: AxiosReques
     }
 }
 
-export const connectUpload = async ({ base64, mediaType, path, type, userId }: { base64: string; mediaType: string; path: string; type: string; userId?: string }) => {
+export const connectUpload = async ({ data, path, type, userId }: { data: { base64: string; mediaType: string }[]; path: string; type: string; userId?: string }) => {
     try {
         const formData = new FormData()
 
@@ -21,9 +21,11 @@ export const connectUpload = async ({ base64, mediaType, path, type, userId }: {
         formData.append('type', type)
         if (userId) formData.append('userId', userId)
 
-        const file = new File([Buffer.from(base64, 'base64')], `file.${extension(mediaType) || 'bin'}`, { type: mediaType })
+        for (const { base64, mediaType } of data) {
+            const file = new File([Buffer.from(base64, 'base64')], `file.${extension(mediaType) || 'bin'}`, { type: mediaType })
 
-        formData.append('files', file)
+            formData.append('files', file)
+        }
 
         const response = await fetch(`${process.env.CONNECT_URL!}/api/file`, {
             body: formData,

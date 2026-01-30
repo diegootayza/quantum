@@ -1,0 +1,13 @@
+<template>
+    <FormDashboard
+        name="dashboard-chat"
+        :schema="chatSchema"
+        title="Chat"
+        url="/api/chat"
+    >
+        <FieldText
+            label="Nombre"
+            name="name"
+        />
+    </FormDashboard>
+</template>

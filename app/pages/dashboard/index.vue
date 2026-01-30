@@ -12,6 +12,8 @@
     const { users } = storeToRefs(store)
     const socket = useSocket()
 
+    const totalUsers = ref(0)
+
     const statsCards = computed(() => {
         const devices = Object.values(users.value).reduce((acc, deviceList) => acc + deviceList.length, 0)
 
@@ -19,7 +21,7 @@
             {
                 subtitle: `${devices} ${devices === 1 ? 'dispositivo' : 'dispositivos'}`,
                 title: 'Usuarios Conectados',
-                value: Object.keys(users.value).length,
+                value: totalUsers,
             },
             {
                 subtitle: `${stats.value?.stats.activeUsers || 0} activos`,
@@ -41,11 +43,11 @@
 
     onMounted(() => {
         socket?.emit('admin:stats', (v: any) => {
-            console.log('admin:stats', v)
+            totalUsers.value = v.total || 0
         })
 
         socket?.on('admin:stats.update', (v: any) => {
-            console.log('admin:stats.update', v)
+            totalUsers.value = v.total || 0
         })
     })
 </script>

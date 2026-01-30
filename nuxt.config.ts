@@ -17,17 +17,20 @@ export default defineNuxtConfig({
             shikiEngine: 'javascript',
         },
     },
-    modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
+    modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@vee-validate/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
     nitro: {
         preset: process.env.NODE_ENV === 'production' ? 'bun' : 'node-server',
     },
     runtimeConfig: {
         public: {
-            commit: process.env.CAPROVER_GIT_COMMIT_SHA || 'dev',
+            appVersion: process.env.CAPROVER_GIT_COMMIT_SHA || 'dev',
             connectUrl: process.env.CONNECT_URL || 'http://localhost:4000',
         },
     },
     sourcemap: { client: false, server: false },
+    typescript: {
+        typeCheck: true,
+    },
     vite: {
         build: {
             chunkSizeWarningLimit: 1024,

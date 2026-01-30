@@ -7,7 +7,9 @@ vue
         title: 'Agentes - Panel de control - Quantum',
     })
 
-    const { data, refresh } = await useFetch('/api/chat-agent', { key: 'dashboard-chat-agent' })
+    const key = 'dashboard-chat-agent'
+
+    const { data } = await useFetch('/api/chat-agent', { key })
 
     const columns: CommonTableColumn[] = [
         { key: 'name', label: 'Nombre' },
@@ -19,14 +21,14 @@ vue
 </script>
 
 <template>
-    <UDashboardPanel id="chat-agent">
+    <UDashboardPanel :id="key">
         <template #header>
             <UDashboardNavbar title="Agentes">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
                 <template #right>
-                    <ModalChatAgent @refresh="refresh" />
+                    <ModalChatAgent />
                 </template>
             </UDashboardNavbar>
         </template>
@@ -40,13 +42,13 @@ vue
                         :id="row.id"
                         :active="row.active"
                         endpoint="/api/chat-agent"
-                        name="dashboard-chat-agent"
+                        :name="key"
                     />
                 </template>
                 <template #actions="{ row }">
                     <TableAction
                         :id="row.id"
-                        name="dashboard-chat-agent"
+                        :name="key"
                     />
                 </template>
             </CommonTable>

@@ -62,7 +62,7 @@
         loading.value = true
 
         const success = await safeExecute(async () => {
-            await $fetch('/api/user/password', {
+            await $fetch('/api/auth/password', {
                 body: {
                     currentPassword: event.data.current,
                     newPassword: event.data.new,

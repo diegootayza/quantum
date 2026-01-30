@@ -1,6 +1,5 @@
 <script setup lang="ts">
     import type { UIMessage } from 'ai'
-    import type { DefineComponent } from 'vue'
 
     import { Chat } from '@ai-sdk/vue'
     import { DefaultChatTransport } from 'ai'
@@ -18,12 +17,6 @@
         })
     }
 
-    const ConversationProse = resolveComponent('ConversationProse')
-
-    const components = {
-        pre: ConversationProse as unknown as DefineComponent,
-    }
-
     const chat = new Chat({
         id: data.value.id,
         messages: data.value.messages as UIMessage[],
@@ -35,10 +28,24 @@
         }),
     })
 
+    const { markClean, markDirty } = useLeavePrevent({
+        async onConfirm() {
+            await chat.stop()
+        },
+    })
+
     function onSubmit(parts: UIMessage['parts'], clean: () => void) {
         chat.sendMessage({ parts })
         clean()
     }
+
+    watch(
+        () => chat.status,
+        (v) => {
+            if (['streaming', 'submitted'].includes(v)) markDirty()
+            else markClean()
+        },
+    )
 
     onMounted(() => {
         if (route.query.new === 'true' && data.value?.messages.length === 1) {
@@ -70,7 +77,6 @@
                                     v-if="part.type === 'text'"
                                     :cacheKey="`${message.id}-${index}`"
                                     class="*:first:mt-0 *:last:mb-0"
-                                    :components="components"
                                     :parserOptions="{ highlight: false }"
                                     :value="part.text"
                                 />

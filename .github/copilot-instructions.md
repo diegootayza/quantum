@@ -18,7 +18,7 @@
 - **State**: Pinia store examples in [app/stores](app/stores); persistence via `pinia-plugin-persistedstate` when needed.
 - **Styling**: Global CSS at [app/assets/css/main.css](app/assets/css/main.css); tailwindcss used through Vite plugin (no Tailwind config file—uses preset).
 - **Language**: All user-facing copy and validation errors are in Spanish; keep code/comments in English unless string shown to users.
-- **Env vars**: Required: `DATABASE_URL`, `AI_GATEWAY_API_KEY`, `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_URL`, `NUXT_SESSION_PASSWORD`, `CONNECT_URL` (fallback to localhost:4000). Nitro preset switches to bun when `NODE_ENV=production`.
+  switches to bun when `NODE_ENV=production`.
 - **API pattern to follow**: `requireUserSession(event)` for auth, validate input with Zod helpers, wrap Prisma mutations in `processError`, persist messages to `conversationMessage` before streaming, and return `createUIMessageStreamResponse` for chat endpoints.
 - **Conventions (ESLint)**: Alphabetical imports/props/object keys (perfectionist), camelCase Vue attributes, object shorthand required, self-closing Vue tags, prefix unused vars with `_`.
 - **Internationalization**: Validation and error responses must stay Spanish; do not mix languages in UI strings.

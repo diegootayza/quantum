@@ -12,7 +12,7 @@ export type SettingSchema = z.output<typeof settingSchema>
 export type UserSchema = z.output<typeof userSchema>
 
 export const modelSchema = z.object({
-    active: z.boolean().optional().default(true),
+    active: z.boolean().optional(),
     name: z.string().min(1, 'El nombre debe tener al menos 1 carácter'),
     roles: z.array(z.string().min(1, 'El rol debe tener al menos 1 carácter')),
     value: z.string().min(1, 'El valor debe tener al menos 1 carácter'),
@@ -25,7 +25,7 @@ export const chatSchema = z.object({
 })
 
 export const chatAgentSchema = z.object({
-    active: z.boolean().optional().default(true),
+    active: z.boolean().optional(),
     description: z.string().min(5, 'La descripción debe tener al menos 5 caracteres'),
     instruction: z.string().min(1, 'La instrucción es requerida'),
     model: z.string().min(1, 'El modelo es requerido'),
@@ -39,7 +39,7 @@ export const chatMessageSchema = z.object({
 })
 
 export const categorySchema = z.object({
-    active: z.boolean().optional().default(true),
+    active: z.boolean().optional(),
     name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
 })
 
@@ -50,14 +50,13 @@ export const conversationSchema = z.object({
 })
 
 export const instructionSchema = z.object({
-    active: z.boolean().optional().default(true),
+    active: z.boolean().optional(),
     content: z.string().min(1, 'El contenido es requerido'),
     description: z.string().min(5, 'La descripción debe tener al menos 5 caracteres'),
     name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
 })
 
 export const settingSchema = z.object({
-    name: z.string().min(1, 'El nombre debe tener al menos 1 carácter'),
     namespace: z.string().min(1, 'El namespace debe tener al menos 1 carácter'),
     value: z.any(),
 })

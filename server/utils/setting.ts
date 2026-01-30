@@ -1,8 +1,8 @@
-export async function getSettingValue<T = unknown>(name: string, namespace: string) {
-    const doc = await prisma.setting.findUnique({
+export async function getSettingValue<T = unknown>(namespace: string) {
+    const doc = await prisma.setting.findUniqueOrThrow({
         select: { value: true },
-        where: { namespace_name: { name, namespace } },
+        where: { namespace },
     })
 
-    return doc?.value as T | undefined
+    return doc.value as T
 }

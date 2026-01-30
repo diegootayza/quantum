@@ -3,14 +3,25 @@
 
     import { es } from '@nuxt/ui/locale'
 
-    const props = defineProps<{ error: NuxtError }>()
+    interface Props {
+        error: NuxtError
+    }
+
+    const props = withDefaults(defineProps<Props>(), {})
+
+    const { loggedIn } = useUserSession()
+
+    const redirect = computed(() => {
+        if (loggedIn.value) return '/profile'
+        return '/'
+    })
 </script>
 
 <template>
     <UApp :locale="es">
-        <div class="h-screen items-center justify-center flex flex-col gap-4">
-            <h1>{{ props.error.statusMessage }}</h1>
-            <NuxtLink to="/">Go back home</NuxtLink>
-        </div>
+        <UError
+            :error="props.error"
+            :redirect="redirect"
+        />
     </UApp>
 </template>

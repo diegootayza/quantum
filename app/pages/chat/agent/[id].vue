@@ -17,12 +17,19 @@
 
     const status = ref<ChatStatus>('ready')
 
+    const { markClean, markDirty } = useLeavePrevent()
+
     async function onSubmit(parts: UIMessage['parts'], clean: () => void) {
         status.value = 'submitted'
         clean()
         const response = await $fetch('/api/ai', { body: { agentId: route.params.id, parts }, method: 'POST' })
         router.push({ name: 'ai-chat-id', params: { id: response.id }, query: { new: 'true' } })
     }
+
+    watch(status, (v) => {
+        if (['streaming', 'submitted'].includes(v)) markDirty()
+        else markClean()
+    })
 </script>
 
 <template>

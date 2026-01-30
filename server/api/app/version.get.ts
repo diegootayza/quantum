@@ -1,5 +1,5 @@
 export default defineEventHandler(() => {
-    const commit = useRuntimeConfig().public.commit
+    const commit = useRuntimeConfig().public.appVersion
 
     return {
         commit,

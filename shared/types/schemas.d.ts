@@ -8,6 +8,12 @@ declare global {
         url: string
         userId: string
     }
+
+    interface ISettingAi {
+        modelImage: string
+        modelText: string
+        prompt: string
+    }
 }
 
 export {}

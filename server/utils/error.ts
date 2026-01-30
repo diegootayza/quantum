@@ -1,5 +1,39 @@
 import { Prisma } from '@prisma/client'
 
+export class Result<T, E> {
+    public isSuccess: boolean
+    private error?: E
+    private value?: T
+
+    private constructor(isSuccess: boolean, error?: E, value?: T) {
+        this.isSuccess = isSuccess
+        this.value = value
+        this.error = error
+    }
+
+    public static fail<F, T>(error: F): Result<T, F> {
+        return new Result<T, F>(false, error)
+    }
+
+    public static ok<T, F>(value?: T): Result<T, F> {
+        return new Result<T, F>(true, undefined, value)
+    }
+
+    public getError() {
+        if (this.isSuccess) {
+            throw new Error('Operación exitosa. No hay error que retornar.')
+        }
+        return this.error
+    }
+
+    public getValue() {
+        if (!this.isSuccess) {
+            throw new Error('Operación fallida. No hay valor que retornar.')
+        }
+        return this.value
+    }
+}
+
 export async function processError<T>(fn: () => Promise<T> | T) {
     try {
         return await fn()

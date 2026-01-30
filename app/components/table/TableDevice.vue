@@ -9,13 +9,16 @@
 
     const devices = ref(0)
 
-    onMounted(() => {
-        socket?.emit('admin:user.devices', props.id)
-
-        socket?.on(`admin:user.devices.${props.id}`, (data: number) => {
-            devices.value = data
-        })
-    })
+    watch(
+        () => props.id,
+        (id) => {
+            socket?.emit('admin:user.devices', id)
+            socket?.on(`admin:user.devices.${id}`, (data: number) => {
+                devices.value = data
+            })
+        },
+        { immediate: true },
+    )
 </script>
 
 <template>

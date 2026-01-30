@@ -7,7 +7,7 @@
     })
 
     const { user } = useUserSession()
-    const { data: stats, pending } = await useFetch('/api/user/stats')
+    const { data: stats, pending } = await useFetch('/api/profile/stats')
 
     const statisticsCards = computed(() => [
         {
@@ -54,7 +54,7 @@
             icon: 'i-lucide-plus-circle',
             show: user.value?.active,
             title: 'Nueva Conversación',
-            to: '/conversation',
+            to: '/chat',
         },
         {
             description: 'Cambiar contraseña',

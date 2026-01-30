@@ -3,12 +3,22 @@
 
     useSeoMeta({
         description: 'Gestiona los usuarios del sistema',
-        title: 'Usuarios - Admin',
+        title: 'Usuarios - Panel de control - Quantum',
     })
 
     const socket = useSocket()
 
-    const { data, refresh } = await useFetch('/api/dashboard/user', { key: 'dashboard-user' })
+    const route = useRoute()
+
+    const key = 'dashboard-user'
+
+    const query = computed(() => {
+        return {
+            page: route.query.page ?? 1,
+        }
+    })
+
+    const { data, refresh } = await useFetch('/api/user', { key, query })
 
     const columns: CommonTableColumn[] = [
         { class: 'w-px', key: 'devices', label: 'Dispositivos' },
@@ -31,7 +41,7 @@
 </script>
 
 <template>
-    <UDashboardPanel id="user">
+    <UDashboardPanel :id="key">
         <template #header>
             <UDashboardNavbar title="Usuarios">
                 <template #leading>
@@ -45,7 +55,8 @@
         <template #body>
             <CommonTable
                 :columns="columns"
-                :data="data"
+                :data="data?.docs"
+                :meta="data?.meta"
             >
                 <template #devices="{ row }">
                     <TableDevice :id="row.id" />
@@ -57,8 +68,8 @@
                     <TableActive
                         :id="row.id"
                         :active="row.active"
-                        endpoint="/api/dashboard/user"
-                        name="dashboard-user"
+                        endpoint="/api/user"
+                        :name="key"
                         @update="onUpdate"
                     />
                 </template>
@@ -73,7 +84,7 @@
                 <template #actions="{ row }">
                     <TableAction
                         :id="row.id"
-                        name="dashboard-user"
+                        :name="key"
                     />
                 </template>
             </CommonTable>

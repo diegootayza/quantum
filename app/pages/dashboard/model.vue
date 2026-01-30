@@ -7,7 +7,9 @@ vue
         title: 'Modelos - Panel de control - Quantum',
     })
 
-    const { data, refresh } = await useFetch('/api/model', { key: 'dashboard-model' })
+    const key = 'dashboard-model'
+
+    const { data } = await useFetch('/api/model', { key })
 
     const columns: CommonTableColumn[] = [
         { key: 'name', label: 'Nombre' },
@@ -19,14 +21,14 @@ vue
 </script>
 
 <template>
-    <UDashboardPanel id="model">
+    <UDashboardPanel :id="key">
         <template #header>
             <UDashboardNavbar title="Modelos">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
                 <template #right>
-                    <ModalModel @refresh="refresh" />
+                    <ModalModel />
                 </template>
             </UDashboardNavbar>
         </template>
@@ -43,13 +45,13 @@ vue
                         :id="row.id"
                         :active="row.active"
                         endpoint="/api/model"
-                        name="dashboard-model"
+                        :name="key"
                     />
                 </template>
                 <template #actions="{ row }">
                     <TableAction
                         :id="row.id"
-                        name="dashboard-model"
+                        :name="key"
                     />
                 </template>
             </CommonTable>

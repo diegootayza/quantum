@@ -1,5 +1,5 @@
 export default defineNuxtPlugin(() => {
-    const commit = useRuntimeConfig().public.commit
+    const commit = useRuntimeConfig().public.appVersion
 
     const toast = useToast()
 

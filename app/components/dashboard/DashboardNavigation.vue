@@ -18,12 +18,12 @@
     const confirmModal = useConfirmModal()
     const inputModal = useInputModal()
 
-    const { data: navigation, refresh } = useFetch('/api/user/navigation', {
+    const { data: navigation, refresh } = useFetch('/api/dashboard/navigation', {
         key: 'dashboard-navigation',
     })
 
     const items = computed<NavigationMenuItem[][]>(() => {
-        const { agents, chats, conversations, instructions } = navigation.value ?? { agents: [], chats: [], conversations: [], instructions: [] }
+        const { agents, chats } = navigation.value ?? { agents: [], chats: [] }
 
         const items: NavigationMenuItem[][] = []
 
@@ -55,23 +55,6 @@
                     },
                     to: { name: 'dashboard' },
                 },
-
-                {
-                    icon: 'lucide:bot',
-                    label: 'Instrucciones',
-                    onSelect: () => {
-                        open.value = false
-                    },
-                    to: { name: 'dashboard-instruction' },
-                },
-                {
-                    icon: 'lucide:messages-square',
-                    label: 'Conversaciones',
-                    onSelect: () => {
-                        open.value = false
-                    },
-                    to: { name: 'dashboard-conversation' },
-                },
                 {
                     icon: 'lucide:users',
                     label: 'Usuarios',
@@ -90,7 +73,7 @@
                 },
                 {
                     icon: 'lucide:messages-square',
-                    label: 'Conversaciones',
+                    label: 'Chats',
                     onSelect: () => {
                         open.value = false
                     },
@@ -111,6 +94,14 @@
                         open.value = false
                     },
                     to: { name: 'dashboard-model' },
+                },
+                {
+                    icon: 'lucide:cog',
+                    label: 'Configuración',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: 'dashboard-setting' },
                 },
             ])
         }
@@ -171,16 +162,16 @@
                             if (!newName.trim()) return
 
                             await safeExecute(async () => {
-                                await $fetch(`/api/conversation/${item.to.params.id}`, {
+                                await $fetch(`/api/chat/${item.to.params.id}`, {
                                     body: { name: newName },
                                     method: 'PATCH',
                                 })
                                 await refresh()
-                                toast.add({ color: 'success', title: 'Conversación renombrada' })
+                                toast.add({ color: 'success', title: 'Chat renombrado' })
                             })
                         },
-                        placeholder: 'Nombre de la conversación',
-                        title: 'Renombrar conversación',
+                        placeholder: 'Nombre del chat',
+                        title: 'Renombrar chat',
                     })
                 },
             },
@@ -191,16 +182,16 @@
                 async onSelect() {
                     confirmModal.open({
                         confirmButtonLabel: 'Eliminar',
-                        description: '¿Estás seguro de que deseas eliminar esta conversación? Esta acción no se puede deshacer.',
+                        description: '¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.',
                         onConfirm: async () => {
                             await safeExecute(async () => {
-                                await $fetch(`/api/conversation/${item.to.params.id}`, { method: 'DELETE' })
-                                router.push({ name: 'conversation' })
-                                toast.add({ color: 'success', title: 'Conversación eliminada' })
+                                await $fetch(`/api/chat/${item.to.params.id}`, { method: 'DELETE' })
+                                router.push({ name: 'chat' })
+                                toast.add({ color: 'success', title: 'Chat eliminado' })
                                 await refresh()
                             })
                         },
-                        title: 'Eliminar conversación',
+                        title: 'Eliminar chat',
                     })
                 },
             },

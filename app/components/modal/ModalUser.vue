@@ -1,58 +1,25 @@
-<script setup lang="ts">
-    interface Emit {
-        (e: 'refresh'): void
-    }
-
-    const emit = defineEmits<Emit>()
-</script>
-
 <template>
-    <DashboardForm
-        ref="DashboardForm"
+    <FormDashboard
         name="dashboard-user"
         :schema="userSchema"
         title="Usuario"
-        url="/api/dashboard/user"
-        @refresh="emit('refresh')"
+        url="/api/user"
     >
-        <template #default="{ state }">
-            <UFormField
-                label="Nombre"
-                name="name"
-            >
-                <UInput
-                    v-model="state.name"
-                    class="w-full"
-                />
-            </UFormField>
-            <UFormField
-                label="Apellido"
-                name="surname"
-            >
-                <UInput
-                    v-model="state.surname"
-                    class="w-full"
-                />
-            </UFormField>
-            <UFormField
-                label="Correo electrónico"
-                name="email"
-            >
-                <UInput
-                    v-model="state.email"
-                    class="w-full"
-                />
-            </UFormField>
-            <UFormField
-                label="Rol"
-                name="role"
-            >
-                <USelectMenu
-                    v-model="state.role"
-                    class="w-full"
-                    :items="['ADMIN', 'USER']"
-                />
-            </UFormField>
-        </template>
-    </DashboardForm>
+        <FieldText
+            label="Nombre"
+            name="name"
+        />
+        <FieldText
+            label="Apellido"
+            name="surname"
+        />
+        <FieldText
+            label="Correo electrónico"
+            name="email"
+        />
+        <FieldRole
+            label="Rol"
+            name="role"
+        />
+    </FormDashboard>
 </template>
