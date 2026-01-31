@@ -89,8 +89,9 @@
                     v-for="file in files"
                     :key="file.id"
                     class="aspect-square w-full bg-default ring ring-accented rounded-md"
-                    :file="file"
-                    @delete="removeFile"
+                    showDelete
+                    :src="file.url"
+                    @delete="removeFile(file)"
                 />
             </div>
         </template>

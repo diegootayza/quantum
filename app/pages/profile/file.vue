@@ -6,16 +6,7 @@
         title: 'Mis Archivos',
     })
 
-    const { data: files, refresh } = await useFetch<IFileSchema[]>('/api/file', { default: () => [] })
-
-    const { fetcher } = useConnect()
-
-    async function removeFile(currentFile: IFileSchema) {
-        // await fetcher(`api/file/${currentFile.id}`, {
-        //     method: 'DELETE',
-        // })
-        // await refresh()
-    }
+    const { data: files } = await useFetch<IFileSchema[]>('/api/file', { default: () => [] })
 </script>
 
 <template>
@@ -37,8 +28,7 @@
                     v-for="file in files"
                     :key="file.id"
                     class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg"
-                    :file="file"
-                    @delete="removeFile"
+                    :src="file.url"
                 />
             </div>
             <UEmpty

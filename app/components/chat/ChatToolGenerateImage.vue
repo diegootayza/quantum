@@ -54,7 +54,7 @@
             v-else-if="props.part.state === 'output-available' && output"
             class="w-full grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4"
         >
-            <AppImage
+            <CommonImage
                 v-for="v in output"
                 :key="v"
                 class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg"

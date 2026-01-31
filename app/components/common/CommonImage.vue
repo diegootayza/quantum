@@ -1,25 +1,23 @@
 <script setup lang="ts">
     import { useImage } from '@vueuse/core'
-
     interface Emit {
-        (e: 'delete', data: IFileSchema): void
+        (e: 'delete'): void
     }
 
     interface Props {
-        file: IFileSchema
+        showDelete?: boolean
+        src: string
     }
 
-    const props = withDefaults(defineProps<Props>(), {})
+    const props = withDefaults(defineProps<Props>(), {
+        showDelete: false,
+    })
 
     const emit = defineEmits<Emit>()
 
-    const { isLoading, isReady } = useImage({ src: props.file.url })
+    const { isLoading, isReady } = useImage({ src: props.src })
 
     const open = ref(false)
-
-    function deleteImage(currentFile: IFileSchema) {
-        emit('delete', currentFile)
-    }
 
     function openModal() {
         open.value = true
@@ -37,7 +35,7 @@
             <img
                 alt="Image"
                 class="block object-contain size-full"
-                :src="props.file.url"
+                :src="props.src"
             />
             <div class="absolute inset-0 flex items-center justify-center gap-2 bg-default/80 opacity-0 hover:opacity-100 transition-opacity">
                 <UButton
@@ -46,10 +44,11 @@
                     @click="openModal"
                 />
                 <UButton
+                    v-if="props.showDelete"
                     color="error"
                     icon="lucide:trash"
                     variant="soft"
-                    @click="deleteImage(props.file)"
+                    @click="emit('delete')"
                 />
             </div>
             <UModal
@@ -61,7 +60,7 @@
                     <img
                         alt="Image"
                         class="block object-contain size-full"
-                        :src="props.file.url"
+                        :src="props.src"
                     />
                 </template>
             </UModal>
