@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
 
         return await prisma.user.paginate({
             limit: 20,
+
             page: page ? parseInt(page) : 1,
         })
     })

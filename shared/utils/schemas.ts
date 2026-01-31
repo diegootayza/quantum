@@ -9,6 +9,7 @@ export type InstructionSchema = z.output<typeof instructionSchema>
 export type ModelSchema = z.output<typeof modelSchema>
 export type PromptSchema = z.output<typeof promptSchema>
 export type SettingSchema = z.output<typeof settingSchema>
+export type UsageSchema = z.output<typeof usageSchema>
 export type UserSchema = z.output<typeof userSchema>
 
 export const modelSchema = z.object({
@@ -65,6 +66,14 @@ export const promptSchema = z.object({
     description: z.string().min(1, 'La descripción debe tener al menos 1 carácter'),
     key: z.string().min(1, 'El key debe tener al menos 1 carácter'),
     value: z.string().min(1, 'El valor debe tener al menos 1 carácter'),
+})
+
+export const usageSchema = z.object({
+    inputTokens: z.number().min(0, 'Los tokens de entrada deben ser mayores o iguales a 0'),
+    model: z.string().min(1, 'El modelo es requerido'),
+    outputTokens: z.number().min(0, 'Los tokens de salida deben ser mayores o iguales a 0'),
+    totalTokens: z.number().min(0, 'Los tokens totales deben ser mayores o iguales a 0'),
+    userId: z.string().min(1, 'El ID de usuario es requerido'),
 })
 
 export const userSchema = z.object({

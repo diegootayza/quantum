@@ -136,3 +136,13 @@ model Setting {
   namespace String @unique
   value     Json
 }
+
+model Usage {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  inputTokens  Int
+  model        String
+  outputTokens Int
+  totalTokens  Int
+  userId       String   @db.ObjectId
+  createdAt    DateTime @default(now())
+}

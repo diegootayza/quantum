@@ -94,6 +94,12 @@
                     </UPageGrid>
                 </ClientOnly>
             </div>
+            <ChartDonut
+                :data="[
+                    { label: 'Example', value: 10 },
+                    { label: 'Another', value: 20 },
+                ]"
+            />
         </template>
     </UDashboardPanel>
 </template>

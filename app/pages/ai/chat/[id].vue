@@ -20,6 +20,9 @@
     const chat = new Chat({
         id: data.value.id,
         messages: data.value.messages as UIMessage[],
+        onData(dataPart) {
+            console.log(dataPart)
+        },
         transport: new DefaultChatTransport({
             api: `/api/ai/${data.value.id}`,
             body: () => ({
@@ -73,8 +76,12 @@
                                 v-for="(part, index) in message.parts"
                                 :key="`${message.id}-${part.type}-${index}${'state' in part ? `-${part.state}` : ''}`"
                             >
+                                <ChatSkeletonText
+                                    v-if="part.type === 'reasoning' && part.state === 'streaming'"
+                                    text="Razonando..."
+                                />
                                 <MDCCached
-                                    v-if="part.type === 'text'"
+                                    v-else-if="part.type === 'text'"
                                     :cacheKey="`${message.id}-${index}`"
                                     class="*:first:mt-0 *:last:mb-0"
                                     :parserOptions="{ highlight: false }"
@@ -85,10 +92,9 @@
                                     :alt="part.mediaType"
                                     :url="part.url"
                                 />
-                                <ConversationImage
-                                    v-else-if="part.type === 'tool-generate-image'"
-                                    :output="part.output"
-                                    :state="part.state"
+                                <ChatToolGenerateImage
+                                    v-else-if="part.type === AI_TOOL.GENERATE_IMAGE"
+                                    :part="part"
                                 />
                             </template>
                         </div>

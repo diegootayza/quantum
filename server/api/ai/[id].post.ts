@@ -1,6 +1,7 @@
+import type { Prisma } from '@prisma/client'
 import type { UIMessage } from 'ai'
 
-import { convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, streamText } from 'ai'
+import { convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, smoothStream, streamText } from 'ai'
 import { z } from 'zod'
 
 const params = z.object({
@@ -41,8 +42,23 @@ export default defineEventHandler(async (event) => {
         const stream = createUIMessageStream({
             execute: async ({ writer }) => {
                 const result = streamText({
+                    experimental_telemetry: {
+                        isEnabled: true,
+                    },
+                    experimental_transform: smoothStream(),
                     messages: await convertToModelMessages(messages),
                     model,
+                    async onFinish({ usage }) {
+                        await prisma.usage.create({
+                            data: {
+                                inputTokens: usage.inputTokens || 0,
+                                model,
+                                outputTokens: usage.outputTokens || 0,
+                                totalTokens: usage.totalTokens || 0,
+                                userId: user.id,
+                            },
+                        })
+                    },
                     system,
                     toolChoice: 'auto',
                     tools: {
@@ -50,23 +66,25 @@ export default defineEventHandler(async (event) => {
                     },
                 })
 
-                writer.merge(
-                    result.toUIMessageStream({
-                        sendReasoning: false,
-                    }),
-                )
+                writer.merge(result.toUIMessageStream())
             },
             onFinish: async ({ messages }) => {
+                const data: Prisma.ChatMessageCreateManyInput[] = []
+
                 for (const message of messages) {
                     const parts: UIMessage['parts'] = []
 
                     for (const part of message.parts) {
-                        if (part.type === 'text') parts.push(part)
-                        else if (part.type === 'tool-generate-image') parts.push(part)
+                        transformResponseText(part, parts)
+                        transformResponseTool(part, parts)
                     }
 
-                    await prisma.chatMessage.create({ data: { chatId: id, parts: parts as any, role: 'assistant' } })
+                    if (parts.length === 0) continue
+
+                    data.push({ chatId: id, parts: parts as any, role: message.role })
                 }
+
+                if (data.length > 0) await prisma.chatMessage.createMany({ data })
             },
         })
 

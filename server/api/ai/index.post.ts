@@ -13,10 +13,10 @@ export default defineEventHandler(async (event) => {
         const conversationTitle = await getPromptByKey('conversation-title')
 
         const { text: name } = await generateText({
-            model: gateway('openai/gpt-5-mini'),
+            model: gateway('openai/gpt-4.1-nano'),
             prompt: JSON.stringify(parts),
             system: conversationTitle,
-            temperature: 0.7,
+            temperature: 0.2,
         })
 
         const chat = await prisma.chat.create({ data: { agentId, name, userId: secure!.id } })
