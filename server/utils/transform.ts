@@ -12,6 +12,10 @@ import type { UIDataTypes, UIMessage, UIMessagePart, UITools } from 'ai'
 // preliminary: undefined,
 // callProviderMetadata: [Object]
 
+export function transformResponseFiles(part: UIMessagePart<UIDataTypes, UITools>, parts: UIMessage['parts']) {
+    if (part.type === 'file') parts.push(part)
+}
+
 export function transformResponseText(part: UIMessagePart<UIDataTypes, UITools>, parts: UIMessage['parts']) {
     if (part.type === 'text') parts.push(part)
 }

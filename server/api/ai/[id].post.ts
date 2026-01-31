@@ -77,6 +77,7 @@ export default defineEventHandler(async (event) => {
                     for (const part of message.parts) {
                         transformResponseText(part, parts)
                         transformResponseTool(part, parts)
+                        transformResponseFiles(part, parts)
                     }
 
                     if (parts.length === 0) continue
