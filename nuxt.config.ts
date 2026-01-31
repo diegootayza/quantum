@@ -19,6 +19,9 @@ export default defineNuxtConfig({
     },
     modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@vee-validate/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
     nitro: {
+        externals: {
+            inline: ['@unovis', '@emotion'],
+        },
         preset: process.env.NODE_ENV === 'production' ? 'bun' : 'node-server',
     },
     runtimeConfig: {
