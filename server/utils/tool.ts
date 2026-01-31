@@ -16,6 +16,10 @@ export async function generateImageTool({ userId, writer }: { userId: string; wr
                         model: openai.image('gpt-image-1-mini'),
                         n,
                         prompt,
+                        providerOptions: {
+                            openai: { quality: 'medium' },
+                        },
+                        size: '1024x1024',
                     })
 
                     await prisma.usage.create({
