@@ -85,14 +85,16 @@
                 v-if="files.length"
                 class="w-full grid grid-cols-[repeat(auto-fill,minmax(80px,1fr))] gap-4 px-4"
             >
-                <CommonImage
-                    v-for="file in files"
-                    :key="file.id"
-                    class="aspect-square w-full bg-default ring ring-accented rounded-md"
-                    showDelete
-                    :src="file.url"
-                    @delete="removeFile(file)"
-                />
+                <ClientOnly>
+                    <CommonImage
+                        v-for="file in files"
+                        :key="file.id"
+                        class="aspect-square w-full bg-default ring ring-accented rounded-md"
+                        showDelete
+                        :src="file.url"
+                        @delete="removeFile(file)"
+                    />
+                </ClientOnly>
             </div>
         </template>
 

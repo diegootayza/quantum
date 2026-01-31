@@ -24,12 +24,14 @@
                 v-if="files?.length"
                 class="w-full grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4"
             >
-                <CommonImage
-                    v-for="file in files"
-                    :key="file.id"
-                    class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg"
-                    :src="file.url"
-                />
+                <ClientOnly>
+                    <CommonImage
+                        v-for="file in files"
+                        :key="file.id"
+                        class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg"
+                        :src="file.url"
+                    />
+                </ClientOnly>
             </div>
             <UEmpty
                 v-else

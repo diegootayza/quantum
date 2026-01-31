@@ -54,12 +54,14 @@
             v-else-if="props.part.state === 'output-available' && output"
             class="w-full grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4"
         >
-            <CommonImage
-                v-for="v in output"
-                :key="v"
-                class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg"
-                :src="v"
-            />
+            <ClientOnly>
+                <CommonImage
+                    v-for="v in output"
+                    :key="v"
+                    class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg"
+                    :src="v"
+                />
+            </ClientOnly>
         </div>
         <ChatError
             v-else-if="props.part.state === 'output-error'"
