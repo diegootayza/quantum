@@ -62,7 +62,7 @@ export default defineEventHandler(async (event) => {
                     system,
                     toolChoice: 'auto',
                     tools: {
-                        'generate-image': await generateImageTool({ userId: user.id }),
+                        'generate-image': await generateImageTool({ userId: user.id, writer }),
                     },
                 })
 
