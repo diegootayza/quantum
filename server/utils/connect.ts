@@ -33,7 +33,9 @@ export const connectUpload = async ({ data, path, type, userId }: { data: { base
         })
 
         return (await response.json()) as IFileSchema[]
-    } catch {
+    } catch (error) {
+        console.log(error)
+
         return null
     }
 }
