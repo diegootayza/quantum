@@ -17,7 +17,7 @@ export default defineNuxtConfig({
             shikiEngine: 'javascript',
         },
     },
-    modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@vee-validate/nuxt', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/scripts'],
+    modules: ['@nuxt/eslint', 'nuxt-auth-utils', '@pinia/nuxt', '@vueuse/nuxt', '@vee-validate/nuxt', '@nuxt/ui', '@nuxtjs/mdc', 'nuxt-echarts', '@nuxt/scripts'],
     nitro: {
         externals: {
             inline: ['@unovis', '@emotion'],
