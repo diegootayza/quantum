@@ -23,10 +23,8 @@
 </script>
 
 <template>
-    <ClientOnly>
-        <VisSingleContainer :data="props.data">
-            <VisTooltip :triggers="triggers" />
-            <VisDonut :value="value" />
-        </VisSingleContainer>
-    </ClientOnly>
+    <VisSingleContainer :data="props.data">
+        <VisTooltip :triggers="triggers" />
+        <VisDonut :value="value" />
+    </VisSingleContainer>
 </template>

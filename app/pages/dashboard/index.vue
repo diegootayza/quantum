@@ -6,48 +6,40 @@
         title: 'Panel de Control',
     })
 
-    const { data: stats, pending } = await useFetch('/api/dashboard/stats')
+    const { data, pending } = await useFetch('/api/dashboard/home')
 
-    const store = useUsersStore()
-    const { users } = storeToRefs(store)
     const socket = useSocket()
 
-    const totalUsers = ref(0)
+    const totalOnlineUsers = ref(0)
 
     const statsCards = computed(() => {
-        const devices = Object.values(users.value).reduce((acc, deviceList) => acc + deviceList.length, 0)
-
         return [
             {
-                subtitle: `${devices} ${devices === 1 ? 'dispositivo' : 'dispositivos'}`,
+                title: 'Usuarios',
+                value: data.value?.totalUsers || 0,
+            },
+            {
                 title: 'Usuarios Conectados',
-                value: totalUsers,
+                value: totalOnlineUsers.value,
             },
             {
-                subtitle: `${stats.value?.stats.activeUsers || 0} activos`,
-                title: 'Total Usuarios',
-                value: stats.value?.stats.totalUsers || 0,
+                title: 'Chats',
+                value: data.value?.totalChats || 0,
             },
             {
-                subtitle: `${stats.value?.stats.conversationsLast30Days || 0} últimos 30 días`,
-                title: 'Conversaciones',
-                value: stats.value?.stats.totalConversations || 0,
-            },
-            {
-                subtitle: 'Total procesados',
                 title: 'Mensajes',
-                value: stats.value?.stats.totalMessages || 0,
+                value: data.value?.totalMessages || 0,
             },
         ]
     })
 
     onMounted(() => {
         socket?.emit('admin:stats', (v: any) => {
-            totalUsers.value = v.total || 0
+            totalOnlineUsers.value = v.total || 0
         })
 
         socket?.on('admin:stats.update', (v: any) => {
-            totalUsers.value = v.total || 0
+            totalOnlineUsers.value = v.total || 0
         })
     })
 </script>
@@ -88,18 +80,14 @@
                         >
                             <div class="flex flex-col gap-1">
                                 <span class="text-3xl font-semibold text-highlighted">{{ card.value }}</span>
-                                <span class="text-xs text-muted">{{ card.subtitle }}</span>
                             </div>
                         </UPageCard>
                     </UPageGrid>
                 </ClientOnly>
             </div>
-            <ChartDonut
-                :data="[
-                    { label: 'Example', value: 10 },
-                    { label: 'Another', value: 20 },
-                ]"
-            />
+            <ClientOnly>
+                <ChartDonut :data="data?.usageByModel || []" />
+            </ClientOnly>
         </template>
     </UDashboardPanel>
 </template>
