@@ -19,7 +19,6 @@ export async function generateImageTool({ userId, writer }: { userId: string; wr
                         providerOptions: {
                             openai: { quality: 'medium' },
                         },
-                        size: '1024x1024',
                     })
 
                     await prisma.usage.create({
