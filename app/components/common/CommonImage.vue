@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { useImage } from '@vueuse/core'
+
     interface Emit {
         (e: 'delete'): void
     }
