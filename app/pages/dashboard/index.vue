@@ -33,6 +33,26 @@
         ]
     })
 
+    function buildChartData(rows: Array<{ day: string; model: string; tokens: number }>) {
+        const labels = getLastDays(7)
+
+        const models = [...new Set(rows.map((r) => r.model))]
+
+        const map = new Map()
+
+        rows.forEach((r) => {
+            map.set(`${r.model}-${r.day}`, r.tokens)
+        })
+
+        const datasets = models.map((model) => ({
+            data: labels.map((day) => map.get(`${model}-${day}`) ?? 0),
+            label: model,
+            tension: 0.35,
+        }))
+
+        return { datasets, labels }
+    }
+
     onMounted(() => {
         socket?.emit('admin:stats', (v: any) => {
             totalOnlineUsers.value = v.total || 0
@@ -85,9 +105,13 @@
                     </UPageGrid>
                 </ClientOnly>
             </div>
-            <ClientOnly>
+            <UPageCard title="Uso de tokens por modelo (últimos 7 días)">
+                <ChartBar :dataChart="buildChartData(data?.usageByModel || [])" />
+            </UPageCard>
+
+            <!-- <ClientOnly>
                 <ChartDonut :data="data?.usageByModel || []" />
-            </ClientOnly>
+            </ClientOnly> -->
         </template>
     </UDashboardPanel>
 </template>

@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
         const { namespace, value } = await readValidatedBody(event, settingSchema.parse)
         return await prisma.setting.upsert({

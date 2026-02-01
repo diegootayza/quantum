@@ -3,7 +3,7 @@
 
     useSeoMeta({
         description: 'Panel de administración del sistema',
-        title: 'Configuración - Panel de control - Quantum',
+        title: 'Configuración - Panel de control',
     })
 </script>
 

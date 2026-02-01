@@ -6,14 +6,14 @@ const schema = z.object({
     parts: z.custom<UIMessage['parts']>(),
 })
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
         const { secure } = await requireUserSession(event)
         const { agentId, parts } = await readValidatedBody(event, schema.parse)
         const conversationTitle = await getPromptByKey('conversation-title')
 
         const { text: name } = await generateText({
-            model: gateway('openai/gpt-4.1-nano'),
+            model: gateway('deepseek/deepseek-v3.2'),
             prompt: JSON.stringify(parts),
             system: conversationTitle,
             temperature: 0.2,

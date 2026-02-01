@@ -10,6 +10,10 @@
 
     const { data } = await useFetch(`/api/chat/${route.params.id}`, { key: `ai-chat-${route.params.id}` })
 
+    useSeoMeta({
+        title: () => data.value?.name || 'Chat AI',
+    })
+
     if (!data.value) {
         throw createError({
             statusCode: 404,
@@ -61,6 +65,13 @@
 
 <template>
     <UDashboardPanel :id="`ai-chat-${route.params.id}`">
+        <template #header>
+            <UDashboardNavbar :title="data?.name || 'Chat AI'">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
+        </template>
         <template #body>
             <UContainer>
                 <UChatMessages
@@ -91,6 +102,10 @@
                                     v-else-if="part.type === 'file'"
                                     :alt="part.mediaType"
                                     :url="part.url"
+                                />
+                                <ChatToolFetchUrl
+                                    v-else-if="part.type === AI_TOOL.FETCH_URL"
+                                    :part="part"
                                 />
                                 <ChatToolGenerateImage
                                     v-else-if="part.type === AI_TOOL.GENERATE_IMAGE"

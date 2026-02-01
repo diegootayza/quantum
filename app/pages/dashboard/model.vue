@@ -1,10 +1,9 @@
-vue
 <script setup lang="ts">
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
     useSeoMeta({
-        description: 'Gestiona los usuarios del sistema',
-        title: 'Modelos - Panel de control - Quantum',
+        description: 'Gestiona los modelos de IA disponibles',
+        title: 'Modelos - Panel de control',
     })
 
     const key = 'dashboard-model'

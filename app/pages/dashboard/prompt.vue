@@ -2,8 +2,8 @@
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
     useSeoMeta({
-        description: 'Gestiona los usuarios del sistema',
-        title: 'Prompts - Panel de control - Quantum',
+        description: 'Gestiona los prompts del sistema',
+        title: 'Prompts - Panel de control',
     })
 
     const key = 'dashboard-prompt'

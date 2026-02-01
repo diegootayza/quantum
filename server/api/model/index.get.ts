@@ -1,10 +1,18 @@
 import { z } from 'zod'
 
-const query = z.object({})
+const query = z.object({
+    mode: z.string().optional(),
+})
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
-        const {} = await getValidatedQuery(event, query.parse)
-        return await prisma.model.findMany({ orderBy: { name: 'asc' } })
+        const { mode } = await getValidatedQuery(event, query.parse)
+
+        return await prisma.model.findMany({
+            orderBy: { name: 'asc' },
+            where: {
+                ...(mode === 'chat' ? { roles: { has: 'USER' } } : {}),
+            },
+        })
     })
 })

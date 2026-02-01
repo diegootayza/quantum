@@ -25,7 +25,7 @@
                     class="lg:hidden"
                     color="neutral"
                     icon="i-lucide-message-circle"
-                    :to="{ name: 'conversation' }"
+                    :to="{ name: 'chat' }"
                     variant="ghost"
                 />
 
@@ -33,7 +33,7 @@
                     class="hidden lg:inline-flex"
                     icon="i-lucide-message-circle"
                     label="Ir al chat"
-                    :to="{ name: 'conversation' }"
+                    :to="{ name: 'chat' }"
                 />
             </template>
 

@@ -4,20 +4,22 @@ const schema = z.object({
     id: z.string(),
 })
 
-export default defineEventHandler(async (event) => {
-    const result = await getValidatedRouterParams(event, schema.parse)
+export default defineEventHandler((event) => {
+    return processError(async () => {
+        const result = await getValidatedRouterParams(event, schema.parse)
 
-    const response = await prisma.user.findUnique({
-        select: {
-            active: true,
-            email: true,
-            id: true,
-            name: true,
-            role: true,
-            surname: true,
-        },
-        where: { id: result.id },
+        const response = await prisma.user.findUnique({
+            select: {
+                active: true,
+                email: true,
+                id: true,
+                name: true,
+                role: true,
+                surname: true,
+            },
+            where: { id: result.id },
+        })
+
+        return response
     })
-
-    return response
 })

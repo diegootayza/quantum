@@ -7,7 +7,7 @@ const schema = z.object({
     surname: z.string().min(1, 'El apellido es obligatorio'),
 })
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
         const data = await readValidatedBody(event, schema.parse)
 

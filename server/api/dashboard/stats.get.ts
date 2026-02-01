@@ -1,51 +1,53 @@
-export default defineEventHandler(async (event) => {
-    const { user } = await requireUserSession(event)
+export default defineEventHandler((event) => {
+    return processError(async () => {
+        const { user } = await requireUserSession(event)
 
-    if (user.role !== 'ADMIN') {
-        throw createError({ statusCode: 403, statusMessage: 'Acceso denegado.' })
-    }
+        if (user.role !== 'ADMIN') {
+            throw createError({ message: 'Acceso denegado.', statusCode: 403 })
+        }
 
-    // Total users
-    const totalUsers = await prisma.user.count()
-    const activeUsers = await prisma.user.count({ where: { active: true } })
+        // Total users
+        const totalUsers = await prisma.user.count()
+        const activeUsers = await prisma.user.count({ where: { active: true } })
 
-    // Conversations
-    const totalConversations = await prisma.conversation.count()
-    const conversationsLast30Days = await prisma.conversation.count({
-        where: {
-            createdAt: {
-                gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        // Conversations
+        const totalConversations = await prisma.conversation.count()
+        const conversationsLast30Days = await prisma.conversation.count({
+            where: {
+                createdAt: {
+                    gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                },
             },
-        },
-    })
+        })
 
-    // Messages
-    const totalMessages = await prisma.conversationMessage.count()
+        // Messages
+        const totalMessages = await prisma.conversationMessage.count()
 
-    // User growth by month (last 6 months)
-    const sixMonthsAgo = new Date()
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+        // User growth by month (last 6 months)
+        const sixMonthsAgo = new Date()
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
-    const usersByMonth = await prisma.user.groupBy({
-        _count: true,
-        by: ['createdAt'],
-        where: {
-            createdAt: {
-                gte: sixMonthsAgo,
+        const usersByMonth = await prisma.user.groupBy({
+            _count: true,
+            by: ['createdAt'],
+            where: {
+                createdAt: {
+                    gte: sixMonthsAgo,
+                },
             },
-        },
-    })
+        })
 
-    return {
-        charts: {
-            userGrowth: usersByMonth,
-        },
-        stats: {
-            activeUsers,
-            conversationsLast30Days,
-            totalConversations,
-            totalMessages,
-            totalUsers,
-        },
-    }
+        return {
+            charts: {
+                userGrowth: usersByMonth,
+            },
+            stats: {
+                activeUsers,
+                conversationsLast30Days,
+                totalConversations,
+                totalMessages,
+                totalUsers,
+            },
+        }
+    })
 })

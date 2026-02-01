@@ -34,11 +34,22 @@ export class Result<T, E> {
     }
 }
 
+export function mapError(error: unknown) {
+    if (error instanceof Error) {
+        return {}
+    }
+
+    return {}
+}
+
 export async function processError<T>(fn: () => Promise<T> | T) {
     try {
         return await fn()
     } catch (error) {
-        const input = { message: 'Error interno del servidor', statusCode: 500 }
+        const input = {
+            message: 'Error interno del servidor',
+            statusCode: 500,
+        }
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             switch (error.code) {

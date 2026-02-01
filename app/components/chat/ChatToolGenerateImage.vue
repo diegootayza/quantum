@@ -30,24 +30,30 @@
 </script>
 
 <template>
-    <div v-if="props.part.type === AI_TOOL.GENERATE_IMAGE">
+    <div
+        v-if="props.part.type === AI_TOOL.GENERATE_IMAGE"
+        class="w-full"
+    >
         <ChatSkeletonText
             v-if="props.part.state === 'input-streaming'"
-            text="Generando imagen(es)..."
+            text="Generando..."
         />
         <div
             v-else-if="props.part.state === 'input-available' && input"
-            class="w-full grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4"
+            class="w-full grid grid-cols-1 gap-4"
         >
-            <div
-                v-for="v in input.n"
-                :key="v"
-                class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg animate-pulse flex items-center justify-center"
-            >
-                <UIcon
-                    class="size-10 animate-spin"
-                    name="lucide:loader-circle"
-                />
+            <ChatSkeletonText :text="`Generando ${input.n} ${input.n === 1 ? 'imagen' : 'imágenes'}...`" />
+            <div class="w-full grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
+                <div
+                    v-for="v in input.n"
+                    :key="v"
+                    class="aspect-square w-full bg-elevated/75 ring ring-default backdrop-blur rounded-lg animate-pulse flex items-center justify-center"
+                >
+                    <UIcon
+                        class="size-10 animate-spin"
+                        name="lucide:loader-circle"
+                    />
+                </div>
             </div>
         </div>
         <div

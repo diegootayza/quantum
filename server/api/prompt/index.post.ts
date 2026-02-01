@@ -1,11 +1,13 @@
-export default defineEventHandler(async (event) => {
-    const result = await readValidatedBody(event, promptSchema.safeParse)
+export default defineEventHandler((event) => {
+    return processError(async () => {
+        const result = await readValidatedBody(event, promptSchema.safeParse)
 
-    if (!result.success) throw result.error.issues
+        if (!result.success) throw result.error.issues
 
-    const response = await prisma.prompt.create({
-        data: result.data,
+        const response = await prisma.prompt.create({
+            data: result.data,
+        })
+
+        return response
     })
-
-    return response
 })

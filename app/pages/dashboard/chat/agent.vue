@@ -1,10 +1,9 @@
-vue
 <script setup lang="ts">
     definePageMeta({ layout: 'dashboard', middleware: ['auth', 'admin'] })
 
     useSeoMeta({
         description: 'Gestiona los agentes del sistema',
-        title: 'Agentes - Panel de control - Quantum',
+        title: 'Agentes - Panel de control',
     })
 
     const key = 'dashboard-chat-agent'

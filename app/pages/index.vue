@@ -1,7 +1,7 @@
 <script setup lang="ts">
     useSeoMeta({
         description: 'Accede a los mejores modelos de IA en una sola plataforma. ChatGPT, Claude, Gemini y más, todo en un solo lugar.',
-        title: 'Quantum - Todos los modelos de IA en un solo lugar',
+        title: 'Todos los modelos de IA en un solo lugar',
     })
 
     const features = [

@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
         try {
             const { secure } = await requireUserSession(event)

@@ -10,7 +10,23 @@
             lang: 'es',
         },
         link: [{ href: '/favicon.svg', rel: 'icon', type: 'image/svg+xml' }],
-        meta: [{ charset: 'utf-8' }, { content: 'width=device-width, initial-scale=1', name: 'viewport' }, { content: color, key: 'theme-color', name: 'theme-color' }],
+        meta: [
+            {
+                charset: 'utf-8',
+            },
+            {
+                content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+                name: 'viewport',
+            },
+            {
+                content: color,
+                key: 'theme-color',
+                name: 'theme-color',
+            },
+        ],
+        titleTemplate(title) {
+            return title ? `${title} - Quantum` : 'Quantum'
+        },
     })
 
     const title = 'Quantum Clic'

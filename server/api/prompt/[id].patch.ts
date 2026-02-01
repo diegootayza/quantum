@@ -1,11 +1,13 @@
-export default defineEventHandler(async (event) => {
-    const id = getRouterParam(event, 'id')
+export default defineEventHandler((event) => {
+    return processError(async () => {
+        const id = getRouterParam(event, 'id')
 
-    const result = await readValidatedBody(event, promptSchema.partial().safeParse)
+        const result = await readValidatedBody(event, promptSchema.partial().safeParse)
 
-    if (!result.success) throw result.error.issues
+        if (!result.success) throw result.error.issues
 
-    const response = await prisma.prompt.update({ data: result.data, where: { id } })
+        const response = await prisma.prompt.update({ data: result.data, where: { id } })
 
-    return response
+        return response
+    })
 })

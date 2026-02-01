@@ -1,11 +1,11 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
         const session = await getUserSession(event)
 
         if (!session?.user?.id) {
             throw createError({
+                message: 'No hay sesión activa',
                 statusCode: 401,
-                statusMessage: 'No hay sesión activa',
             })
         }
 

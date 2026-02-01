@@ -145,4 +145,22 @@ model Usage {
   totalTokens  Int
   userId       String   @db.ObjectId
   createdAt    DateTime @default(now())
+
+  @@index([model, totalTokens, userId, createdAt])
+}
+
+model Error {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  cause     String?
+  code      String?
+  env       String?
+  message   String
+  name      String?
+  namespace String?
+  release   String?
+  stack     String?
+  userId    String?  @db.ObjectId
+  createdAt DateTime @default(now())
+
+  @@index([namespace])
 }

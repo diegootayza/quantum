@@ -6,14 +6,18 @@
     const route = useRoute()
     const router = useRouter()
 
-    const { data, error } = await useFetch(`/api/chat-agent/${route.params.id}`, { key: `chat-agent-${route.params.id}` })
+    const { data } = await useFetch(`/api/chat-agent/${route.params.id}`, { key: `chat-agent-${route.params.id}` })
 
-    if (error.value) {
+    if (!data.value) {
         throw createError({
-            statusCode: error.value.statusCode || 500,
-            statusMessage: error.value.statusMessage || 'Error fetching instruction data.',
+            statusCode: 404,
+            statusMessage: 'Agente de chat no encontrado',
         })
     }
+
+    useSeoMeta({
+        title: () => data.value?.name || 'Chat AI',
+    })
 
     const status = ref<ChatStatus>('ready')
 
@@ -35,18 +39,27 @@
 
 <template>
     <UDashboardPanel :id="`chat-agent-${route.params.id}`">
-        <div class="flex-1 flex flex-col gap-8 p-4 items-center justify-center">
-            <div class="flex flex-col items-center justify-center gap-4 w-full">
-                <h1 class="text-3xl sm:text-4xl text-center text-highlighted font-bold">{{ data?.name }}</h1>
-                <p class="text-center text-base text-muted-foreground">{{ data?.description }}</p>
+        <template #header>
+            <UDashboardNavbar :title="data?.name || 'Chat AI'">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
+        </template>
+        <template #body>
+            <div class="flex-1 flex flex-col gap-8 p-4 items-center justify-center">
+                <div class="flex flex-col items-center justify-center gap-4 w-full">
+                    <h1 class="text-3xl sm:text-4xl text-center text-highlighted font-bold">{{ data?.name }}</h1>
+                    <p class="text-center text-base text-muted-foreground">{{ data?.description }}</p>
+                </div>
+                <div class="w-full max-w-6xl">
+                    <ChatForm
+                        hideModel
+                        :status="status"
+                        @submit="onSubmit"
+                    />
+                </div>
             </div>
-            <div class="w-full max-w-6xl">
-                <ChatForm
-                    hideModel
-                    :status="status"
-                    @submit="onSubmit"
-                />
-            </div>
-        </div>
+        </template>
     </UDashboardPanel>
 </template>

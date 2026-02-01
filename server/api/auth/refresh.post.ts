@@ -4,7 +4,7 @@ const schema = z.object({
     refreshToken: z.string().min(1, 'Refresh token requerido'),
 })
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
         const { refreshToken } = await readValidatedBody(event, schema.parse)
 
@@ -20,8 +20,8 @@ export default defineEventHandler(async (event) => {
 
         if (!user) {
             throw createError({
+                message: 'Refresh token inválido o expirado',
                 statusCode: 401,
-                statusMessage: 'Refresh token inválido o expirado',
             })
         }
 

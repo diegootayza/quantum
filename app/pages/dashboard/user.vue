@@ -3,7 +3,7 @@
 
     useSeoMeta({
         description: 'Gestiona los usuarios del sistema',
-        title: 'Usuarios - Panel de control - Quantum',
+        title: 'Usuarios - Panel de control',
     })
 
     const socket = useSocket()

@@ -13,13 +13,14 @@ const body = z.object({
     messages: z.array(z.custom<UIMessage>()),
 })
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     return processError(async () => {
         const { user } = await requireUserSession(event)
         const { id } = await getValidatedRouterParams(event, params.parse)
         const { agentId, messages } = await readValidatedBody(event, body.parse)
         const ai = await getSettingValue<ISettingAi>('ai')
         const chatModel = getCookie(event, 'chat-model')
+        const userId = user.id
 
         let model = chatModel || ai.modelText
         let system = ai.prompt
@@ -29,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
             if (agent) {
                 model = agent.model
-                system = agent.instruction
+                system = `${system}\n\n\n${agent.instruction}`
             }
         }
 
@@ -49,20 +50,13 @@ export default defineEventHandler(async (event) => {
                     messages: await convertToModelMessages(messages),
                     model,
                     async onFinish({ usage }) {
-                        await prisma.usage.create({
-                            data: {
-                                inputTokens: usage.inputTokens || 0,
-                                model,
-                                outputTokens: usage.outputTokens || 0,
-                                totalTokens: usage.totalTokens || 0,
-                                userId: user.id,
-                            },
-                        })
+                        await saveUsageTokens({ model, usage, userId })
                     },
                     system,
                     toolChoice: 'auto',
                     tools: {
-                        'generate-image': await generateImageTool({ userId: user.id, writer }),
+                        'fetch-url': await fetchUrlTool({ userId, writer }),
+                        'generate-image': await generateImageTool({ userId, writer }),
                     },
                 })
 

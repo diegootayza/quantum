@@ -29,6 +29,8 @@
             <UPagination
                 :itemsPerPage="props.meta.limit"
                 :page="props.meta.page"
+                showEdges
+                :siblingCount="1"
                 :total="props.meta.totalDocs"
                 @update:page="onUpdatePage"
             />
@@ -86,6 +88,8 @@
             <UPagination
                 :itemsPerPage="props.meta.limit"
                 :page="props.meta.page"
+                showEdges
+                :siblingCount="1"
                 :total="props.meta.totalDocs"
                 @update:page="onUpdatePage"
             />

@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import type { DropdownMenuItem } from '@nuxt/ui'
 
-    const { data } = await useFetch('/api/model')
+    const { data } = await useFetch('/api/model', { query: { mode: 'chat' } })
 
     const model = useCookie<string>('chat-model', { default: () => 'openai/gpt-5-mini' })
 

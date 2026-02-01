@@ -22,4 +22,5 @@ export function transformResponseText(part: UIMessagePart<UIDataTypes, UITools>,
 
 export function transformResponseTool(part: UIMessagePart<UIDataTypes, UITools>, parts: UIMessage['parts']) {
     if (part.type === AI_TOOL.GENERATE_IMAGE && part.state === 'output-available') parts.push(part)
+    if (part.type === AI_TOOL.FETCH_URL && part.state === 'output-available') parts.push(part)
 }
