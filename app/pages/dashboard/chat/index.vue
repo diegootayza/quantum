@@ -6,17 +6,25 @@
         title: 'Chats - Panel de control',
     })
 
+    const route = useRoute()
+ 
     const key = 'dashboard-chat'
-
-    const { data } = await useFetch('/api/chat', { key, query: { user: 'true' } })
-
+ 
+    const query = computed(() => {
+        return {
+            page: route.query.page ?? 1,
+        }
+    })
+ 
+    const { data, refresh } = await useFetch('/api/chat', { key, query })
+ 
     const columns: CommonTableColumn[] = [
         { key: 'name', label: 'Nombre' },
         { key: 'user', label: 'Usuario' },
         { class: 'w-px text-center', key: 'actions' },
     ]
 </script>
-
+ 
 <template>
     <UDashboardPanel :id="key">
         <template #header>
@@ -25,17 +33,19 @@
                     <UDashboardSidebarCollapse />
                 </template>
                 <template #right>
-                    <ModalChat />
+                    <ModalChat @refresh="refresh" />
                 </template>
             </UDashboardNavbar>
         </template>
         <template #body>
             <CommonTable
                 :columns="columns"
-                :data="data"
+                :data="data?.docs"
+                :meta="data?.meta"
             >
                 <template #user="{ row }">
-                    <span>{{ row.user?.name }} {{ row.user?.surname }}</span>
+                    <span v-if="row.user">{{ row.user.name }} {{ row.user.surname }}</span>
+                    <span v-else>{{ row.userId }}</span>
                 </template>
                 <template #actions="{ row }">
                     <TableAction

@@ -6,7 +6,7 @@
     const model = useCookie<string>('chat-model', { default: () => 'openai/gpt-5-mini' })
 
     const items = computed<DropdownMenuItem[]>(() => {
-        const values = data.value ?? []
+        const values = data.value?.docs ?? []
 
         return values.map((item) => ({
             label: item.name,
@@ -17,7 +17,7 @@
     })
 
     const label = computed(() => {
-        const found = data.value?.find((item) => item.value === model.value)
+        const found = data.value?.docs.find((item) => item.value === model.value)
         return found ? found.name : 'Seleccionar modelo'
     })
 </script>

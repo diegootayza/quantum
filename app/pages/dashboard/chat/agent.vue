@@ -6,10 +6,18 @@
         title: 'Agentes - Panel de control',
     })
 
+    const route = useRoute()
+ 
     const key = 'dashboard-chat-agent'
-
-    const { data } = await useFetch('/api/chat-agent', { key })
-
+ 
+    const query = computed(() => {
+        return {
+            page: route.query.page ?? 1,
+        }
+    })
+ 
+    const { data, refresh } = await useFetch('/api/chat-agent', { key, query })
+ 
     const columns: CommonTableColumn[] = [
         { key: 'name', label: 'Nombre' },
         { key: 'description', label: 'Descripción' },
@@ -18,7 +26,7 @@
         { class: 'w-px text-center', key: 'actions' },
     ]
 </script>
-
+ 
 <template>
     <UDashboardPanel :id="key">
         <template #header>
@@ -27,14 +35,15 @@
                     <UDashboardSidebarCollapse />
                 </template>
                 <template #right>
-                    <ModalChatAgent />
+                    <ModalChatAgent @refresh="refresh" />
                 </template>
             </UDashboardNavbar>
         </template>
         <template #body>
             <CommonTable
                 :columns="columns"
-                :data="data"
+                :data="data?.docs"
+                :meta="data?.meta"
             >
                 <template #active="{ row }">
                     <TableActive

@@ -6,17 +6,25 @@
         title: 'Prompts - Panel de control',
     })
 
+    const route = useRoute()
+ 
     const key = 'dashboard-prompt'
-
-    const { data } = await useFetch('/api/prompt', { key })
-
+ 
+    const query = computed(() => {
+        return {
+            page: route.query.page ?? 1,
+        }
+    })
+ 
+    const { data } = await useFetch('/api/prompt', { key, query })
+ 
     const columns: CommonTableColumn[] = [
         { key: 'description', label: 'Descripción' },
         { class: 'w-px', key: 'key', label: 'Clave' },
         { class: 'w-px text-center', key: 'actions' },
     ]
 </script>
-
+ 
 <template>
     <UDashboardPanel :id="key">
         <template #header>
@@ -32,7 +40,8 @@
         <template #body>
             <CommonTable
                 :columns="columns"
-                :data="data"
+                :data="data?.docs"
+                :meta="data?.meta"
             >
                 <template #actions="{ row }">
                     <TableAction

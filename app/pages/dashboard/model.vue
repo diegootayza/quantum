@@ -6,10 +6,18 @@
         title: 'Modelos - Panel de control',
     })
 
+    const route = useRoute()
+ 
     const key = 'dashboard-model'
-
-    const { data } = await useFetch('/api/model', { key })
-
+ 
+    const query = computed(() => {
+        return {
+            page: route.query.page ?? 1,
+        }
+    })
+ 
+    const { data, refresh } = await useFetch('/api/model', { key, query })
+ 
     const columns: CommonTableColumn[] = [
         { key: 'name', label: 'Nombre' },
         { key: 'value', label: 'Valor' },
@@ -18,7 +26,7 @@
         { class: 'w-px text-center', key: 'actions' },
     ]
 </script>
-
+ 
 <template>
     <UDashboardPanel :id="key">
         <template #header>
@@ -27,14 +35,15 @@
                     <UDashboardSidebarCollapse />
                 </template>
                 <template #right>
-                    <ModalModel />
+                    <ModalModel @refresh="refresh" />
                 </template>
             </UDashboardNavbar>
         </template>
         <template #body>
             <CommonTable
                 :columns="columns"
-                :data="data"
+                :data="data?.docs"
+                :meta="data?.meta"
             >
                 <template #roles="{ row }">
                     <TableConstant :value="row.roles" />

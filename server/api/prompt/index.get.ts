@@ -1,15 +1,16 @@
 import { z } from 'zod'
 
-const schema = z.object({})
+const schema = z.object({
+    page: z.string().optional(),
+})
 
 export default defineEventHandler((event) => {
     return processError(async () => {
-        const result = await getValidatedQuery(event, schema.safeParse)
+        const { page } = await getValidatedQuery(event, schema.parse)
 
-        if (!result.success) throw result.error.issues
-
-        const response = await prisma.prompt.findMany()
-
-        return response
+        return await prisma.prompt.paginate({
+            limit: 15,
+            page: page ? parseInt(page) : 1,
+        })
     })
 })
