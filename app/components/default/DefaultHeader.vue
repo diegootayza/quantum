@@ -25,7 +25,7 @@
                     class="lg:hidden"
                     color="neutral"
                     icon="i-lucide-message-circle"
-                    :to="{ name: 'chat' }"
+                    :to="{ name: PAGE_NAME.PROFILE_CHAT }"
                     variant="ghost"
                 />
 
@@ -33,7 +33,7 @@
                     class="hidden lg:inline-flex"
                     icon="i-lucide-message-circle"
                     label="Ir al chat"
-                    :to="{ name: 'chat' }"
+                    :to="{ name: PAGE_NAME.PROFILE_CHAT }"
                 />
             </template>
 
@@ -68,7 +68,7 @@
                     block
                     icon="i-lucide-layout-dashboard"
                     label="Ir al chat"
-                    :to="{ name: 'chat' }"
+                    :to="{ name: PAGE_NAME.PROFILE_CHAT }"
                 />
             </template>
 

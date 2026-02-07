@@ -1,12 +1,12 @@
 <script setup lang="ts">
     interface Emit {
-        (e: 'files', data: IFileSchema[]): void
+        (e: 'files', data: ({ url: string } & API.File)[]): void
     }
 
     const emit = defineEmits<Emit>()
 
-    const { user } = useUserSession()
-    const { fetcher } = useConnect()
+    const { user } = useData()
+    const apiFile = useApiFile()
 
     const inputRef = useTemplateRef('input')
 
@@ -18,27 +18,9 @@
 
         loading.value = true
 
-        try {
-            const formData = new FormData()
-
-            if (user.value) {
-                formData.append('path', `users/${user.value.id}/uploads`)
-                formData.append('type', 'upload')
-                formData.append('userId', user.value.id)
-
-                files.forEach((file) => {
-                    formData.append('files', file)
-                })
-
-                const data = await fetcher<IFileSchema[]>('api/file', {
-                    body: formData,
-                    method: 'POST',
-                })
-
-                emit('files', data)
-            }
-        } catch {
-            //
+        if (user.value) {
+            const items = await apiFile.createMany({ files, path: `users/${user.value.id}/uploads`, type: 'upload', userId: user.value.id })
+            if (items) emit('files', items)
         }
 
         loading.value = false

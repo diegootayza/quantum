@@ -6,50 +6,52 @@
         title: 'Prompts - Panel de control',
     })
 
-    const route = useRoute()
- 
-    const key = 'dashboard-prompt'
- 
-    const query = computed(() => {
-        return {
-            page: route.query.page ?? 1,
-        }
+    const axios = useAxios()
+
+    const { docs, endpoint, initialValues, key, loadMore, params } = useInfiniteScroll<API.Prompt>({
+        endpoint: '/api/prompt/list',
+        key: 'dashboard-prompt',
+        limit: 30,
     })
- 
-    const { data } = await useFetch('/api/prompt', { key, query })
- 
+
+    const { data, pending } = await useApiAsyncData(key, () => {
+        return axios.get<API.ResponseList<API.Prompt>>(endpoint, {
+            params: params.value,
+        })
+    })
+
     const columns: CommonTableColumn[] = [
         { key: 'description', label: 'Descripción' },
         { class: 'w-px', key: 'key', label: 'Clave' },
         { class: 'w-px text-center', key: 'actions' },
     ]
+
+    watch(data, initialValues, { immediate: true })
 </script>
- 
+
 <template>
-    <UDashboardPanel :id="key">
-        <template #header>
-            <UDashboardNavbar title="Prompts">
-                <template #leading>
-                    <UDashboardSidebarCollapse />
-                </template>
-                <template #right>
-                    <ModalPrompt />
-                </template>
-            </UDashboardNavbar>
+    <DashboardPage
+        :id="key"
+        title="Prompts"
+    >
+        <template #headerRight>
+            <ModalPrompt />
         </template>
-        <template #body>
-            <CommonTable
-                :columns="columns"
-                :data="data?.docs"
-                :meta="data?.meta"
-            >
-                <template #actions="{ row }">
-                    <TableAction
-                        :id="row.id"
-                        :name="key"
-                    />
-                </template>
-            </CommonTable>
-        </template>
-    </UDashboardPanel>
+        <CommonInfiniteScroll @loadMore="loadMore">
+            <div class="p-8">
+                <DashboardTable
+                    :columns="columns"
+                    :docs="docs"
+                    :pending="pending"
+                >
+                    <template #actions="{ row }">
+                        <TableAction
+                            :id="row.id"
+                            :name="key"
+                        />
+                    </template>
+                </DashboardTable>
+            </div>
+        </CommonInfiniteScroll>
+    </DashboardPage>
 </template>

@@ -10,6 +10,8 @@
 
     const props = withDefaults(defineProps<Props>(), {})
 
+    const axios = useAxios()
+
     const { handleSubmit, setValues } = useForm({
         initialValues: {
             namespace: props.namespace,
@@ -19,14 +21,11 @@
     })
 
     const onSubmit = handleSubmit(async (data) => {
-        await useFetch('/api/setting', {
-            body: data,
-            method: 'POST',
-        })
+        await axios.post(API_ENDPOINT.SETTING_CREATE_OR_UPDATE, data)
     })
 
     onMounted(async () => {
-        const data = await $fetch(`/api/setting/${props.namespace}`, {})
+        const { data } = await axios.get(`${API_ENDPOINT.SETTING_NAMESPACE}/ai`)
         if (data) setValues(data, false)
     })
 </script>

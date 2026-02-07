@@ -1,34 +1,33 @@
 <script setup lang="ts">
     import type { ChatStatus, UIMessage } from 'ai'
 
-    definePageMeta({ key: 'chat', layout: 'dashboard', middleware: ['auth'] })
- 
+    definePageMeta({ layout: 'dashboard', middleware: ['auth'] })
+
     useSeoMeta({
         title: 'Nuevo chat',
     })
 
-    const router = useRouter()
+    const axios = useAxios()
 
     const status = ref<ChatStatus>('ready')
 
-    let controller: AbortController | null = null
-
     const { markClean, markDirty } = useLeavePrevent({
-        onCancel() {
-            controller?.abort()
+        onConfirm() {
+            console.log('confirm')
         },
     })
 
     async function onSubmit(parts: UIMessage['parts'], clean: () => void) {
-        controller?.abort()
-
-        controller = new AbortController()
-
         status.value = 'submitted'
         clean()
-        const response = await $fetch('/api/ai', { body: { parts }, method: 'POST', signal: controller.signal })
+
+        const id = await safeExecute(async () => {
+            const { data } = await axios.post<string>(API_ENDPOINT.AI_CHAT_CREATE, { parts })
+            return data
+        })
+
         status.value = 'ready'
-        router.push({ name: 'ai-chat-id', params: { id: response.id }, query: { new: 'true' } })
+        if (id) navigateTo({ name: PAGE_NAME.PROFILE_CHAT_ID, params: { id }, query: { new: 'true' } })
     }
 
     watch(status, (v) => {

@@ -20,9 +20,9 @@
 
     const emit = defineEmits<Emit>()
 
-    const { fetcher } = useConnect()
+    const apiFile = useApiFile()
 
-    const files = ref<IFileSchema[]>([])
+    const files = ref<({ url: string } & API.File)[]>([])
     const text = ref('')
 
     const parts = computed<UIMessage['parts']>(() => {
@@ -38,13 +38,11 @@
 
     const { markClean, markDirty } = useLeavePrevent({
         async onConfirm() {
-            for await (const file of files.value) {
-                await fetcher(`api/file/${file.id}`, { method: 'DELETE' })
-            }
+            await apiFile.deleteMany(files.value.map((file) => file.id))
         },
     })
 
-    function onFiles(newFiles: IFileSchema[]) {
+    function onFiles(newFiles: ({ url: string } & API.File)[]) {
         files.value.push(...newFiles)
     }
 
@@ -57,8 +55,8 @@
         })
     }
 
-    async function removeFile(currentFile: IFileSchema) {
-        await fetcher(`api/file/${currentFile.id}`, { method: 'DELETE' })
+    async function removeFile(currentFile: { url: string } & API.File) {
+        await apiFile.deleteOne(currentFile.id)
         files.value = files.value.filter((file) => file.id !== currentFile.id)
     }
 

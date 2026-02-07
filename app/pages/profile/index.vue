@@ -6,8 +6,11 @@
         title: 'Mi Perfil',
     })
 
-    const { user } = useUserSession()
-    const { data: stats, pending } = await useFetch('/api/profile/stats')
+    const { user } = useData()
+
+    const axios = useAxios()
+
+    const { data, pending } = await useAsyncData('profile-home', () => axiosData(axios.get<API.ProfileHomeResponse>('/api/profile/home')), { default: () => ({}) as API.ProfileHomeResponse })
 
     const statisticsCards = computed(() => [
         {
@@ -15,9 +18,9 @@
             icon: 'i-lucide-message-square',
             iconClass: 'text-blue-600 dark:text-blue-400',
             key: 'conversations',
-            subtitle: `${stats.value?.stats.conversationsThisMonth || 0} este mes`,
+            subtitle: `${data.value?.chatsThisMonth || 0} este mes`,
             title: 'Conversaciones',
-            value: stats.value?.stats.totalConversations || 0,
+            value: data.value?.totalChats || 0,
         },
         {
             bgClass: 'bg-green-100 dark:bg-green-900/30',
@@ -26,16 +29,16 @@
             key: 'messages',
             subtitle: 'Total enviados',
             title: 'Mensajes',
-            value: stats.value?.stats.totalMessages || 0,
+            value: data.value?.totalMessages || 0,
         },
         {
             bgClass: 'bg-purple-100 dark:bg-purple-900/30',
             icon: 'i-lucide-file',
             iconClass: 'text-purple-600 dark:text-purple-400',
             key: 'files',
-            subtitle: `${stats.value?.stats.storageUsed || 0} MB usados`,
+            subtitle: `${formatFileSize(data.value?.storageUsed || 0)} usados`,
             title: 'Archivos',
-            value: stats.value?.stats.totalFiles || 0,
+            value: data.value?.totalFiles || 0,
         },
         {
             bgClass: 'bg-orange-100 dark:bg-orange-900/30',
@@ -44,7 +47,7 @@
             key: 'account',
             subtitle: 'días activo',
             title: 'Cuenta',
-            value: stats.value?.stats.accountAge || 0,
+            value: data.value?.accountAge || 0,
         },
     ])
 
@@ -54,7 +57,7 @@
             icon: 'i-lucide-plus-circle',
             show: user.value?.active,
             title: 'Nueva Conversación',
-            to: '/chat',
+            to: '/profile/chat',
         },
         {
             description: 'Cambiar contraseña',

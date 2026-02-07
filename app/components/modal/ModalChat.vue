@@ -1,9 +1,11 @@
 <template>
     <FormDashboard
-        name="dashboard-chat"
-        :schema="chatSchema"
+        :createUrl="API_ENDPOINT.CHAT_CREATE"
+        :name="PAGE_NAME.DASHBOARD_CHAT"
+        :readUrl="API_ENDPOINT.CHAT_READ"
+        :schema="createChatSchema"
         title="Chat"
-        url="/api/chat"
+        :updateUrl="API_ENDPOINT.CHAT_UPDATE"
     >
         <FieldText
             label="Nombre"

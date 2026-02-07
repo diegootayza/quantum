@@ -1,9 +1,11 @@
 <template>
     <FormDashboard
-        name="dashboard-user"
+        :createUrl="API_ENDPOINT.USER_CREATE"
+        :name="PAGE_NAME.DASHBOARD_USER"
+        :readUrl="API_ENDPOINT.USER_READ"
         :schema="userSchema"
         title="Usuario"
-        url="/api/user"
+        :updateUrl="API_ENDPOINT.USER_UPDATE"
     >
         <FieldText
             label="Nombre"

@@ -4,9 +4,8 @@
     defineProps<{ collapsed?: boolean }>()
 
     const colorMode = useColorMode()
-    const router = useRouter()
-    const authRefresh = useAuthRefresh()
-    const { clear, user } = useUserSession()
+    const { user } = useData()
+    const { signout } = useAuth()
 
     const items = computed<DropdownMenuItem[][]>(() => [
         [
@@ -54,19 +53,7 @@
                 icon: 'i-lucide-log-out',
                 label: 'Cerrar sesión',
                 async onSelect() {
-                    // Limpiar refresh token
-                    authRefresh.cleanup()
-
-                    // Llamar endpoint logout
-                    try {
-                        await $fetch('/api/auth/logout', { method: 'POST' })
-                    } catch (error) {
-                        console.error('Error al cerrar sesión:', error)
-                    }
-
-                    // Limpiar sesión
-                    await clear()
-                    router.push({ name: 'auth-signin' })
+                    await signout()
                 },
             },
         ],

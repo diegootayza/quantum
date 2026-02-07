@@ -6,18 +6,20 @@
         title: 'Agentes - Panel de control',
     })
 
-    const route = useRoute()
- 
-    const key = 'dashboard-chat-agent'
- 
-    const query = computed(() => {
-        return {
-            page: route.query.page ?? 1,
-        }
+    const axios = useAxios()
+
+    const { docs, endpoint, initialValues, key, loadMore, params } = useInfiniteScroll<API.ChatAgent>({
+        endpoint: '/api/chat-agent/list',
+        key: 'dashboard-chat-agent',
+        limit: 30,
     })
- 
-    const { data, refresh } = await useFetch('/api/chat-agent', { key, query })
- 
+
+    const { data, pending } = await useApiAsyncData(key, () => {
+        return axios.get<API.ResponseList<API.ChatAgent>>(endpoint, {
+            params: params.value,
+        })
+    })
+
     const columns: CommonTableColumn[] = [
         { key: 'name', label: 'Nombre' },
         { key: 'description', label: 'Descripción' },
@@ -25,41 +27,41 @@
         { class: 'w-px', key: 'active', label: 'Activo' },
         { class: 'w-px text-center', key: 'actions' },
     ]
+
+    watch(data, initialValues, { immediate: true })
 </script>
- 
+
 <template>
-    <UDashboardPanel :id="key">
-        <template #header>
-            <UDashboardNavbar title="Agentes">
-                <template #leading>
-                    <UDashboardSidebarCollapse />
-                </template>
-                <template #right>
-                    <ModalChatAgent @refresh="refresh" />
-                </template>
-            </UDashboardNavbar>
+    <DashboardPage
+        :id="key"
+        title="Agentes"
+    >
+        <template #headerRight>
+            <ModalChatAgent />
         </template>
-        <template #body>
-            <CommonTable
-                :columns="columns"
-                :data="data?.docs"
-                :meta="data?.meta"
-            >
-                <template #active="{ row }">
-                    <TableActive
-                        :id="row.id"
-                        :active="row.active"
-                        endpoint="/api/chat-agent"
-                        :name="key"
-                    />
-                </template>
-                <template #actions="{ row }">
-                    <TableAction
-                        :id="row.id"
-                        :name="key"
-                    />
-                </template>
-            </CommonTable>
-        </template>
-    </UDashboardPanel>
+        <CommonInfiniteScroll @loadMore="loadMore">
+            <div class="p-8">
+                <DashboardTable
+                    :columns="columns"
+                    :docs="docs"
+                    :pending="pending"
+                >
+                    <template #active="{ row }">
+                        <TableActive
+                            :id="row.id"
+                            :active="row.active"
+                            :endpoint="API_ENDPOINT.CHAT_AGENT_UPDATE"
+                            :name="key"
+                        />
+                    </template>
+                    <template #actions="{ row }">
+                        <TableAction
+                            :id="row.id"
+                            :name="key"
+                        />
+                    </template>
+                </DashboardTable>
+            </div>
+        </CommonInfiniteScroll>
+    </DashboardPage>
 </template>

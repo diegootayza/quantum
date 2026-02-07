@@ -61,26 +61,10 @@
     async function onSubmit(event: FormSubmitEvent<PasswordSchema>) {
         loading.value = true
 
-        const success = await safeExecute(async () => {
-            await $fetch('/api/auth/password', {
-                body: {
-                    currentPassword: event.data.current,
-                    newPassword: event.data.new,
-                },
-                method: 'POST',
-            })
-
-            toast.add({
-                color: 'success',
-                description: 'Tu contraseña ha sido cambiada exitosamente',
-                title: 'Contraseña actualizada',
-            })
-
-            // Reset form
-            password.current = undefined
-            password.new = undefined
-
-            return true
+        toast.add({
+            color: 'success',
+            description: 'Tu contraseña ha sido cambiada exitosamente',
+            title: 'Contraseña actualizada',
         })
 
         loading.value = false

@@ -1,9 +1,11 @@
 <template>
     <FormDashboard
-        name="dashboard-prompt"
+        :createUrl="API_ENDPOINT.PROMPT_CREATE"
+        :name="PAGE_NAME.DASHBOARD_PROMPT"
+        :readUrl="API_ENDPOINT.PROMPT_READ"
         :schema="promptSchema"
         title="Prompt"
-        url="/api/prompt"
+        :updateUrl="API_ENDPOINT.PROMPT_UPDATE"
     >
         <FieldText
             label="Descripción"

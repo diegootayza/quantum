@@ -4,16 +4,18 @@
     import { toTypedSchema } from '@vee-validate/zod'
 
     interface Props {
+        createUrl: string
         name: string
+        readUrl: string
         schema: T
         title: string
-        url: string
+        updateUrl: string
     }
 
     const props = withDefaults(defineProps<Props>(), {})
 
     const route = useRoute()
-    const router = useRouter()
+    const axios = useAxios()
 
     const open = ref(false)
 
@@ -25,12 +27,12 @@
 
     function onReset() {
         open.value = false
-        router.push({ name: props.name })
+        navigateTo({ query: { ...route.query, id: undefined } }, { replace: true })
     }
 
     const onSubmit = handleSubmit(async (data) => {
-        if (id.value) await $fetch(`${props.url}/${id.value}`, { body: data, method: 'PATCH' })
-        else await $fetch(`${props.url}`, { body: data, method: 'POST' })
+        if (id.value) await axios.patch(`${props.updateUrl}/${id.value}`, data)
+        else await axios.post(`${props.createUrl}`, data)
         onReset()
         await refreshNuxtData(props.name)
     })
@@ -39,7 +41,7 @@
         id,
         async (v) => {
             if (v) {
-                const data = await $fetch(`${props.url}/${v}`)
+                const { data } = await axios.get(`${props.readUrl}/${v}`)
 
                 if (data) {
                     setValues(data, false)

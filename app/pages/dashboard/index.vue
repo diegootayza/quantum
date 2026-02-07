@@ -6,7 +6,9 @@
         title: 'Panel de Control',
     })
 
-    const { data, pending } = await useFetch('/api/dashboard/home')
+    const axios = useAxios()
+
+    const { data, pending } = await useAsyncData('dashboard-home', () => axiosData(axios.get<API.DashboardHomeResponse>('/api/dashboard/home')), { default: () => ({}) as API.DashboardHomeResponse })
 
     const socket = useSocket()
 
@@ -29,6 +31,10 @@
             {
                 title: 'Mensajes',
                 value: data.value?.totalMessages || 0,
+            },
+            {
+                title: 'Tamaño de Archivos',
+                value: formatFileSize(data.value?.sizeFiles || 0),
             },
         ]
     })
@@ -65,7 +71,7 @@
 </script>
 
 <template>
-    <UDashboardPanel id="dashboard">
+    <UDashboardPanel id="dashboard-home">
         <template #header>
             <UDashboardNavbar title="Panel de control">
                 <template #leading>
@@ -88,22 +94,20 @@
                 v-else
                 class="space-y-6"
             >
-                <ClientOnly>
-                    <UPageGrid class="lg:grid-cols-4 gap-6">
-                        <UPageCard
-                            v-for="card in statsCards"
-                            :key="card.title"
-                            :title="card.title"
-                            :ui="{
-                                title: 'font-normal text-muted text-xs uppercase',
-                            }"
-                        >
-                            <div class="flex flex-col gap-1">
-                                <span class="text-3xl font-semibold text-highlighted">{{ card.value }}</span>
-                            </div>
-                        </UPageCard>
-                    </UPageGrid>
-                </ClientOnly>
+                <UPageGrid class="lg:grid-cols-4 gap-6">
+                    <UPageCard
+                        v-for="card in statsCards"
+                        :key="card.title"
+                        :title="card.title"
+                        :ui="{
+                            title: 'font-normal text-muted text-xs uppercase',
+                        }"
+                    >
+                        <div class="flex flex-col gap-1">
+                            <span class="text-3xl font-semibold text-highlighted">{{ card.value }}</span>
+                        </div>
+                    </UPageCard>
+                </UPageGrid>
             </div>
             <UPageCard title="Uso de tokens por modelo (últimos 7 días)">
                 <ChartBar :dataChart="buildChartData(data?.usageByModel || [])" />

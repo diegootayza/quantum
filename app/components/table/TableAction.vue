@@ -8,7 +8,7 @@
 
     const props = withDefaults(defineProps<Props>(), {})
 
-    const router = useRouter()
+    const route = useRoute()
 
     const items = computed<DropdownMenuItem[]>(() => {
         return [
@@ -16,7 +16,7 @@
                 icon: 'lucide:edit',
                 label: 'Editar',
                 async onSelect() {
-                    router.push({ name: props.name, query: { id: props.id } })
+                    navigateTo({ query: { ...route.query, id: props.id } }, { replace: true })
                 },
             },
             {

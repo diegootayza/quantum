@@ -1,26 +1,108 @@
-<script setup lang="ts" generic="T">
-    import type { TableColumn } from '@nuxt/ui'
-
+<script setup lang="ts" generic="T extends RecordType">
     interface Props {
-        columns: TableColumn<T>[]
-        data: T[] | undefined
+        columns: CommonTableColumn[]
+        docs?: T[]
+        pending?: boolean
     }
 
-    withDefaults(defineProps<Props>(), {})
+    const props = withDefaults(defineProps<Props>(), {
+        docs: () => [],
+        pending: false,
+    })
+
+    const route = useRoute()
+
+    const search = ref(String(route.query.search ?? ''))
+
+    const cleanSearch = computed(() => formatSearchText(search.value))
+
+    const debouncedSearch = useDebounceFn(() => {
+        if (cleanSearch.value.length > 0) navigateTo({ query: { ...route.query, search: cleanSearch.value } }, { replace: true })
+        else navigateTo({ query: { ...route.query, search: undefined } }, { replace: true })
+    }, 350)
+
+    watch(cleanSearch, () => {
+        debouncedSearch()
+    })
 </script>
 
 <template>
-    <UTable
-        class="flex-1"
-        :columns="columns"
-        :data="data"
-        :ui="{
-            base: 'table-fixed border-separate border-spacing-0',
-            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-            tbody: '[&>tr]:last:[&>td]:border-b-0',
-            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-            td: 'border-b border-default',
-            separator: 'h-0',
-        }"
-    />
+    <div class="w-full grid grid-cols-1 gap-8">
+        <div class="w-full">
+            <UInput
+                v-model="search"
+                class="w-sm"
+                name="search-dashboard-table"
+                placeholder="Buscar..."
+            >
+                <template
+                    v-if="search.length > 0"
+                    #trailing
+                >
+                    <UButton
+                        aria-label="Clear input"
+                        color="neutral"
+                        icon="i-lucide-circle-x"
+                        size="sm"
+                        variant="link"
+                        @click="search = ''"
+                    />
+                </template>
+            </UInput>
+        </div>
+        <div
+            v-if="props.pending"
+            class="flex items-center justify-center"
+        >
+            <UIcon
+                class="size-14 animate-spin"
+                name="lucide:loader-circle"
+            />
+        </div>
+        <UEmpty
+            v-else-if="props.docs.length === 0"
+            description="Aún no has subido ningún archivo. Los archivos que subas en tus conversaciones aparecerán aquí."
+            icon="lucide:folder-open"
+            title="No hay archivos"
+        />
+        <div
+            v-else
+            class="relative w-full overflow-x-auto"
+        >
+            <table class="w-full border-collapse divide-y divide-default text-left border border-default">
+                <thead class="bg-elevated/50">
+                    <tr class="h-10">
+                        <th
+                            v-for="(column, columnIdx) in columns"
+                            :key="columnIdx"
+                            :class="['px-4 text-sm font-medium whitespace-nowrap', column.class, column.classHeader]"
+                        >
+                            {{ column.label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-default">
+                    <tr
+                        v-for="(row, rowIdx) in props.docs"
+                        :key="rowIdx"
+                    >
+                        <td
+                            v-for="(column, columnIdx) in columns"
+                            :key="columnIdx"
+                            :class="['p-4 text-sm whitespace-nowrap', column.class, column.classCell]"
+                        >
+                            <slot
+                                v-if="$slots[column.key]"
+                                :name="column.key"
+                                :row="row"
+                            />
+                            <template v-else>
+                                {{ valueToPath(row, column.key) }}
+                            </template>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </template>

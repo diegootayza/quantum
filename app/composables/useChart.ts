@@ -65,7 +65,6 @@ export function useChart<T extends ChartType = keyof ChartTypeRegistry>({ decora
                     usePointStyle: true,
                 },
             },
-            responsive: true,
             scales: {
                 x: {
                     grid: {

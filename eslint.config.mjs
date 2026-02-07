@@ -10,6 +10,7 @@ export default withNuxt(
             files: ['**/*.ts', '**/*.vue'],
             plugins: { perfectionist, 'unused-imports': unusedImports },
             rules: {
+                'no-empty': 'warn',
                 'no-empty-pattern': 'warn',
                 '@typescript-eslint/no-empty-object-type': 'off',
                 '@typescript-eslint/no-explicit-any': 'off',
@@ -54,5 +55,5 @@ export default withNuxt(
                 'vue/v-on-event-hyphenation': ['error', 'never', { autofix: true }],
             },
         },
-    ]
+    ],
 )

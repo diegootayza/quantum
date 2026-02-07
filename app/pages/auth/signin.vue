@@ -10,11 +10,7 @@
         title: 'Iniciar Sesión',
     })
 
-    const toast = useToast()
-    const router = useRouter()
-    const authRefresh = useAuthRefresh()
-
-    const { fetch } = useUserSession()
+    const { signin } = useAuth()
 
     const fields = [
         {
@@ -39,60 +35,46 @@
 
     type Schema = z.output<typeof schema>
 
-    async function onSubmit(payload: FormSubmitEvent<Schema>) {
-        const response = await $fetch<{ message: string; refreshToken: string }>('/api/auth/signin', {
-            body: payload.data,
-            method: 'POST',
-        })
-
-        // Inicializar refresh token
-        if (response.refreshToken) {
-            authRefresh.initializeRefresh(response.refreshToken)
-        }
-
-        await fetch()
-
-        toast.add({ color: 'success', title: response.message })
-
-        router.push({ name: 'profile' })
+    async function onSubmit({ data }: FormSubmitEvent<Schema>) {
+        await signin(data)
     }
 </script>
 
 <template>
-    <ClientOnly>
-        <UAuthForm
-            :fields="fields"
-            icon="i-lucide-lock"
-            :schema="schema"
-            title="Bienvenido de nuevo"
-            @submit="onSubmit"
-        >
-            <template #description>
-                ¿No tienes una cuenta?
-                <ULink
-                    class="text-primary font-medium"
-                    :to="{ name: 'auth-signup' }"
-                    >Regístrate</ULink
-                >.
-            </template>
+    <UAuthForm
+        :fields="fields"
+        icon="i-lucide-lock"
+        :schema="schema"
+        title="Bienvenido de nuevo"
+        @submit="onSubmit"
+    >
+        <template #description>
+            ¿No tienes una cuenta?
+            <ULink
+                class="text-primary font-medium"
+                :to="{ name: 'auth-signup' }"
+                >Regístrate</ULink
+            >.
+        </template>
 
-            <template #password-hint>
-                <ULink
-                    class="text-primary font-medium"
-                    tabindex="-1"
-                    to="/"
-                    >¿Olvidaste tu contraseña?</ULink
-                >
-            </template>
+        <template #password-hint>
+            <ULink
+                class="text-primary font-medium"
+                tabindex="-1"
+                :to="{ name: PAGE_NAME.AUTH_PASSWORD }"
+            >
+                ¿Olvidaste tu contraseña?
+            </ULink>
+        </template>
 
-            <template #footer>
-                Al iniciar sesión, aceptas nuestros
-                <ULink
-                    class="text-primary font-medium"
-                    to="/"
-                    >Términos de Servicio</ULink
-                >.
-            </template>
-        </UAuthForm>
-    </ClientOnly>
+        <template #footer>
+            Al iniciar sesión, aceptas nuestros
+            <ULink
+                class="text-primary font-medium"
+                to="/"
+            >
+                Términos de Servicio </ULink
+            >.
+        </template>
+    </UAuthForm>
 </template>

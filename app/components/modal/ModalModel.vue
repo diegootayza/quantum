@@ -1,16 +1,18 @@
 <template>
     <FormDashboard
-        name="dashboard-model"
+        :createUrl="API_ENDPOINT.MODEL_CREATE"
+        :name="PAGE_NAME.DASHBOARD_MODEL"
+        :readUrl="API_ENDPOINT.MODEL_READ"
         :schema="modelSchema"
         title="Modelo"
-        url="/api/model"
+        :updateUrl="API_ENDPOINT.MODEL_UPDATE"
     >
         <FieldText
             label="Nombre"
             name="name"
         />
         <FieldModelText
-            label="Model"
+            label="Modelo"
             name="value"
         />
         <FieldRole

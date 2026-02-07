@@ -10,12 +10,7 @@
         title: 'Registrarse',
     })
 
-    const toast = useToast()
-    const router = useRouter()
-    const authRefresh = useAuthRefresh()
-
-    const { fetch } = useUserSession()
-    const { safeExecute } = useSafeError()
+    const { signup } = useAuth()
 
     const fields = [
         {
@@ -53,27 +48,8 @@
 
     type Schema = z.output<typeof schema>
 
-    async function onSubmit(payload: FormSubmitEvent<Schema>) {
-        safeExecute(async () => {
-            const response = await $fetch<{
-                message: string
-                refreshToken: string
-            }>('/api/auth/signup', {
-                body: payload.data,
-                method: 'POST',
-            })
-
-            // Inicializar refresh token
-            if (response.refreshToken) {
-                authRefresh.initializeRefresh(response.refreshToken)
-            }
-
-            await fetch()
-
-            toast.add({ color: 'success', title: response.message })
-
-            router.push({ name: 'profile' })
-        })
+    async function onSubmit({ data }: FormSubmitEvent<Schema>) {
+        await signup(data)
     }
 </script>
 

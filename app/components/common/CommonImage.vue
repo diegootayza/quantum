@@ -7,11 +7,13 @@
 
     interface Props {
         showDelete?: boolean
+        size?: number
         src: string
     }
 
     const props = withDefaults(defineProps<Props>(), {
         showDelete: false,
+        size: 0,
     })
 
     const emit = defineEmits<Emit>()
@@ -19,6 +21,8 @@
     const { isLoading, isReady } = useImage({ src: props.src })
 
     const open = ref(false)
+
+    const size = computed(() => formatFileSize(props.size))
 
     function openModal() {
         open.value = true
@@ -54,7 +58,7 @@
             </div>
             <UModal
                 v-model:open="open"
-                :description="`Tamaño: 1MB`"
+                :description="`Tamaño: ${size}`"
                 title="Previsualización"
             >
                 <template #body>

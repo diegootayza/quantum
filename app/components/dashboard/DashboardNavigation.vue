@@ -11,19 +11,18 @@
 
     const open = defineModel('open', { default: false, type: Boolean })
 
-    const router = useRouter()
     const toast = useToast()
-    const { user } = useUserSession()
+    const { user } = useData()
     const { safeExecute } = useSafeError()
     const confirmModal = useConfirmModal()
     const inputModal = useInputModal()
 
-    const { data: navigation, refresh } = useFetch('/api/dashboard/navigation', {
-        key: 'dashboard-navigation',
-    })
+    const apiChat = useApiChat()
+
+    const { data, refresh } = await useApiGetData<API.ProfileNavigation>(API_ENDPOINT.PROFILE_NAVIGATION)
 
     const items = computed<NavigationMenuItem[][]>(() => {
-        const { agents, chats } = navigation.value ?? { agents: [], chats: [] }
+        const { agents, chats } = data.value ?? { agents: [], chats: [] }
 
         const items: NavigationMenuItem[][] = []
 
@@ -31,17 +30,17 @@
             {
                 icon: 'lucide:home',
                 label: 'Inicio',
-                to: { name: 'profile' },
+                to: { name: PAGE_NAME.PROFILE },
             },
             {
                 icon: 'lucide:files',
                 label: 'Archivos',
-                to: { name: 'profile-file' },
+                to: { name: PAGE_NAME.PROFILE_FILE },
             },
             {
                 icon: 'lucide:shield',
                 label: 'Seguridad',
-                to: { name: 'profile-security' },
+                to: { name: PAGE_NAME.PROFILE_SECURITY },
             },
         ])
 
@@ -53,7 +52,7 @@
                     onSelect: () => {
                         open.value = false
                     },
-                    to: { name: 'dashboard' },
+                    to: { name: PAGE_NAME.DASHBOARD },
                 },
                 {
                     icon: 'lucide:users',
@@ -61,7 +60,7 @@
                     onSelect: () => {
                         open.value = false
                     },
-                    to: { name: 'dashboard-user' },
+                    to: { name: PAGE_NAME.DASHBOARD_USER },
                 },
                 {
                     icon: 'lucide:brain',
@@ -69,7 +68,7 @@
                     onSelect: () => {
                         open.value = false
                     },
-                    to: { name: 'dashboard-prompt' },
+                    to: { name: PAGE_NAME.DASHBOARD_PROMPT },
                 },
                 {
                     icon: 'lucide:messages-square',
@@ -77,7 +76,7 @@
                     onSelect: () => {
                         open.value = false
                     },
-                    to: { name: 'dashboard-chat' },
+                    to: { name: PAGE_NAME.DASHBOARD_CHAT },
                 },
                 {
                     icon: 'lucide:bot',
@@ -85,7 +84,7 @@
                     onSelect: () => {
                         open.value = false
                     },
-                    to: { name: 'dashboard-chat-agent' },
+                    to: { name: PAGE_NAME.DASHBOARD_CHAT_AGENT },
                 },
                 {
                     icon: 'lucide:brain-cog',
@@ -93,7 +92,15 @@
                     onSelect: () => {
                         open.value = false
                     },
-                    to: { name: 'dashboard-model' },
+                    to: { name: PAGE_NAME.DASHBOARD_MODEL },
+                },
+                {
+                    icon: 'lucide:files',
+                    label: 'Archivos',
+                    onSelect: () => {
+                        open.value = false
+                    },
+                    to: { name: PAGE_NAME.DASHBOARD_FILE },
                 },
                 {
                     icon: 'lucide:cog',
@@ -101,7 +108,7 @@
                     onSelect: () => {
                         open.value = false
                     },
-                    to: { name: 'dashboard-setting' },
+                    to: { name: PAGE_NAME.DASHBOARD_SETTING },
                 },
             ])
         }
@@ -112,7 +119,7 @@
                     exactQuery: true,
                     icon: 'lucide:plus',
                     label: 'Nuevo chat',
-                    to: { name: 'chat' },
+                    to: { name: PAGE_NAME.PROFILE_CHAT },
                 },
             ])
 
@@ -126,7 +133,7 @@
                         exactQuery: true,
                         icon: 'lucide:bot-message-square',
                         label: agent.name,
-                        to: { name: 'chat-agent-id', params: { id: agent.id } },
+                        to: { name: PAGE_NAME.PROFILE_CHAT_AGENT_ID, params: { id: agent.id } },
                     })),
                 ])
             }
@@ -140,7 +147,7 @@
                     ...chats.map((chat) => ({
                         label: chat.name,
                         slot: 'actions' as const,
-                        to: { name: 'ai-chat-id', params: { id: chat.id } },
+                        to: { name: PAGE_NAME.PROFILE_CHAT_ID, params: { id: chat.id } },
                     })),
                 ])
             }
@@ -162,10 +169,7 @@
                             if (!newName.trim()) return
 
                             await safeExecute(async () => {
-                                await $fetch(`/api/chat/${item.to.params.id}`, {
-                                    body: { name: newName },
-                                    method: 'PATCH',
-                                })
+                                await apiChat.updateChat(item.to.params.id, { name: newName })
                                 await refresh()
                                 toast.add({ color: 'success', title: 'Chat renombrado' })
                             })
@@ -185,8 +189,8 @@
                         description: '¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.',
                         onConfirm: async () => {
                             await safeExecute(async () => {
-                                await $fetch(`/api/chat/${item.to.params.id}`, { method: 'DELETE' })
-                                router.push({ name: 'chat' })
+                                await apiChat.deleteChat(item.to.params.id)
+                                navigateTo({ name: PAGE_NAME.PROFILE_CHAT })
                                 toast.add({ color: 'success', title: 'Chat eliminado' })
                                 await refresh()
                             })
@@ -224,7 +228,12 @@
                     />
                 </UDropdownMenu>
                 <template #fallback>
-                    <div class="size-6" />
+                    <UButton
+                        color="neutral"
+                        icon="lucide:ellipsis-vertical"
+                        size="xs"
+                        variant="ghost"
+                    />
                 </template>
             </ClientOnly>
         </template>

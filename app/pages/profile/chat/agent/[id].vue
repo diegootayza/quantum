@@ -4,9 +4,10 @@
     definePageMeta({ key: (route) => `chat-agent-${route.params.id}`, layout: 'dashboard', middleware: ['auth'] })
 
     const route = useRoute()
-    const router = useRouter()
 
-    const { data } = await useFetch(`/api/chat-agent/${route.params.id}`, { key: `chat-agent-${route.params.id}` })
+    const axios = useAxios()
+
+    const { data } = await useApiGetData<API.ChatAgent>(`${API_ENDPOINT.CHAT_AGENT_READ}/${route.params.id}`)
 
     if (!data.value) {
         throw createError({
@@ -26,9 +27,14 @@
     async function onSubmit(parts: UIMessage['parts'], clean: () => void) {
         status.value = 'submitted'
         clean()
-        const response = await $fetch('/api/ai', { body: { agentId: route.params.id, parts }, method: 'POST' })
+
+        const id = await safeExecute(async () => {
+            const { data } = await axios.post<string>(API_ENDPOINT.AI_CHAT_CREATE, { agentId: route.params.id, parts })
+            return data
+        })
+
         status.value = 'ready'
-        router.push({ name: 'ai-chat-id', params: { id: response.id }, query: { new: 'true' } })
+        if (id) navigateTo({ name: PAGE_NAME.PROFILE_CHAT_ID, params: { id }, query: { new: 'true' } })
     }
 
     watch(status, (v) => {

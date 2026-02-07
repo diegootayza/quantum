@@ -1,16 +1,16 @@
 <script setup lang="ts">
     const socket = useSocket()
-    const { clearSession, updateSession } = useAuth()
+    const { getUser, signout } = useAuth()
 
     const open = ref(false)
 
     onMounted(() => {
         socket?.on('user:signout', async () => {
-            await clearSession()
+            await signout()
         })
 
         socket?.on('user:update', async () => {
-            await updateSession()
+            await getUser()
         })
     })
 </script>

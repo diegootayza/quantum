@@ -4,11 +4,24 @@
     import { Chat } from '@ai-sdk/vue'
     import { DefaultChatTransport } from 'ai'
 
-    definePageMeta({ key: (route) => `ai-chat-${route.params.id}`, layout: 'dashboard', middleware: ['auth'] })
+    definePageMeta({ key: (route) => generateKey(PAGE_NAME.PROFILE_CHAT_ID, String(route.params.id)), layout: 'dashboard', middleware: ['auth'] })
 
     const route = useRoute()
+    const config = useRuntimeConfig()
+    const axios = useAxios()
+    const { accessToken } = useData()
 
-    const { data } = await useFetch(`/api/chat/${route.params.id}`, { key: `ai-chat-${route.params.id}` })
+    const key = computed(() => {
+        return generateKey(PAGE_NAME.PROFILE_CHAT_ID, String(route.params.id))
+    })
+
+    const { data } = await useApiAsyncData(key.value, () => {
+        return axios.get<{ messages: API.ChatMessage[] } & API.Chat>(`${API_ENDPOINT.CHAT_READ}/${route.params.id}`, {
+            params: {
+                messages: true,
+            },
+        })
+    })
 
     useSeoMeta({
         title: () => data.value?.name || 'Chat AI',
@@ -28,10 +41,13 @@
             console.log(dataPart)
         },
         transport: new DefaultChatTransport({
-            api: `/api/ai/${data.value.id}`,
+            api: `${config.public.connectUrl}/api/ai/chat/${data.value.id}`,
             body: () => ({
                 agentId: data.value?.agentId,
             }),
+            headers: {
+                Authorization: `Bearer ${accessToken.value}`,
+            },
         }),
     })
 
@@ -58,13 +74,13 @@
         if (route.query.new === 'true' && data.value?.messages.length === 1) {
             chat.regenerate()
             navigateTo({ params: { id: route.params.id }, query: {} }, { replace: true })
-            refreshNuxtData('dashboard-navigation')
+            refreshNuxtData(API_ENDPOINT.PROFILE_NAVIGATION)
         }
     })
 </script>
 
 <template>
-    <UDashboardPanel :id="`ai-chat-${route.params.id}`">
+    <UDashboardPanel :id="key">
         <template #header>
             <UDashboardNavbar :title="data?.name || 'Chat AI'">
                 <template #leading>

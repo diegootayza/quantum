@@ -14,11 +14,10 @@
 
     const emit = defineEmits<Emit>()
 
+    const axios = useAxios()
+
     async function onUpdate(value: boolean) {
-        await $fetch(`${props.endpoint}/${props.id}`, {
-            body: { active: value },
-            method: 'PATCH',
-        })
+        await axios.patch(`${props.endpoint}/${props.id}`, { active: value })
         await refreshNuxtData(props.name)
         emit('update', props.id)
     }
