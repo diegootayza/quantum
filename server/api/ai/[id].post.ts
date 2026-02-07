@@ -37,7 +37,7 @@ export default defineEventHandler((event) => {
         const lastMessage = messages[messages.length - 1]
 
         if (messages.length > 1 && lastMessage?.role === 'user') {
-            await prisma.chatMessage.create({ data: { chatId: id, parts: lastMessage.parts as any, role: 'user' } })
+            await prisma.chatMessage.create({ data: { chatId: id, parts: lastMessage.parts as any, role: 'user', userId } })
         }
 
         const stream = createUIMessageStream({
@@ -76,7 +76,7 @@ export default defineEventHandler((event) => {
 
                     if (parts.length === 0) continue
 
-                    data.push({ chatId: id, parts: parts as any, role: message.role })
+                    data.push({ chatId: id, parts: parts as any, role: message.role, userId })
                 }
 
                 if (data.length > 0) await prisma.chatMessage.createMany({ data })

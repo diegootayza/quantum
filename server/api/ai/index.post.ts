@@ -20,7 +20,7 @@ export default defineEventHandler((event) => {
         })
 
         const chat = await prisma.chat.create({ data: { agentId, name, userId: secure!.id } })
-        await prisma.chatMessage.create({ data: { chatId: chat.id, parts: parts as any, role: 'user' } })
+        await prisma.chatMessage.create({ data: { chatId: chat.id, parts: parts as any, role: 'user', userId: secure!.id } })
         return chat
     })
 })

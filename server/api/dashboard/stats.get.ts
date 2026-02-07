@@ -10,18 +10,7 @@ export default defineEventHandler((event) => {
         const totalUsers = await prisma.user.count()
         const activeUsers = await prisma.user.count({ where: { active: true } })
 
-        // Conversations
-        const totalConversations = await prisma.conversation.count()
-        const conversationsLast30Days = await prisma.conversation.count({
-            where: {
-                createdAt: {
-                    gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-                },
-            },
-        })
-
         // Messages
-        const totalMessages = await prisma.conversationMessage.count()
 
         // User growth by month (last 6 months)
         const sixMonthsAgo = new Date()
@@ -43,9 +32,9 @@ export default defineEventHandler((event) => {
             },
             stats: {
                 activeUsers,
-                conversationsLast30Days,
-                totalConversations,
-                totalMessages,
+                conversationsLast30Days: 0,
+                totalConversations: 0,
+                totalMessages: 0,
                 totalUsers,
             },
         }
