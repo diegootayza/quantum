@@ -10,9 +10,9 @@ export default defineEventHandler((event) => {
             })
         }
 
-        const userData = await prisma.user.findUnique({
-            where: { id: userId },
-        })
+        const userData = await prisma.user.findUnique({ where: { id: userId } })
+        const totalChats = await prisma.chat.count({ where: { userId } })
+        const totalMessages = await prisma.chatMessage.count({ where: { userId } })
 
         if (!userData) {
             throw createError({
@@ -26,9 +26,9 @@ export default defineEventHandler((event) => {
                 accountAge: Math.floor((Date.now() - new Date(userData.createdAt).getTime()) / (1000 * 60 * 60 * 24)),
                 conversationsThisMonth: 0,
                 storageUsed: 0,
-                totalConversations: 0,
+                totalConversations: totalChats,
                 totalFiles: 0,
-                totalMessages: 0,
+                totalMessages,
             },
             user: {
                 active: userData.active,
