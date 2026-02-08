@@ -74,7 +74,7 @@
                                 :row="row"
                             />
                             <template v-else>
-                                {{ valueToPath(row, column.key) }}
+                                <span class="truncate block max-w-xl">{{ valueToPath(row, column.key) }}</span>
                             </template>
                         </td>
                     </tr>

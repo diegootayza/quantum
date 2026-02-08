@@ -7,24 +7,24 @@
     })
 
     const route = useRoute()
- 
+
     const key = 'dashboard-chat'
- 
+
     const query = computed(() => {
         return {
             page: route.query.page ?? 1,
         }
     })
- 
+
     const { data, refresh } = await useFetch('/api/chat', { key, query })
- 
+
     const columns: CommonTableColumn[] = [
         { key: 'name', label: 'Nombre' },
         { key: 'user', label: 'Usuario' },
         { class: 'w-px text-center', key: 'actions' },
     ]
 </script>
- 
+
 <template>
     <UDashboardPanel :id="key">
         <template #header>

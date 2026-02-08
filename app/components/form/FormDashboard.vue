@@ -56,6 +56,7 @@
         v-model:open="open"
         :description="props.title"
         :title="id ? 'Actualizar' : 'Crear'"
+        :ui="{ content: 'max-w-6xl' }"
         @after:leave="onReset"
     >
         <UButton

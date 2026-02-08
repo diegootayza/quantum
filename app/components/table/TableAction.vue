@@ -8,7 +8,7 @@
 
     const props = withDefaults(defineProps<Props>(), {})
 
-    const router = useRouter()
+    const confirmModal = useConfirmModal()
 
     const items = computed<DropdownMenuItem[]>(() => {
         return [
@@ -16,7 +16,7 @@
                 icon: 'lucide:edit',
                 label: 'Editar',
                 async onSelect() {
-                    router.push({ name: props.name, query: { id: props.id } })
+                    navigateTo({ name: props.name, query: { id: props.id } })
                 },
             },
             {
@@ -27,7 +27,14 @@
                 icon: 'lucide:trash',
                 label: 'Eliminar',
                 onSelect() {
-                    console.log(props.id)
+                    confirmModal.open({
+                        confirmButtonLabel: 'Eliminar',
+                        description: '¿Estás seguro de que deseas eliminar? Esta acción no se puede deshacer.',
+                        onConfirm: async () => {
+                            console.log(props.id)
+                        },
+                        title: 'Eliminar',
+                    })
                 },
             },
         ]

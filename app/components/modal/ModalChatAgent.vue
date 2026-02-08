@@ -17,7 +17,7 @@
             label="Model"
             name="model"
         />
-        <FieldTextarea
+        <FieldEditor
             label="Instrucción"
             name="instruction"
         />
