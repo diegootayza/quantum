@@ -21,7 +21,13 @@
         })
     })
 
-    const columns: CommonTableColumn[] = [
+    const {} = await useApiListData('user', {
+        params: {
+            limit: 100,
+        },
+    })
+
+    const columns = [
         { class: 'w-px', key: 'devices', label: 'Dispositivos' },
         { class: 'w-px', key: 'name', label: 'Nombre' },
         { class: 'w-px', key: 'surname', label: 'Apellido' },
@@ -30,7 +36,7 @@
         { class: 'w-px', key: 'session', label: 'Sesión' },
         { class: 'w-px text-center', key: 'active', label: 'Activo' },
         { class: 'w-px text-center', key: 'actions' },
-    ]
+    ] satisfies CommonTableColumn<API.User>[]
 
     function onSession(id: string) {
         socket?.emit('user:signout', id)
@@ -45,7 +51,7 @@
 
 <template>
     <DashboardPage
-        :id="key"
+        :id="'dashboard-user'"
         title="Usuarios"
     >
         <template #headerRight>
@@ -56,13 +62,18 @@
                 <DashboardTable
                     :columns="columns"
                     :docs="docs"
+                    :keys="[key]"
                     :pending="pending"
                 >
                     <template #devices="{ row }">
                         <TableDevice :id="row.id" />
                     </template>
                     <template #role="{ row }">
-                        <TableConstant :value="row.role" />
+                        <UBadge
+                            :ui="{ label: 'text-center w-full', base: 'w-28' }"
+                            v-bind="mapUserRole(row.role)"
+                            variant="outline"
+                        />
                     </template>
                     <template #active="{ row }">
                         <TableActive

@@ -1,12 +1,14 @@
 <script setup lang="ts" generic="T extends RecordType">
     interface Props {
-        columns: CommonTableColumn[]
+        columns: CommonTableColumn<T>[]
         docs?: T[]
+        keys?: string[]
         pending?: boolean
     }
 
     const props = withDefaults(defineProps<Props>(), {
         docs: () => [],
+        keys: () => [],
         pending: false,
     })
 
@@ -21,34 +23,47 @@
         else navigateTo({ query: { ...route.query, search: undefined } }, { replace: true })
     }, 350)
 
+    async function onReload() {
+        if (!props.keys.length) return
+        await refreshNuxtData(props.keys)
+    }
+
     watch(cleanSearch, () => {
         debouncedSearch()
     })
 </script>
 
 <template>
-    <div class="w-full grid grid-cols-1 gap-8">
-        <div class="w-full">
-            <UInput
-                v-model="search"
-                class="w-sm"
-                name="search-dashboard-table"
-                placeholder="Buscar..."
-            >
-                <template
-                    v-if="search.length > 0"
-                    #trailing
+    <div class="w-full grid grid-cols-1 gap-8 relative">
+        <div class="w-full flex items-center justify-between">
+            <div>
+                <UInput
+                    v-model="search"
+                    class="w-sm"
+                    name="search-dashboard-table"
+                    placeholder="Buscar..."
                 >
-                    <UButton
-                        aria-label="Clear input"
-                        color="neutral"
-                        icon="i-lucide-circle-x"
-                        size="sm"
-                        variant="link"
-                        @click="search = ''"
-                    />
-                </template>
-            </UInput>
+                    <template
+                        v-if="search.length > 0"
+                        #trailing
+                    >
+                        <UButton
+                            aria-label="Clear input"
+                            color="neutral"
+                            icon="i-lucide-circle-x"
+                            size="sm"
+                            variant="link"
+                            @click="search = ''"
+                        />
+                    </template>
+                </UInput>
+            </div>
+            <div>
+                <UButton
+                    icon="lucide:loader-circle"
+                    @click="onReload"
+                />
+            </div>
         </div>
         <div
             v-if="props.pending"
@@ -67,7 +82,7 @@
         />
         <div
             v-else
-            class="relative w-full overflow-x-auto"
+            class="w-full overflow-x-auto"
         >
             <table class="w-full border-collapse divide-y divide-default text-left border border-default">
                 <thead class="bg-elevated/50">
@@ -92,13 +107,11 @@
                             :class="['p-4 text-sm whitespace-nowrap', column.class, column.classCell]"
                         >
                             <slot
-                                v-if="$slots[column.key]"
                                 :name="column.key"
                                 :row="row"
-                            />
-                            <template v-else>
+                            >
                                 {{ valueToPath(row, column.key) }}
-                            </template>
+                            </slot>
                         </td>
                     </tr>
                 </tbody>

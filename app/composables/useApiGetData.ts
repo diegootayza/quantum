@@ -1,6 +1,6 @@
 import type { AsyncDataOptions } from '#app'
 
-export function useApiGetData<T>(url: string, { params, ...options } = {} as { params: RecordType } & AsyncDataOptions<T>) {
+export function useApiGetData<T>(url: string, { params, ...options } = {} as { params?: RecordType } & AsyncDataOptions<T>) {
     const axios = useAxios()
 
     return useAsyncData<T>(

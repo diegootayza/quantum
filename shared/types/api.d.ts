@@ -143,6 +143,20 @@ declare global {
             updatedAt: string
         }
     }
+
+    type ApiData = {
+        chat: API.Chat
+        'chat-agent': API.ChatAgent
+        file: API.File
+        model: API.Model
+        prompt: API.Prompt
+        setting: API.Setting
+        user: API.User
+    }
+
+    type ApiDataType = keyof ApiData
+
+    type ApiResponseList<T extends ApiDataType> = API.ResponseList<ApiData[T]>
 }
 
 export {}

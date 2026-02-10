@@ -22,9 +22,9 @@
 
     const columns: CommonTableColumn[] = [
         { key: 'mimeType', label: 'Tipo de contenido' },
-        { class: 'w-px', key: 'size', label: 'Tamaño' },
-        { class: 'w-px', key: 'userId', label: 'Usuario' },
-        { class: 'w-px', key: 'type', label: 'Tipo' },
+        { class: 'w-px text-center', key: 'size', label: 'Tamaño' },
+        { class: 'w-px text-center', key: 'type', label: 'Tipo' },
+        { class: 'w-px text-center', key: 'url', label: 'URL' },
         { class: 'w-px text-center', key: 'actions' },
     ]
 
@@ -46,6 +46,30 @@
                     :docs="docs"
                     :pending="pending"
                 >
+                    <template #size="{ row }">
+                        <UBadge
+                            color="neutral"
+                            :label="formatFileSize(row.size)"
+                            :ui="{ label: 'text-center w-full', base: 'w-24 p-2' }"
+                            variant="outline"
+                        />
+                    </template>
+                    <template #type="{ row }">
+                        <UBadge
+                            :ui="{ label: 'text-center w-full', base: 'w-28' }"
+                            v-bind="mapFileType(row.type)"
+                            variant="outline"
+                        />
+                    </template>
+                    <template #url="{ row }">
+                        <UButton
+                            color="info"
+                            :href="row.url"
+                            icon="lucide:eye"
+                            target="_blank"
+                            variant="outline"
+                        />
+                    </template>
                     <template #actions="{ row }">
                         <TableAction
                             :id="row.id"

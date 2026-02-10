@@ -12,7 +12,6 @@
 
     const toast = useToast()
     const loading = ref(false)
-    const { safeExecute } = useSafeError()
 
     const securityTips = [
         {

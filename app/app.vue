@@ -53,5 +53,6 @@
         <CommonConfirmModal />
         <CommonImageModal />
         <CommonInputModal />
+        <AppAlert />
     </UApp>
 </template>

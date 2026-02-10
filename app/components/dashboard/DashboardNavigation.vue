@@ -13,7 +13,6 @@
 
     const toast = useToast()
     const { user } = useData()
-    const { safeExecute } = useSafeError()
     const confirmModal = useConfirmModal()
     const inputModal = useInputModal()
 
@@ -168,11 +167,9 @@
                         onConfirm: async (newName: string) => {
                             if (!newName.trim()) return
 
-                            await safeExecute(async () => {
-                                await apiChat.updateChat(item.to.params.id, { name: newName })
-                                await refresh()
-                                toast.add({ color: 'success', title: 'Chat renombrado' })
-                            })
+                            await apiChat.updateChat(item.to.params.id, { name: newName })
+                            await refresh()
+                            toast.add({ color: 'success', title: 'Chat renombrado' })
                         },
                         placeholder: 'Nombre del chat',
                         title: 'Renombrar chat',
@@ -188,12 +185,10 @@
                         confirmButtonLabel: 'Eliminar',
                         description: '¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.',
                         onConfirm: async () => {
-                            await safeExecute(async () => {
-                                await apiChat.deleteChat(item.to.params.id)
-                                navigateTo({ name: PAGE_NAME.PROFILE_CHAT })
-                                toast.add({ color: 'success', title: 'Chat eliminado' })
-                                await refresh()
-                            })
+                            await apiChat.deleteChat(item.to.params.id)
+                            navigateTo({ name: PAGE_NAME.PROFILE_CHAT })
+                            toast.add({ color: 'success', title: 'Chat eliminado' })
+                            await refresh()
                         },
                         title: 'Eliminar chat',
                     })

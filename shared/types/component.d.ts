@@ -1,5 +1,5 @@
 declare global {
-    interface CommonTableColumn {
+    interface CommonTableColumn<T = any> {
         class?: string
         classCell?: string
         classHeader?: string

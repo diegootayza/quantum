@@ -53,12 +53,12 @@ export function useInfiniteScroll<T>(props: UseInfiniteScrollProps) {
         }
     }
 
-    function reset() {
+    async function reset() {
+        await refreshNuxtData(props.key)
         cursor.value = null
         docs.value = []
         ready.value = false
         streaming.value = false
-        refreshNuxtData(props.key)
     }
 
     watch(

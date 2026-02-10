@@ -5,7 +5,9 @@
         dataChart?: any
     }
 
-    const props = withDefaults(defineProps<Props>(), {})
+    const props = withDefaults(defineProps<Props>(), {
+        dataChart: () => ({}),
+    })
 
     const lineChart = useChart<'line'>({})
 </script>
